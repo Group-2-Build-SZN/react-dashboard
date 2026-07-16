@@ -1,7 +1,9 @@
+import Button from "./components/Button/Button";
+
 function App() {
   return (
-    <div>
-      <h1>My Ulo</h1>
+    <div className="flex min-h-screen items-center justify-center">
+      <Button>Unlock Contact</Button>
     </div>
   );
 }
