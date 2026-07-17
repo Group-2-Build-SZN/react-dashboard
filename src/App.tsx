@@ -1,11 +1,7 @@
-import Button from "./components/Button/Button";
+import PropertyListing from "./pages/PropertyListing/PropertyListing";
 
 function App() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <Button>Unlock Contact</Button>
-    </div>
-  );
+  return <PropertyListing />;
 }
 
 export default App;

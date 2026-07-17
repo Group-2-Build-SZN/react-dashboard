@@ -1,0 +1,41 @@
+import apartment1 from "../assets/images/apartment1.png";
+import apartment2 from "../assets/images/apartment2.png";
+
+export const properties = [
+  {
+    id: 1,
+    image: apartment1,
+    name: "2 Bedroom Apartment",
+    location: "Enugu, New Haven",
+    address: "New Haven Market",
+    price: "₦1,500,000",
+    bedrooms: 2,
+    bathrooms: 2,
+    size: "120 sqm",
+    videoDuration: "1:36",
+    views: 15,
+    verified: true,
+    trustScore: 82,
+    trustRating: "Very Good",
+    water: "Good",
+    security: "Good",
+  },
+  {
+    id: 2,
+    image: apartment2,
+    name: "Mini Flat",
+    location: "Enugu, New GRA",
+    address: "5 Upper North",
+    price: "₦650,000",
+    bedrooms: 1,
+    bathrooms: 1,
+    size: "45 sqm",
+    videoDuration: "1:08",
+    views: 8,
+    verified: true,
+    trustScore: 78,
+    trustRating: "Good",
+    water: "Good",
+    security: "Good",
+  },
+];
