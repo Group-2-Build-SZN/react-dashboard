@@ -12,7 +12,7 @@ function PropertyImage({
   videoDuration,
 }: PropertyImageProps) {
   return (
-    <div className="relative h-44 w-40 overflow-hidden rounded-xl">
+    <div className="relative h-48 w-full overflow-hidden">
       <img
         src={image}
         alt="Property"
@@ -20,13 +20,13 @@ function PropertyImage({
       />
 
       {/* Upload Count */}
-      <div className="absolute left-2 top-2 flex items-center gap-1 rounded-md bg-black/70 px-2 py-1 text-xs text-white">
+      <div className="absolute left-3 top-3 flex items-center gap-1 rounded-md bg-black/70 px-2 py-1 text-xs text-white">
         <CameraIcon size={14} />
         <span>{uploadCount}</span>
       </div>
 
       {/* Video Duration */}
-      <div className="absolute bottom-2 left-2 rounded-md bg-black/70 px-2 py-1 text-xs text-white">
+      <div className="absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 text-xs text-white">
         {videoDuration}
       </div>
     </div>

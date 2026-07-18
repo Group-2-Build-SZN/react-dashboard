@@ -1,0 +1,82 @@
+import { useEffect, useState } from "react";
+import { CheckCircle2 } from "lucide-react";
+
+import OTPInput from "../../components/OTPInput/OTPInput";
+
+type EnterCodeProps = {
+  email?: string;
+  onVerified?: (code: string) => void;
+  onResend?: () => void;
+};
+
+const RESEND_SECONDS = 45;
+
+function formatTime(seconds: number) {
+  const mins = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const secs = (seconds % 60).toString().padStart(2, "0");
+  return `${mins}:${secs}`;
+}
+
+function EnterCode({ email = "example@gmail.com", onVerified, onResend }: EnterCodeProps) {
+  const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
+
+  useEffect(() => {
+    if (secondsLeft <= 0) return;
+    const timer = setInterval(() => setSecondsLeft((s) => s - 1), 1000);
+    return () => clearInterval(timer);
+  }, [secondsLeft]);
+
+  const handleChange = (value: string) => {
+    if (value.length === 6) {
+      onVerified?.(value);
+    }
+  };
+
+  const handleResend = () => {
+    if (secondsLeft > 0) return;
+    setSecondsLeft(RESEND_SECONDS);
+    onResend?.();
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col bg-blue-tint px-6 pb-8 pt-10">
+
+      <h1 className="text-2xl font-bold text-gray-900">
+        Enter the code
+      </h1>
+
+      <p className="mt-1 text-sm text-gray-500">
+        We've sent a 6-digit code to {email}
+      </p>
+
+      <div className="mt-10">
+        <OTPInput onChange={handleChange} />
+      </div>
+
+      <p className="mt-6 text-sm text-gray-500">
+        {secondsLeft > 0 ? (
+          <>
+            Resend code in{" "}
+            <span className="font-medium text-primary-800">
+              {formatTime(secondsLeft)}
+            </span>
+          </>
+        ) : (
+          <button onClick={handleResend} className="font-medium text-primary-800">
+            Resend code
+          </button>
+        )}
+      </p>
+
+      <div className="mt-auto flex items-center justify-center gap-1.5 text-center text-xs text-gray-500">
+        <CheckCircle2 size={14} className="flex-shrink-0 text-secondary-600" />
+        <span>Didn't receive a code? Check inbox or spam folder</span>
+      </div>
+
+    </div>
+  );
+}
+
+export default EnterCode;

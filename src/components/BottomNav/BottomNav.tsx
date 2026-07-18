@@ -8,7 +8,7 @@ import {
 
 function BottomNav() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white">
+    <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-gray-200 bg-white">
 
       <div className="mx-auto flex max-w-md justify-around py-3">
 

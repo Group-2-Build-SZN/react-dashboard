@@ -14,7 +14,7 @@ function TrustScoreCard({
   security,
 }: TrustScoreCardProps) {
   return (
-    <div className="mt-4 flex items-center justify-between rounded-xl bg-green-50 px-4 py-3">
+    <div className="flex items-center justify-between bg-green-50 px-4 py-3">
 
       {/* Trust Score */}
       <div className="flex items-center gap-3 flex-1">

@@ -6,7 +6,11 @@ import BottomNav from "../../components/BottomNav/BottomNav";
 
 import { properties } from "../../data/properties";
 
-function PropertyListing() {
+type PropertyListingProps = {
+  onSelectProperty?: (id: number) => void;
+};
+
+function PropertyListing({ onSelectProperty }: PropertyListingProps) {
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
 
@@ -60,6 +64,7 @@ function PropertyListing() {
             trustRating={property.trustRating}
             water={property.water}
             security={property.security}
+            onClick={() => onSelectProperty?.(property.id)}
           />
         ))}
 
