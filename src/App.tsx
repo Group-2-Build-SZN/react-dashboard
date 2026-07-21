@@ -7,6 +7,9 @@ import SignUp from "./pages/SignUp/SignUp";
 import VerifyEmail from "./pages/VerifyEmail/VerifyEmail";
 import Login from "./pages/Login/Login";
 import EnterCode from "./pages/EnterCode/EnterCode";
+import ChooseUserType from "./pages/ChooseUserType/ChooseUserType";
+import KYCVerification from "./pages/KYCVerification/KYCVerification";
+import HomeDashboard from "./pages/HomeDashboard/HomeDashboard";
 import PropertyListing from "./pages/PropertyListing/PropertyListing";
 import PropertyDetails from "./pages/PropertyDetails/PropertyDetails";
 import VideoWalkthrough from "./pages/VideoWalkthrough/VideoWalkthrough";
@@ -19,6 +22,9 @@ type View =
   | { screen: "verify-email"; email: string }
   | { screen: "login" }
   | { screen: "enter-code" }
+  | { screen: "choose-user-type" }
+  | { screen: "kyc-verification" }
+  | { screen: "home" }
   | { screen: "listing" }
   | { screen: "details"; propertyId: number }
   | { screen: "video"; propertyId: number };
@@ -49,12 +55,12 @@ function App() {
       )}
 
       {view.screen === "signup" && (
-        // Continue with Google falls through to listing for now — will
+        // Continue with Google falls through to home for now — will
         // repoint once that flow is defined.
         <SignUp
           onBack={() => setView({ screen: "welcome" })}
           onContinueWithEmail={(email) => setView({ screen: "verify-email", email })}
-          onContinueWithGoogle={() => setView({ screen: "listing" })}
+          onContinueWithGoogle={() => setView({ screen: "home" })}
           onSignIn={() => setView({ screen: "login" })}
         />
       )}
@@ -62,27 +68,63 @@ function App() {
       {view.screen === "verify-email" && (
         <VerifyEmail
           email={view.email || "example@gmail.com"}
-          onVerified={() => setView({ screen: "listing" })}
+          onVerified={() => setView({ screen: "choose-user-type" })}
         />
       )}
 
       {view.screen === "login" && (
-        // Continue with Google falls through to the listing screen for now.
+        // Continue with Google falls through to home for now.
         <Login
           onBack={() => setView({ screen: "welcome" })}
           onContinueWithEmail={() => setView({ screen: "enter-code" })}
-          onContinueWithGoogle={() => setView({ screen: "listing" })}
+          onContinueWithGoogle={() => setView({ screen: "home" })}
           onSignUp={() => setView({ screen: "signup" })}
         />
       )}
 
       {view.screen === "enter-code" && (
-        <EnterCode onVerified={() => setView({ screen: "listing" })} />
+        <EnterCode onVerified={() => setView({ screen: "home" })} />
+      )}
+
+      {view.screen === "choose-user-type" && (
+        <ChooseUserType
+          onBack={() => setView({ screen: "verify-email", email: "example@gmail.com" })}
+          onContinue={(role) =>
+            setView(
+              role === "tenant"
+                ? { screen: "home" }
+                : { screen: "kyc-verification" }
+            )
+          }
+        />
+      )}
+
+      {view.screen === "kyc-verification" && (
+        // Continue falls through to home for now — will repoint to the
+        // verification-pending state once it exists.
+        <KYCVerification
+          onBack={() => setView({ screen: "choose-user-type" })}
+          onContinue={() => setView({ screen: "home" })}
+        />
+      )}
+
+      {view.screen === "home" && (
+        <HomeDashboard
+          onSelectProperty={(propertyId) => setView({ screen: "details", propertyId })}
+          onSeeAll={() => setView({ screen: "listing" })}
+          onOpenFilters={() => setView({ screen: "listing" })}
+          onNavigate={(tab) => {
+            if (tab === "explore") setView({ screen: "listing" });
+          }}
+        />
       )}
 
       {view.screen === "listing" && (
         <PropertyListing
           onSelectProperty={(propertyId) => setView({ screen: "details", propertyId })}
+          onNavigate={(tab) => {
+            if (tab === "home") setView({ screen: "home" });
+          }}
         />
       )}
 

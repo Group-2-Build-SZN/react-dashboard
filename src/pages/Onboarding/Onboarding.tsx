@@ -76,11 +76,11 @@ function Onboarding({ onComplete }: OnboardingProps) {
 
       {/* Heading + Body */}
       <div className="mt-6">
-        <h1 className="text-2xl font-bold leading-tight text-gray-900">
+        <h1 className="text-[28px] font-bold leading-9 text-gray-900">
           {slide.heading}
         </h1>
 
-        <p className="mt-3 text-sm leading-relaxed text-gray-500">
+        <p className="mt-3 text-base leading-6 text-gray-500">
           {slide.body}
         </p>
       </div>

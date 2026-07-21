@@ -3,14 +3,16 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import FilterChip from "../../components/FilterChip/FilterChip";
 import PropertyCard from "../../components/PropertyCard/PropertyCard";
 import BottomNav from "../../components/BottomNav/BottomNav";
+import type { BottomNavTab } from "../../components/BottomNav/BottomNav";
 
 import { properties } from "../../data/properties";
 
 type PropertyListingProps = {
   onSelectProperty?: (id: number) => void;
+  onNavigate?: (tab: BottomNavTab) => void;
 };
 
-function PropertyListing({ onSelectProperty }: PropertyListingProps) {
+function PropertyListing({ onSelectProperty, onNavigate }: PropertyListingProps) {
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
 
@@ -71,7 +73,7 @@ function PropertyListing({ onSelectProperty }: PropertyListingProps) {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNav />
+      <BottomNav active="explore" onNavigate={onNavigate} />
 
     </div>
   );

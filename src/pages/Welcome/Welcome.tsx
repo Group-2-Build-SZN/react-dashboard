@@ -23,11 +23,11 @@ function Welcome({ onGetStarted, onLogIn }: WelcomeProps) {
       <div className="-mt-10 mx-4 mb-6 flex flex-col gap-3 rounded-2xl bg-white px-6 py-6 shadow-[0_4px_16px_rgba(0,0,0,0.12)]">
 
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-[28px] font-bold leading-9 text-gray-900">
             Welcome to <span className="text-primary-800">My Ulo</span>
           </h1>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-base leading-6 text-gray-500">
             The smarter way to find rent verified properties in Nigeria.
           </p>
         </div>

@@ -43,34 +43,40 @@ function EnterCode({ email = "example@gmail.com", onVerified, onResend }: EnterC
   return (
     <div className="flex min-h-screen flex-col bg-blue-tint px-6 pb-8 pt-10">
 
-      <h1 className="text-2xl font-bold text-gray-900">
-        Enter the code
-      </h1>
+      {/* Content centers as a group in the available space */}
+      <div className="flex flex-1 flex-col justify-center gap-8">
 
-      <p className="mt-1 text-sm text-gray-500">
-        We've sent a 6-digit code to {email}
-      </p>
+        <div>
+          <h1 className="text-[28px] font-bold leading-9 text-gray-900">
+            Enter the code
+          </h1>
 
-      <div className="mt-10">
+          <p className="mt-1 text-base leading-6 text-gray-500">
+            We've sent a 6-digit code to {email}
+          </p>
+        </div>
+
         <OTPInput onChange={handleChange} />
+
+        <p className="text-sm text-gray-500">
+          {secondsLeft > 0 ? (
+            <>
+              Resend code in{" "}
+              <span className="font-medium text-primary-800">
+                {formatTime(secondsLeft)}
+              </span>
+            </>
+          ) : (
+            <button onClick={handleResend} className="font-medium text-primary-800">
+              Resend code
+            </button>
+          )}
+        </p>
+
       </div>
 
-      <p className="mt-6 text-sm text-gray-500">
-        {secondsLeft > 0 ? (
-          <>
-            Resend code in{" "}
-            <span className="font-medium text-primary-800">
-              {formatTime(secondsLeft)}
-            </span>
-          </>
-        ) : (
-          <button onClick={handleResend} className="font-medium text-primary-800">
-            Resend code
-          </button>
-        )}
-      </p>
-
-      <div className="mt-auto flex items-center justify-center gap-1.5 text-center text-xs text-gray-500">
+      {/* Help note stays near the bottom */}
+      <div className="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500">
         <CheckCircle2 size={14} className="flex-shrink-0 text-secondary-600" />
         <span>Didn't receive a code? Check inbox or spam folder</span>
       </div>

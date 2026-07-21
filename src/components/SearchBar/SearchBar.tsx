@@ -1,19 +1,42 @@
-import { Search } from "lucide-react";
+import { Search, SlidersHorizontal } from "lucide-react";
 
-function SearchBar() {
+type SearchBarProps = {
+  placeholder?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  onFilterClick?: () => void;
+};
+
+function SearchBar({
+  placeholder = "Search by location, estate or landmark",
+  value,
+  onChange,
+  onFilterClick,
+}: SearchBarProps) {
   return (
-    <div className="flex h-16 items-center rounded-2xl border border-gray-200 bg-white px-5 shadow-sm">
+    <div className="flex items-center gap-2">
 
-      <Search
-        size={26}
-        className="text-gray-400"
-      />
+      <div className="flex h-[50px] flex-1 items-center gap-2 rounded-full border border-border-light bg-white px-4">
+        <Search size={18} className="flex-shrink-0 text-muted" />
 
-      <input
-        type="text"
-        placeholder="Search by location, estate or landmark"
-        className="ml-4 flex-1 bg-transparent text-[16px] text-gray-700 outline-none placeholder:text-gray-400"
-      />
+        <input
+          type="text"
+          value={value}
+          onChange={(event) => onChange?.(event.target.value)}
+          placeholder={placeholder}
+          className="h-full w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-muted"
+        />
+      </div>
+
+      {onFilterClick && (
+        <button
+          onClick={onFilterClick}
+          aria-label="Filters"
+          className="flex h-[50px] w-[50px] flex-shrink-0 items-center justify-center rounded-full border border-border-light"
+        >
+          <SlidersHorizontal size={18} className="text-gray-700" />
+        </button>
+      )}
 
     </div>
   );

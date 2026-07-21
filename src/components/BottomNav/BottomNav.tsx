@@ -6,46 +6,41 @@ import {
   User,
 } from "lucide-react";
 
-function BottomNav() {
+export type BottomNavTab = "home" | "explore" | "map" | "saved" | "profile";
+
+type BottomNavProps = {
+  active?: BottomNavTab;
+  onNavigate?: (tab: BottomNavTab) => void;
+};
+
+const tabs: { id: BottomNavTab; label: string; icon: typeof House }[] = [
+  { id: "home", label: "Home", icon: House },
+  { id: "explore", label: "Explore", icon: Compass },
+  { id: "map", label: "Map", icon: Map },
+  { id: "saved", label: "Saved", icon: Heart },
+  { id: "profile", label: "Profile", icon: User },
+];
+
+function BottomNav({ active = "home", onNavigate }: BottomNavProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-gray-200 bg-white">
 
       <div className="mx-auto flex max-w-md justify-around py-3">
 
-        <button className="flex flex-col items-center text-gray-400">
-          <House size={22} />
-          <span className="mt-1 text-xs">
-            Home
-          </span>
-        </button>
-
-        <button className="flex flex-col items-center text-blue-600">
-          <Compass size={22} />
-          <span className="mt-1 text-xs font-medium">
-            Explore
-          </span>
-        </button>
-
-        <button className="flex flex-col items-center text-gray-400">
-          <Map size={22} />
-          <span className="mt-1 text-xs">
-            Map
-          </span>
-        </button>
-
-        <button className="flex flex-col items-center text-gray-400">
-          <Heart size={22} />
-          <span className="mt-1 text-xs">
-            Saved
-          </span>
-        </button>
-
-        <button className="flex flex-col items-center text-gray-400">
-          <User size={22} />
-          <span className="mt-1 text-xs">
-            Profile
-          </span>
-        </button>
+        {tabs.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            onClick={() => onNavigate?.(id)}
+            className={`flex flex-col items-center ${
+              active === id ? "text-primary-800" : "text-gray-400"
+            }`}
+          >
+            <Icon size={22} />
+            <span className={`mt-1 text-xs ${active === id ? "font-medium" : ""}`}>
+              {label}
+            </span>
+          </button>
+        ))}
 
       </div>
 

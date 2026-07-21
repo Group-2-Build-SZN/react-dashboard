@@ -1,0 +1,191 @@
+import { useState } from "react";
+import { ArrowLeft, IdCard, Building2, Lock, Calendar } from "lucide-react";
+
+import Input from "../../components/Input/Input";
+import Button from "../../components/Button/Button";
+
+export type VerificationType = "individual" | "business";
+
+type KYCVerificationProps = {
+  onBack?: () => void;
+  onContinue?: (type: VerificationType) => void;
+};
+
+function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
+  const [type, setType] = useState<VerificationType>("individual");
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dob, setDob] = useState("");
+  const [ninNumber, setNinNumber] = useState("");
+
+  const [companyName, setCompanyName] = useState("");
+  const [rcNumber, setRcNumber] = useState("");
+
+  return (
+    <div className="flex min-h-screen flex-col bg-white px-6 pb-8 pt-5">
+
+      {/* Back */}
+      <button
+        onClick={onBack}
+        aria-label="Go back"
+        className="flex h-10 w-10 flex-shrink-0 items-center justify-center"
+      >
+        <ArrowLeft size={20} strokeWidth={2} />
+      </button>
+
+      {/* Heading */}
+      <div className="mt-4 text-center">
+        <h1 className="text-[28px] font-bold leading-9 text-gray-900">
+          KYC Verification
+        </h1>
+
+        <p className="mt-1 text-base leading-6 text-gray-500">
+          To keep our community safe and secure, please provide your details
+          for verification.
+        </p>
+      </div>
+
+      {/* Toggle */}
+      <div className="mt-6">
+        <p className="mb-2 text-sm font-medium text-gray-700">
+          I am verifying as
+        </p>
+
+        <div className="flex rounded-xl border border-border-light p-1">
+
+          <button
+            onClick={() => setType("individual")}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-colors ${
+              type === "individual"
+                ? "border border-primary-800 bg-primary-50 text-primary-800"
+                : "text-gray-500"
+            }`}
+          >
+            <IdCard size={16} />
+            Individual (NIN)
+          </button>
+
+          <button
+            onClick={() => setType("business")}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-colors ${
+              type === "business"
+                ? "border border-primary-800 bg-primary-50 text-primary-800"
+                : "text-gray-500"
+            }`}
+          >
+            <Building2 size={16} />
+            Business (CAC)
+          </button>
+
+        </div>
+      </div>
+
+      {/* Info card */}
+      <div className="mt-5 flex items-start gap-3 rounded-xl bg-blue-tint p-4">
+
+        <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary-800 text-white">
+          {type === "individual" ? <IdCard size={18} /> : <Building2 size={18} />}
+        </span>
+
+        <div>
+          <p className="text-sm font-semibold text-gray-900">
+            {type === "individual" ? "Individual (NIN)" : "Business (CAC)"}
+          </p>
+
+          <p className="mt-0.5 text-xs text-gray-500">
+            {type === "individual"
+              ? "Enter your personal details as they appear on your NIN."
+              : "Enter your company details as they appear on your CAC registration."}
+          </p>
+        </div>
+
+      </div>
+
+      {/* Form */}
+      <div className="mt-5 flex flex-col gap-4">
+
+        {type === "individual" ? (
+          <>
+            <Input
+              id="first-name"
+              label="First Name"
+              placeholder="Enter your first name"
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+            />
+
+            <Input
+              id="last-name"
+              label="Last Name"
+              placeholder="Enter your last name"
+              value={lastName}
+              onChange={(event) => setLastName(event.target.value)}
+            />
+
+            <Input
+              id="dob"
+              label="Date of Birth"
+              placeholder="Select your date of birth"
+              type="date"
+              icon={<Calendar size={18} />}
+              value={dob}
+              onChange={(event) => setDob(event.target.value)}
+            />
+
+            <Input
+              id="nin-number"
+              label="NIN Number"
+              placeholder="Enter your 11-digit NIN"
+              value={ninNumber}
+              onChange={(event) => setNinNumber(event.target.value)}
+            />
+          </>
+        ) : (
+          <>
+            <Input
+              id="company-name"
+              label="Company Name"
+              placeholder="Enter your company name"
+              value={companyName}
+              onChange={(event) => setCompanyName(event.target.value)}
+            />
+
+            <Input
+              id="rc-number"
+              label="RC Number"
+              placeholder="Enter your RC number"
+              value={rcNumber}
+              onChange={(event) => setRcNumber(event.target.value)}
+            />
+          </>
+        )}
+
+      </div>
+
+      {/* Encryption note */}
+      <div className="mt-5 flex items-start gap-2 text-xs text-gray-500">
+        <Lock size={14} className="mt-0.5 flex-shrink-0" />
+        <span>
+          Your information is encrypted and securely stored. We never share
+          your data.
+        </span>
+      </div>
+
+      {/* Continue */}
+      <div className="mt-6">
+        <Button
+          variant="primary"
+          size="lg"
+          className="w-full"
+          onClick={() => onContinue?.(type)}
+        >
+          Continue
+        </Button>
+      </div>
+
+    </div>
+  );
+}
+
+export default KYCVerification;
