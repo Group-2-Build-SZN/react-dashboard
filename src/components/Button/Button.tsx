@@ -11,10 +11,7 @@ const variantStyles = {
   outline: "border border-muted bg-transparent text-gray-900",
 };
 
-// Per the Figma Dev Mode spec: buttons are 48px tall across the app
-// (Sign Up/Login/Welcome CTAs), 2px corner radius — not the 8-12px we'd
-// been guessing. The onboarding "Next" button is the one compact exception
-// (fixed 137px width), handled via className on that call site.
+
 const sizeStyles = {
   sm: "h-8 px-3 text-xs",
   md: "h-12 px-4 text-sm",

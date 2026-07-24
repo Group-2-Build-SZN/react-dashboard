@@ -12,8 +12,8 @@ function FeatureCard({
   value,
 }: FeatureCardProps) {
   return (
-    <div className="flex flex-1 items-center gap-2 rounded-xl bg-green-50 p-2">
-      <div className="text-green-600">
+    <div className="flex flex-1 items-center gap-2 rounded-xl bg-secondary-50 p-2">
+      <div className="text-secondary-600">
         {icon}
       </div>
 

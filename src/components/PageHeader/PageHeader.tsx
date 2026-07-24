@@ -17,7 +17,7 @@ function PageHeader({ title, subtitle, onBack, rightAction }: PageHeaderProps) {
         <button
           onClick={onBack}
           aria-label="Go back"
-          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-gray-200"
+          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-border-light"
         >
           <ArrowLeft size={20} strokeWidth={2} />
         </button>

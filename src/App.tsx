@@ -10,6 +10,7 @@ import EnterCode from "./pages/EnterCode/EnterCode";
 import ChooseUserType from "./pages/ChooseUserType/ChooseUserType";
 import KYCVerification from "./pages/KYCVerification/KYCVerification";
 import HomeDashboard from "./pages/HomeDashboard/HomeDashboard";
+import Search from "./pages/Search/Search";
 import PropertyListing from "./pages/PropertyListing/PropertyListing";
 import PropertyDetails from "./pages/PropertyDetails/PropertyDetails";
 import VideoWalkthrough from "./pages/VideoWalkthrough/VideoWalkthrough";
@@ -25,6 +26,7 @@ type View =
   | { screen: "choose-user-type" }
   | { screen: "kyc-verification" }
   | { screen: "home" }
+  | { screen: "search"; query?: string }
   | { screen: "listing" }
   | { screen: "details"; propertyId: number }
   | { screen: "video"; propertyId: number };
@@ -112,10 +114,19 @@ function App() {
         <HomeDashboard
           onSelectProperty={(propertyId) => setView({ screen: "details", propertyId })}
           onSeeAll={() => setView({ screen: "listing" })}
-          onOpenFilters={() => setView({ screen: "listing" })}
+          onOpenSearch={(query) => setView({ screen: "search", query })}
+          onOpenFilters={() => setView({ screen: "search" })}
           onNavigate={(tab) => {
             if (tab === "explore") setView({ screen: "listing" });
           }}
+        />
+      )}
+
+      {view.screen === "search" && (
+        <Search
+          initialQuery={view.query}
+          onBack={() => setView({ screen: "home" })}
+          onSelectProperty={(propertyId) => setView({ screen: "details", propertyId })}
         />
       )}
 

@@ -20,14 +20,14 @@ function TrustScorePanel({
   const filled = (trustScore / 100) * circumference;
 
   const items = [
-    { icon: <Droplets size={16} className="text-sky-500" />, label: "Water", value: water },
-    { icon: <Zap size={16} className="text-orange-500" />, label: "Power", value: power },
-    { icon: <Shield size={16} className="text-green-600" />, label: "Security", value: security },
+    { icon: <Droplets size={16} className="text-primary-600" />, label: "Water", value: water },
+    { icon: <Zap size={16} className="text-accent-500" />, label: "Power", value: power },
+    { icon: <Shield size={16} className="text-secondary-600" />, label: "Security", value: security },
     { icon: <Route size={16} className="text-gray-500" />, label: "Road", value: road },
   ];
 
   return (
-    <div className="flex items-center gap-5 rounded-2xl border border-gray-100 p-4 shadow-sm">
+    <div className="flex items-center gap-5 rounded-2xl border border-border-light p-4 shadow-sm">
 
       {/* Circular Score */}
       <div className="flex flex-shrink-0 flex-col items-center">
@@ -40,7 +40,7 @@ function TrustScorePanel({
               cy="40"
               r={radius}
               fill="none"
-              stroke="#E5E7EB"
+              stroke="var(--color-border-light)"
               strokeWidth="8"
             />
             <circle
@@ -48,7 +48,7 @@ function TrustScorePanel({
               cy="40"
               r={radius}
               fill="none"
-              stroke="#16A34A"
+              stroke="var(--color-secondary-600)"
               strokeWidth="8"
               strokeLinecap="round"
               strokeDasharray={`${filled} ${circumference}`}
@@ -65,14 +65,14 @@ function TrustScorePanel({
           Trust Score
         </p>
 
-        <button className="text-xs font-medium text-blue-600">
+        <button className="text-xs font-medium text-primary-800">
           What is this?
         </button>
 
       </div>
 
       {/* Divider */}
-      <span className="h-24 w-px bg-gray-100" />
+      <span className="h-24 w-px bg-border-light" />
 
       {/* Status List */}
       <div className="flex flex-1 flex-col gap-3">
@@ -85,7 +85,7 @@ function TrustScorePanel({
               <span className="text-sm text-gray-700">{item.label}</span>
             </div>
 
-            <span className="text-sm font-medium text-green-600">
+            <span className="text-sm font-medium text-secondary-700">
               {item.value}
             </span>
 

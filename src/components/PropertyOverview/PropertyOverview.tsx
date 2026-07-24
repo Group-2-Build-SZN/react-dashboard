@@ -36,7 +36,7 @@ function PropertyOverview({
           </h1>
 
           <div className="mt-2 flex items-center gap-1">
-            <MapPin size={14} className="text-blue-600" />
+            <MapPin size={14} className="text-primary-800" />
             <span className="text-sm text-gray-700">
               {location}
             </span>
@@ -48,7 +48,7 @@ function PropertyOverview({
         </div>
 
         <div className="text-right">
-          <p className="text-lg font-bold text-[#2F4CD6]">
+          <p className="text-lg font-bold text-primary-800">
             {price}
             <span className="ml-1 text-sm font-medium text-gray-500">
               / year

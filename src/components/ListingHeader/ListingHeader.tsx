@@ -13,7 +13,7 @@ function ListingHeader() {
         {/* Left */}
         <div className="flex items-center gap-4">
 
-          <button className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200">
+          <button className="flex h-10 w-10 items-center justify-center rounded-full border border-border-light">
             <ArrowLeft size={22} strokeWidth={2} />
           </button>
 
@@ -35,25 +35,25 @@ function ListingHeader() {
 
         <div className="flex items-center gap-3">
 
-          <button className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-200 bg-white">
+          <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-border-light bg-white">
             <Map
-              size={22}
+              size={18}
               strokeWidth={2}
             />
           </button>
 
-          <button className="relative flex h-12 items-center gap-2 rounded-full border border-gray-200 bg-white px-4">
+          <button className="flex h-9 items-center gap-2 rounded-xl border border-border-light bg-white px-3">
 
             <SlidersHorizontal
-              size={20}
+              size={16}
               strokeWidth={2}
             />
 
-            <span className="text-sm font-medium">
+            <span className="text-sm font-medium text-gray-900">
               Filter
             </span>
 
-            <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-800 text-[11px] font-semibold text-white">
               2
             </span>
 

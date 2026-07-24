@@ -24,7 +24,7 @@ function AboutSection({ text }: AboutSectionProps) {
 
       <button
         onClick={() => setExpanded(!expanded)}
-        className="mt-1 text-sm font-medium text-blue-600"
+        className="mt-1 text-sm font-medium text-primary-800"
       >
         {expanded ? "Read less" : "Read more"}
       </button>

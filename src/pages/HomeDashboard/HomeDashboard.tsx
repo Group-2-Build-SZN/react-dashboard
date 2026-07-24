@@ -6,12 +6,13 @@ import BottomNav from "../../components/BottomNav/BottomNav";
 import type { BottomNavTab } from "../../components/BottomNav/BottomNav";
 
 import { properties } from "../../data/properties";
-import welcomeHouse from "../../assets/branding/welcome-screen-house.png";
+import verifiedBannerImage from "../../assets/images/unsplash_DI3MlpRdYeE (1).png";
 
 type HomeDashboardProps = {
   userName?: string;
   onOpenMenu?: () => void;
   onSearch?: (query: string) => void;
+  onOpenSearch?: (query?: string) => void;
   onOpenFilters?: () => void;
   onSelectProperty?: (propertyId: number) => void;
   onSeeAll?: () => void;
@@ -28,6 +29,7 @@ function HomeDashboard({
   userName = "Chinazor",
   onOpenMenu,
   onSearch,
+  onOpenSearch,
   onOpenFilters,
   onSelectProperty,
   onSeeAll,
@@ -37,7 +39,7 @@ function HomeDashboard({
     <div className="min-h-screen bg-white pb-24">
 
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 pt-5">
+      <div className="flex items-center justify-between px-5 pt-5">
 
         <button onClick={onOpenMenu} aria-label="Menu">
           <Menu size={22} className="text-gray-700" />
@@ -56,27 +58,28 @@ function HomeDashboard({
       </div>
 
       {/* Greeting */}
-      <div className="mt-5 px-6">
+      <div className="mt-8 px-5">
         <p className="text-sm text-gray-500">
           Hello, {userName} 👋
         </p>
 
-        <h1 className="mt-1 text-[22px] font-bold leading-8 text-gray-900">
+        <h1 className="mt-2 text-[24px] font-bold leading-8 text-gray-900">
           Find verified properties you can trust.
         </h1>
       </div>
 
       {/* Search */}
-      <div className="mt-5 px-6">
+      <div className="mt-8 px-5">
         <SearchBar
           placeholder="Search by location, area or keyword"
           onChange={onSearch}
+          onFocus={() => onOpenSearch?.()}
           onFilterClick={onOpenFilters}
         />
       </div>
 
-      {/* Quick actions */}
-      <div className="mt-5 flex justify-around px-6">
+      
+      <div className="mt-9 flex justify-center gap-[100px] px-5">
         {quickActions.map(({ id, label, icon: Icon, colorClass }) => (
           <button key={id} className="flex flex-col items-center gap-2">
             <span className={`flex h-12 w-12 items-center justify-center rounded-full border border-border-light ${colorClass}`}>
@@ -88,31 +91,31 @@ function HomeDashboard({
       </div>
 
       {/* Verified banner */}
-      <div className="relative mx-6 mt-5 flex items-center gap-3 overflow-hidden rounded-xl bg-blue-tint p-4">
-        <span className="z-10 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-secondary-600 text-white">
-          <ShieldCheck size={20} />
+      <div className="relative mx-5 mt-10 flex h-40 items-center gap-4 overflow-hidden rounded-2xl bg-blue-tint p-5">
+        <span className="z-10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary-600 text-white">
+          <ShieldCheck size={24} />
         </span>
 
-        <div className="z-10 max-w-[70%]">
-          <p className="text-sm font-semibold text-gray-900">
+        <div className="z-10 max-w-[55%]">
+          <p className="text-base font-semibold text-gray-900">
             100% Verified Properties
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="mt-1 text-sm text-gray-500">
             All properties on My Ulo are verified for your peace of mind
           </p>
         </div>
 
         <img
-          src={welcomeHouse}
+          src={verifiedBannerImage}
           alt=""
-          className="absolute right-0 top-0 h-full w-24 object-cover opacity-90 [mask-image:linear-gradient(to_left,black_40%,transparent)]"
+          className="absolute right-0 top-0 h-full w-44 object-cover opacity-90 [mask-image:linear-gradient(to_left,black_40%,transparent)]"
         />
       </div>
 
-      {/* Recommended for you */}
-      <div className="mt-6">
+     
+      <div className="mt-10">
 
-        <div className="flex items-center justify-between px-6">
+        <div className="flex items-center justify-between px-5">
           <h2 className="text-base font-semibold text-gray-900">
             Recommended for you
           </h2>
@@ -122,7 +125,7 @@ function HomeDashboard({
           </button>
         </div>
 
-        <div className="mt-3 flex gap-4 overflow-x-auto px-6 pb-2">
+        <div className="scrollbar-hide mt-4 flex gap-4 overflow-x-auto px-5 pb-2">
           {properties.map((property) => (
             <RecommendedPropertyCard
               key={property.id}

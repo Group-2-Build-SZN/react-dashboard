@@ -23,7 +23,7 @@ const tabs: { id: BottomNavTab; label: string; icon: typeof House }[] = [
 
 function BottomNav({ active = "home", onNavigate }: BottomNavProps) {
   return (
-    <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-gray-200 bg-white">
+    <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-border-light bg-white">
 
       <div className="mx-auto flex max-w-md justify-around py-3">
 

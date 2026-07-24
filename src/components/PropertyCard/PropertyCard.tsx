@@ -14,6 +14,7 @@ type PropertyCardProps = {
   image: string;
   name: string;
   location: string;
+  address: string;
   price: string;
   bedrooms: number;
   bathrooms: number;
@@ -32,6 +33,7 @@ function PropertyCard({
   image,
   name,
   location,
+  address,
   price,
   bedrooms,
   bathrooms,
@@ -51,99 +53,104 @@ function PropertyCard({
       className="overflow-hidden rounded-3xl bg-white shadow-sm"
     >
 
-      {/* Image */}
-      <PropertyImage
-        image={image}
-        uploadCount={views}
-        videoDuration={videoDuration}
-      />
+      <div className="flex gap-3 p-4">
 
-      <div className="flex flex-col p-4">
+        {/* Image thumbnail */}
+        <PropertyImage
+          image={image}
+          uploadCount={views}
+          videoDuration={videoDuration}
+          className="h-28 w-28 flex-shrink-0 rounded-xl"
+          compact
+        />
 
-        {/* Verified + Favourite Row */}
-        <div className="flex items-center justify-between">
+        {/* Content */}
+        <div className="flex min-w-0 flex-1 flex-col">
 
-          {verified ? <VerifiedBadge /> : <span />}
+          {/* Verified + Favourite Row */}
+          <div className="flex items-center justify-between">
 
-          <button className="rounded-full p-1 hover:bg-gray-100">
-            <Heart
-              size={20}
-              strokeWidth={2}
-              className="text-gray-500"
-            />
-          </button>
+            {verified ? <VerifiedBadge /> : <span />}
 
-        </div>
+            <button className="rounded-full p-1 hover:bg-gray-100">
+              <Heart
+                size={18}
+                strokeWidth={2}
+                className="text-gray-500"
+              />
+            </button>
 
-        {/* Title */}
-        <h2 className="mt-2 text-base font-semibold text-gray-900">
-          {name}
-        </h2>
+          </div>
 
-        {/* Address */}
-        <div className="mt-2">
+          {/* Title */}
+          <h2 className="mt-1.5 truncate text-sm font-semibold text-gray-900">
+            {name}
+          </h2>
 
-          <div className="flex items-center gap-1">
+          {/* Address */}
+          <div className="mt-1">
 
-            <MapPin
-              size={14}
-              className="text-blue-600"
-            />
+            <div className="flex items-center gap-1">
 
-            <span className="text-sm text-gray-700">
-              {location}
+              <MapPin
+                size={12}
+                className="flex-shrink-0 text-primary-800"
+              />
+
+              <span className="truncate text-xs text-gray-700">
+                {location}
+              </span>
+
+            </div>
+
+            <p className="ml-4 truncate text-[11px] text-gray-400">
+              {address}
+            </p>
+
+          </div>
+
+          {/* Price */}
+          <p className="mt-1.5 text-sm font-bold text-primary-800">
+
+            {price}
+
+            <span className="ml-1 text-xs font-medium text-gray-500">
+              / year
             </span>
 
-          </div>
-
-          <p className="ml-5 text-xs text-gray-400">
-            New Haven Market
           </p>
 
-        </div>
+          {/* Property Details */}
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-gray-500">
 
-        {/* Price */}
-        <p className="mt-3 text-xl font-bold text-[#2F4CD6]">
+            <div className="flex items-center gap-1">
+              <Bed size={12} />
+              <span>{bedrooms} Beds</span>
+            </div>
 
-          {price}
+            <div className="flex items-center gap-1">
+              <Bath size={12} />
+              <span>{bathrooms} Baths</span>
+            </div>
 
-          <span className="ml-1 text-sm font-medium text-gray-500">
-            / year
-          </span>
+            <div className="flex items-center gap-1">
+              <Ruler size={12} />
+              <span>{size}</span>
+            </div>
 
-        </p>
-
-        {/* Property Details */}
-        <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
-
-          <div className="flex items-center gap-1">
-            <Bed size={14} />
-            <span>{bedrooms} Beds</span>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <Bath size={14} />
-            <span>{bathrooms} Baths</span>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <Ruler size={14} />
-            <span>{size}</span>
           </div>
 
         </div>
 
       </div>
 
-      {/* Trust Section — full width, flush with the card's bottom edge */}
-      <div className="mt-4">
-        <TrustScoreCard
-          trustScore={trustScore}
-          trustRating={trustRating}
-          water={water}
-          security={security}
-        />
-      </div>
+      {/* Trust Section*/}
+      <TrustScoreCard
+        trustScore={trustScore}
+        trustRating={trustRating}
+        water={water}
+        security={security}
+      />
 
     </div>
   );

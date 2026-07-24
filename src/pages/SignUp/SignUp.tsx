@@ -25,7 +25,7 @@ function SignUp({
   return (
     <div className="flex min-h-screen flex-col bg-blue-tint px-6 pb-8 pt-5">
 
-      {/* Back — stays pinned to the top */}
+      
       <button
         onClick={onBack}
         aria-label="Go back"
@@ -34,8 +34,7 @@ function SignUp({
         <ArrowLeft size={20} strokeWidth={2} />
       </button>
 
-      {/* Everything else centers as a group in the remaining space,
-          so it looks balanced regardless of the device's screen height */}
+      
       <div className="flex flex-1 flex-col justify-center gap-8">
 
         <div className="flex justify-center">

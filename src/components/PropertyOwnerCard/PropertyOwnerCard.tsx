@@ -22,11 +22,11 @@ function PropertyOwnerCard({
         Property Owner
       </h3>
 
-      <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-gray-100 p-3">
+      <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-border-light p-3">
 
         <div className="flex items-center gap-3">
 
-          <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+          <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-800">
             <Building2 size={20} />
           </span>
 
@@ -37,7 +37,7 @@ function PropertyOwnerCard({
                 {name}
               </p>
 
-              <BadgeCheck size={16} className="text-blue-600" />
+              <BadgeCheck size={16} className="text-primary-800" />
             </div>
 
             <p className="text-xs text-gray-500">
@@ -51,7 +51,7 @@ function PropertyOwnerCard({
         <div className="flex flex-shrink-0 items-center gap-2">
 
           {idVerified && (
-            <span className="whitespace-nowrap rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+            <span className="whitespace-nowrap rounded-full bg-secondary-100 px-3 py-1 text-xs font-medium text-secondary-700">
               ID Verified
             </span>
           )}

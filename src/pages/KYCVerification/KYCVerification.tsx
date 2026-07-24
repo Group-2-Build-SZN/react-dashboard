@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, IdCard, Building2, Lock, Calendar } from "lucide-react";
+import { ArrowLeft, User, Building2, Lock, Calendar, IdCard } from "lucide-react";
 
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
@@ -58,11 +58,19 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
             onClick={() => setType("individual")}
             className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-colors ${
               type === "individual"
-                ? "border border-primary-800 bg-primary-50 text-primary-800"
-                : "text-gray-500"
+                ? "border border-primary-800 bg-white text-primary-800"
+                : "border border-transparent text-gray-500"
             }`}
           >
-            <IdCard size={16} />
+            <span
+              className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ${
+                type === "individual"
+                  ? "bg-primary-800 text-white"
+                  : "bg-gray-200 text-gray-400"
+              }`}
+            >
+              <User size={12} />
+            </span>
             Individual (NIN)
           </button>
 
@@ -70,96 +78,111 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
             onClick={() => setType("business")}
             className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-colors ${
               type === "business"
-                ? "border border-primary-800 bg-primary-50 text-primary-800"
-                : "text-gray-500"
+                ? "border border-primary-800 bg-white text-primary-800"
+                : "border border-transparent text-gray-500"
             }`}
           >
-            <Building2 size={16} />
+            <span
+              className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ${
+                type === "business"
+                  ? "bg-primary-800 text-white"
+                  : "bg-gray-200 text-gray-400"
+              }`}
+            >
+              <Building2 size={12} />
+            </span>
             Business (CAC)
           </button>
 
         </div>
       </div>
 
-      {/* Info card */}
-      <div className="mt-5 flex items-start gap-3 rounded-xl bg-blue-tint p-4">
+      {/* Info card and form*/}
+      <div className="mt-5 rounded-xl bg-blue-tint p-4">
 
-        <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary-800 text-white">
-          {type === "individual" ? <IdCard size={18} /> : <Building2 size={18} />}
-        </span>
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-800 text-white">
+            <IdCard size={18} />
+          </span>
 
-        <div>
-          <p className="text-sm font-semibold text-gray-900">
-            {type === "individual" ? "Individual (NIN)" : "Business (CAC)"}
-          </p>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">
+              {type === "individual" ? "Individual (NIN)" : "Business (CAC)"}
+            </p>
 
-          <p className="mt-0.5 text-xs text-gray-500">
-            {type === "individual"
-              ? "Enter your personal details as they appear on your NIN."
-              : "Enter your company details as they appear on your CAC registration."}
-          </p>
+            <p className="mt-0.5 text-xs text-gray-500">
+              {type === "individual"
+                ? "Enter your personal details as they appear on your NIN."
+                : "Enter your company details as they appear on your CAC registration."}
+            </p>
+          </div>
         </div>
 
-      </div>
+        {/* Form */}
+        <div className="mt-4 flex flex-col gap-4">
 
-      {/* Form */}
-      <div className="mt-5 flex flex-col gap-4">
+          {type === "individual" ? (
+            <>
+              <Input
+                id="first-name"
+                label="First Name"
+                placeholder="Enter your first name"
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
+              />
 
-        {type === "individual" ? (
-          <>
-            <Input
-              id="first-name"
-              label="First Name"
-              placeholder="Enter your first name"
-              value={firstName}
-              onChange={(event) => setFirstName(event.target.value)}
-            />
+              <Input
+                id="last-name"
+                label="Last Name"
+                placeholder="Enter your last name"
+                value={lastName}
+                onChange={(event) => setLastName(event.target.value)}
+              />
 
-            <Input
-              id="last-name"
-              label="Last Name"
-              placeholder="Enter your last name"
-              value={lastName}
-              onChange={(event) => setLastName(event.target.value)}
-            />
+              <Input
+                id="dob"
+                label="Date of Birth"
+                placeholder="Select your date of birth"
+                type="text"
+                onFocus={(event) => (event.target.type = "date")}
+                onBlur={(event) => {
+                  if (!event.target.value) event.target.type = "text";
+                }}
+                icon={<Calendar size={18} />}
+                iconPosition="right"
+                value={dob}
+                onChange={(event) => setDob(event.target.value)}
+              />
 
-            <Input
-              id="dob"
-              label="Date of Birth"
-              placeholder="Select your date of birth"
-              type="date"
-              icon={<Calendar size={18} />}
-              value={dob}
-              onChange={(event) => setDob(event.target.value)}
-            />
+              <Input
+                id="nin-number"
+                label="NIN Number"
+                placeholder="Enter your 11-digit NIN"
+                value={ninNumber}
+                onChange={(event) => setNinNumber(event.target.value)}
+              />
+            </>
+          ) : (
+            <>
+              <Input
+                id="company-name"
+                label="Company Name"
+                placeholder="Enter your company name"
+                value={companyName}
+                onChange={(event) => setCompanyName(event.target.value)}
+              />
 
-            <Input
-              id="nin-number"
-              label="NIN Number"
-              placeholder="Enter your 11-digit NIN"
-              value={ninNumber}
-              onChange={(event) => setNinNumber(event.target.value)}
-            />
-          </>
-        ) : (
-          <>
-            <Input
-              id="company-name"
-              label="Company Name"
-              placeholder="Enter your company name"
-              value={companyName}
-              onChange={(event) => setCompanyName(event.target.value)}
-            />
+              <Input
+                id="rc-number"
+                label="RC Number"
+                placeholder="Enter your RC number"
+                value={rcNumber}
+                onChange={(event) => setRcNumber(event.target.value)}
+              />
+            </>
+          )}
 
-            <Input
-              id="rc-number"
-              label="RC Number"
-              placeholder="Enter your RC number"
-              value={rcNumber}
-              onChange={(event) => setRcNumber(event.target.value)}
-            />
-          </>
-        )}
+        </div>
 
       </div>
 

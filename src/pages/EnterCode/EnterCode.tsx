@@ -75,7 +75,7 @@ function EnterCode({ email = "example@gmail.com", onVerified, onResend }: EnterC
 
       </div>
 
-      {/* Help note stays near the bottom */}
+     
       <div className="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500">
         <CheckCircle2 size={14} className="flex-shrink-0 text-secondary-600" />
         <span>Didn't receive a code? Check inbox or spam folder</span>

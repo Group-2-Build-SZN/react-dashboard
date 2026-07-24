@@ -14,12 +14,12 @@ function TrustScoreCard({
   security,
 }: TrustScoreCardProps) {
   return (
-    <div className="flex items-center justify-between bg-green-50 px-4 py-3">
+    <div className="flex items-center justify-between bg-secondary-50 px-4 py-3">
 
       {/* Trust Score */}
       <div className="flex items-center gap-3 flex-1">
 
-        <div className="rounded-lg bg-green-600 px-3 py-2 text-sm font-bold text-white">
+        <div className="rounded-lg bg-secondary-600 px-3 py-2 text-sm font-bold text-white">
           {trustScore}%
         </div>
 
@@ -28,14 +28,14 @@ function TrustScoreCard({
             Trust Score
           </p>
 
-          <p className="text-xs font-medium text-green-600">
+          <p className="text-xs font-medium text-secondary-700">
             {trustRating}
           </p>
         </div>
 
       </div>
 
-      <div className="mx-4 h-10 w-px bg-green-200"></div>
+      <div className="mx-4 h-10 w-px bg-secondary-200"></div>
 
       {/* Water */}
 
@@ -43,7 +43,7 @@ function TrustScoreCard({
 
         <Droplets
           size={18}
-          className="text-sky-500"
+          className="text-primary-600"
         />
 
         <div>
@@ -52,7 +52,7 @@ function TrustScoreCard({
             Water
           </p>
 
-          <p className="text-xs font-medium text-green-600">
+          <p className="text-xs font-medium text-secondary-700">
             {water}
           </p>
 
@@ -60,7 +60,7 @@ function TrustScoreCard({
 
       </div>
 
-      <div className="mx-4 h-10 w-px bg-green-200"></div>
+      <div className="mx-4 h-10 w-px bg-secondary-200"></div>
 
       {/* Security */}
 
@@ -68,7 +68,7 @@ function TrustScoreCard({
 
         <Shield
           size={18}
-          className="text-green-600"
+          className="text-secondary-600"
         />
 
         <div>
@@ -77,7 +77,7 @@ function TrustScoreCard({
             Security
           </p>
 
-          <p className="text-xs font-medium text-green-600">
+          <p className="text-xs font-medium text-secondary-700">
             {security}
           </p>
 

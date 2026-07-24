@@ -20,10 +20,10 @@ function RoleCard({
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-xl border px-4 py-4 text-left transition-colors ${
+      className={`flex h-[76px] w-full items-center gap-[10.5px] rounded-xl border px-4 text-left transition-colors ${
         selected
-          ? "border-primary-800 bg-primary-50"
-          : "border-border-light bg-white"
+          ? "border-[#1E40AF] bg-[#E2EAFC]"
+          : "border-transparent bg-[#E2E8F0]/60"
       }`}
     >
       <span
@@ -32,12 +32,12 @@ function RoleCard({
         {icon}
       </span>
 
-      <span>
-        <span className="block text-sm font-semibold text-gray-900">
+      <span className="flex flex-col gap-[5px]">
+        <span className="block text-base font-medium leading-5 tracking-[0.01em] text-[#0C1323]">
           {title}
         </span>
 
-        <span className="block text-xs text-gray-500">
+        <span className="block text-xs font-medium leading-5 tracking-[0.01em] text-[#878B94]">
           {subtitle}
         </span>
       </span>

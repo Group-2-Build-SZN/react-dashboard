@@ -5,6 +5,7 @@ type SearchBarProps = {
   value?: string;
   onChange?: (value: string) => void;
   onFilterClick?: () => void;
+  onFocus?: () => void;
 };
 
 function SearchBar({
@@ -12,6 +13,7 @@ function SearchBar({
   value,
   onChange,
   onFilterClick,
+  onFocus,
 }: SearchBarProps) {
   return (
     <div className="flex items-center gap-2">
@@ -23,6 +25,7 @@ function SearchBar({
           type="text"
           value={value}
           onChange={(event) => onChange?.(event.target.value)}
+          onFocus={onFocus}
           placeholder={placeholder}
           className="h-full w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-muted"
         />

@@ -8,7 +8,7 @@ function VerifiedBadge({
   text = "Verified",
 }: VerifiedBadgeProps) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+    <span className="inline-flex items-center gap-1 rounded-full bg-secondary-100 px-2 py-1 text-xs font-medium text-secondary-700">
       <BadgeCheck size={14} />
       {text}
     </span>

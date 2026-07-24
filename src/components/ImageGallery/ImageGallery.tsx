@@ -40,7 +40,7 @@ function ImageGallery({ images, onClose }: ImageGalleryProps) {
             onClick={() => setActiveIndex(index)}
             className={`h-16 w-20 flex-shrink-0 overflow-hidden rounded-xl border-2 ${
               index === activeIndex
-                ? "border-blue-600"
+                ? "border-primary-800"
                 : "border-white"
             }`}
           >

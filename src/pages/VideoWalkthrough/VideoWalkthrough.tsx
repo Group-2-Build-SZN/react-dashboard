@@ -44,7 +44,7 @@ function VideoWalkthrough({ propertyId = 1, onBack }: VideoWalkthroughProps) {
 
       <div className="mt-5 flex flex-col gap-5 px-4">
 
-        {/* Title + Price */}
+        {/* Title and Price */}
         <PropertyOverview
           name={property.name}
           location={property.location}
@@ -54,7 +54,7 @@ function VideoWalkthrough({ propertyId = 1, onBack }: VideoWalkthroughProps) {
           verified={property.verified}
         />
 
-        {/* Bed / Bath / Size / Type */}
+        {/* Bed, Bath, Size and Type */}
         <PropertySpecs
           bedrooms={property.bedrooms}
           bathrooms={property.bathrooms}

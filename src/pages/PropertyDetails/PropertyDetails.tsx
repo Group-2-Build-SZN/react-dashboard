@@ -37,7 +37,7 @@ function PropertyDetails({ propertyId = 1, onClose, onOpenVideo }: PropertyDetai
           security={property.security}
         />
 
-        {/* Title + Price */}
+        {/* Title and Price */}
         <PropertyOverview
           name={property.name}
           location={property.location}
@@ -47,7 +47,7 @@ function PropertyDetails({ propertyId = 1, onClose, onOpenVideo }: PropertyDetai
           verified={property.verified}
         />
 
-        {/* Bed / Bath / Size / Type */}
+        {/* Bed, Bath, Size and Type */}
         <PropertySpecs
           bedrooms={property.bedrooms}
           bathrooms={property.bathrooms}

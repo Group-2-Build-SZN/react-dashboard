@@ -38,7 +38,7 @@ function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
   const [selectedRole, setSelectedRole] = useState<UserRole>("tenant");
 
   return (
-    <div className="flex min-h-screen flex-col bg-white px-6 pb-8 pt-5">
+    <div className="flex min-h-screen flex-col bg-white px-5 pb-[60px] pt-[61px]">
 
       {/* Back */}
       <button
@@ -49,28 +49,28 @@ function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
         <ArrowLeft size={20} strokeWidth={2} />
       </button>
 
-      {/* Logo + tagline */}
-      <div className="mt-4 flex flex-col items-center">
+      {/* Logo and tagline */}
+      <div className="mt-[14.08px] flex flex-col items-center">
         <img src={logo} alt="My Ulo" className="h-24 w-24" />
 
-        <p className="mt-3 text-center text-sm text-gray-500">
+        <p className="mt-[13px] text-center text-sm font-medium leading-5 tracking-[0.01em] text-gray-500">
           Verified properties. Honest deals. Peace of mind
         </p>
       </div>
 
       {/* Heading */}
-      <div className="mt-8 text-center">
-        <h1 className="text-[28px] font-bold leading-9 text-gray-900">
+      <div className="mt-[45px] text-center">
+        <h1 className="text-[20px] font-bold leading-none text-gray-900">
           Choose User Type
         </h1>
 
-        <p className="mt-1 text-base leading-6 text-gray-500">
+        <p className="mt-[3px] text-sm font-medium leading-5 tracking-[0.01em] text-gray-500">
           Select how you want to use My Ulo
         </p>
       </div>
 
       {/* Role cards */}
-      <div className="mt-6 flex flex-col gap-5">
+      <div className="mt-[23px] flex flex-col gap-5">
         {roles.map((role) => (
           <RoleCard
             key={role.id}
@@ -84,22 +84,25 @@ function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
         ))}
       </div>
 
-      {/* Verification note */}
-      <div className="mt-5 flex items-center justify-center gap-1.5 text-xs text-gray-500">
-        <ShieldCheck size={14} className="text-secondary-600" />
-        <span>All users go through verification</span>
-      </div>
+    
+      <div className="mt-auto">
 
-      {/* Continue */}
-      <div className="mt-6">
-        <Button
-          variant="primary"
-          size="lg"
-          className="w-full"
-          onClick={() => onContinue?.(selectedRole)}
-        >
-          Continue
-        </Button>
+        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500">
+          <ShieldCheck size={14} className="text-secondary-600" />
+          <span>All users go through verification</span>
+        </div>
+
+        <div className="mt-[42px]">
+          <Button
+            variant="primary"
+            size="lg"
+            className="w-full"
+            onClick={() => onContinue?.(selectedRole)}
+          >
+            Continue
+          </Button>
+        </div>
+
       </div>
 
     </div>

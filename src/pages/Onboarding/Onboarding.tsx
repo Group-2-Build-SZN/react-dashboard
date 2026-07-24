@@ -74,7 +74,7 @@ function Onboarding({ onComplete }: OnboardingProps) {
         </button>
       </div>
 
-      {/* Heading + Body */}
+      {/* Heading and Body */}
       <div className="mt-6">
         <h1 className="text-[28px] font-bold leading-9 text-gray-900">
           {slide.heading}
@@ -94,7 +94,7 @@ function Onboarding({ onComplete }: OnboardingProps) {
         />
       </div>
 
-      {/* Pagination + Action */}
+      {/* Pagination plus Action */}
       <div className="mt-6 flex items-center justify-between">
         <PaginationDots total={slides.length} activeIndex={activeIndex} />
 

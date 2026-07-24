@@ -1,8 +1,6 @@
-import { Bed, Bath, Ruler } from "lucide-react";
+import { Heart, Bed, Bath, Ruler } from "lucide-react";
 
-import VerifiedBadge from "../VerifiedBadge/VerifiedBadge";
-
-type RecommendedPropertyCardProps = {
+type SearchResultCardProps = {
   image: string;
   name: string;
   location: string;
@@ -10,11 +8,10 @@ type RecommendedPropertyCardProps = {
   bedrooms: number;
   bathrooms: number;
   size: string;
-  verified: boolean;
   onClick?: () => void;
 };
 
-function RecommendedPropertyCard({
+function SearchResultCard({
   image,
   name,
   location,
@@ -22,28 +19,21 @@ function RecommendedPropertyCard({
   bedrooms,
   bathrooms,
   size,
-  verified,
   onClick,
-}: RecommendedPropertyCardProps) {
+}: SearchResultCardProps) {
   return (
-    <button
+    <div
       onClick={onClick}
-      className="w-56 flex-shrink-0 overflow-hidden rounded-xl border border-border-light bg-white text-left"
+      className="relative flex cursor-pointer gap-3 rounded-2xl border border-border-light bg-white p-3"
     >
+      <img
+        src={image}
+        alt={name}
+        className="h-[92px] w-[92px] flex-shrink-0 rounded-xl object-cover"
+      />
 
-      <div className="relative h-32 w-full">
-        <img src={image} alt={name} className="h-full w-full object-cover" />
-
-        {verified && (
-          <div className="absolute left-2 top-2">
-            <VerifiedBadge text="Verified" />
-          </div>
-        )}
-      </div>
-
-      <div className="p-3.5">
-
-        <p className="truncate text-sm font-semibold text-gray-900">
+      <div className="flex min-w-0 flex-1 flex-col justify-center">
+        <p className="truncate pr-6 text-sm font-semibold text-gray-900">
           {name}
         </p>
 
@@ -58,7 +48,7 @@ function RecommendedPropertyCard({
           </span>
         </p>
 
-        <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500">
+        <div className="mt-1.5 flex items-center gap-3 text-xs text-gray-500">
           <span className="flex items-center gap-1">
             <Bed size={12} />
             {bedrooms} Beds
@@ -74,11 +64,17 @@ function RecommendedPropertyCard({
             {size}
           </span>
         </div>
-
       </div>
 
-    </button>
+      <button
+        onClick={(event) => event.stopPropagation()}
+        aria-label="Save property"
+        className="absolute right-3 top-3 rounded-full p-1"
+      >
+        <Heart size={18} className="text-gray-400" />
+      </button>
+    </div>
   );
 }
 
-export default RecommendedPropertyCard;
+export default SearchResultCard;

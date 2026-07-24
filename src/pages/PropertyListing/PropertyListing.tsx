@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import ListingHeader from "../../components/ListingHeader/ListingHeader";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import FilterChip from "../../components/FilterChip/FilterChip";
@@ -7,12 +9,16 @@ import type { BottomNavTab } from "../../components/BottomNav/BottomNav";
 
 import { properties } from "../../data/properties";
 
+const listingFilters = ["All (1,248)", "Verified only", "1 Bedroom", "2 Bedroom"] as const;
+
 type PropertyListingProps = {
   onSelectProperty?: (id: number) => void;
   onNavigate?: (tab: BottomNavTab) => void;
 };
 
 function PropertyListing({ onSelectProperty, onNavigate }: PropertyListingProps) {
+  const [activeFilter, setActiveFilter] = useState<(typeof listingFilters)[number]>("All (1,248)");
+
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
 
@@ -25,26 +31,16 @@ function PropertyListing({ onSelectProperty, onNavigate }: PropertyListingProps)
       </div>
 
       {/* Filter Chips */}
-<div className="mt-4 flex gap-3 overflow-x-auto px-5 pb-2">
-
-  <FilterChip
-    label="All (1,248)"
-    active
-  />
-
-  <FilterChip
-    label="Verified only"
-  />
-
-  <FilterChip
-    label="1 Bedroom"
-  />
-
-  <FilterChip
-    label="2 Bedroom"
-  />
-
-</div>
+      <div className="mt-4 flex gap-2.5 overflow-x-auto px-5 pb-2">
+        {listingFilters.map((filter) => (
+          <FilterChip
+            key={filter}
+            label={filter}
+            active={activeFilter === filter}
+            onClick={() => setActiveFilter(filter)}
+          />
+        ))}
+      </div>
 
       {/* Property Cards */}
       <div className="mt-5 flex flex-col gap-4 px-4">
@@ -66,6 +62,7 @@ function PropertyListing({ onSelectProperty, onNavigate }: PropertyListingProps)
             trustRating={property.trustRating}
             water={property.water}
             security={property.security}
+            address={property.address}
             onClick={() => onSelectProperty?.(property.id)}
           />
         ))}
