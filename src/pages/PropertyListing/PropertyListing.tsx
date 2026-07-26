@@ -24,11 +24,11 @@ function PropertyListing({ onSelectProperty, onNavigate }: PropertyListingProps)
 
       <ListingHeader />
 
-      <div className="mt-5 px-4">
+      <div className="mt-6 px-4">
         <SearchBar />
       </div>
 
-      <div className="mt-4 flex gap-2.5 overflow-x-auto px-5 pb-2">
+      <div className="mt-5 flex gap-2.5 overflow-x-auto px-5 pb-2">
         {listingFilters.map((filter) => (
           <FilterChip
             key={filter}
@@ -39,7 +39,7 @@ function PropertyListing({ onSelectProperty, onNavigate }: PropertyListingProps)
         ))}
       </div>
 
-      <div className="mt-5 flex flex-col gap-4 px-4">
+      <div className="mt-6 flex flex-col gap-5 px-4">
 
         {properties.map((property) => (
           <PropertyCard

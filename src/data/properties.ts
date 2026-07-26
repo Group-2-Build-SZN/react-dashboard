@@ -39,6 +39,7 @@ export const properties = [
       name: "Tunde Adeyemi",
       memberSince: "Jan 2022",
       idVerified: true,
+      phone: "0803 123 4567",
     },
   },
   {
@@ -71,6 +72,7 @@ export const properties = [
       name: "Ngozi Okafor",
       memberSince: "Mar 2023",
       idVerified: true,
+      phone: "0807 456 7890",
     },
   },
   {
@@ -103,6 +105,7 @@ export const properties = [
       name: "Tunde Adeyemi",
       memberSince: "Jan 2022",
       idVerified: true,
+      phone: "0803 123 4567",
     },
   },
   {
@@ -135,6 +138,7 @@ export const properties = [
       name: "Ngozi Okafor",
       memberSince: "Mar 2023",
       idVerified: true,
+      phone: "0807 456 7890",
     },
   },
   {
@@ -174,6 +178,7 @@ export const properties = [
       name: "Tunde Adeyemi",
       memberSince: "Jan 2022",
       idVerified: true,
+      phone: "0803 123 4567",
     },
   },
   {
@@ -206,6 +211,7 @@ export const properties = [
       name: "Ngozi Okafor",
       memberSince: "Mar 2023",
       idVerified: true,
+      phone: "0807 456 7890",
     },
   },
 ];

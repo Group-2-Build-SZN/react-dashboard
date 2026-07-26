@@ -14,6 +14,8 @@ import Search from "./pages/Search/Search";
 import PropertyListing from "./pages/PropertyListing/PropertyListing";
 import PropertyDetails from "./pages/PropertyDetails/PropertyDetails";
 import VideoWalkthrough from "./pages/VideoWalkthrough/VideoWalkthrough";
+import EnterCardDetails from "./pages/EnterCardDetails/EnterCardDetails";
+import PaymentSuccess from "./pages/PaymentSuccess/PaymentSuccess";
 
 type View =
   | { screen: "splash" }
@@ -29,7 +31,9 @@ type View =
   | { screen: "search"; query?: string }
   | { screen: "listing" }
   | { screen: "details"; propertyId: number }
-  | { screen: "video"; propertyId: number };
+  | { screen: "video"; propertyId: number }
+  | { screen: "enter-card-details"; propertyId: number }
+  | { screen: "payment-success"; propertyId: number };
 
 function App() {
   const [view, setView] = useState<View>({ screen: "splash" });
@@ -148,6 +152,22 @@ function App() {
         <VideoWalkthrough
           propertyId={view.propertyId}
           onBack={() => setView({ screen: "details", propertyId: view.propertyId })}
+          onUnlockContact={(propertyId) => setView({ screen: "enter-card-details", propertyId })}
+        />
+      )}
+
+      {view.screen === "enter-card-details" && (
+        <EnterCardDetails
+          propertyId={view.propertyId}
+          onBack={() => setView({ screen: "video", propertyId: view.propertyId })}
+          onPaymentSuccess={(propertyId) => setView({ screen: "payment-success", propertyId })}
+        />
+      )}
+
+      {view.screen === "payment-success" && (
+        <PaymentSuccess
+          propertyId={view.propertyId}
+          onBackToHome={() => setView({ screen: "home" })}
         />
       )}
     </div>

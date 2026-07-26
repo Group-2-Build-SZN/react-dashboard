@@ -14,9 +14,10 @@ import { properties } from "../../data/properties";
 type VideoWalkthroughProps = {
   propertyId?: number;
   onBack?: () => void;
+  onUnlockContact?: (propertyId: number) => void;
 };
 
-function VideoWalkthrough({ propertyId = 1, onBack }: VideoWalkthroughProps) {
+function VideoWalkthrough({ propertyId = 1, onBack, onUnlockContact }: VideoWalkthroughProps) {
   const property = properties.find((p) => p.id === propertyId) ?? properties[0];
 
   return (
@@ -73,7 +74,7 @@ function VideoWalkthrough({ propertyId = 1, onBack }: VideoWalkthroughProps) {
       </div>
 
       <div className="sticky bottom-0 mx-auto mt-6 w-full max-w-md flex-shrink-0 border-t border-gray-100 bg-white px-4 py-3">
-        <Button variant="primary" className="w-full">
+        <Button variant="primary" className="w-full" onClick={() => onUnlockContact?.(property.id)}>
           Unlock Contact - {property.unlockPrice}
         </Button>
       </div>

@@ -25,7 +25,7 @@ function PropertyDetails({ propertyId = 1, onClose, onOpenVideo }: PropertyDetai
 
       <ImageGallery images={property.images} onClose={onClose} />
 
-      <div className="mt-4 flex flex-col gap-5 px-4">
+      <div className="mt-6 flex flex-col gap-6 px-4">
 
         <DetailTrustBar
           trustScore={property.trustScore}
