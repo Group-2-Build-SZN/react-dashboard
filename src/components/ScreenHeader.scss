@@ -1,0 +1,44 @@
+@import '../styles/tokens';
+
+.screen-header {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-4;
+    background: $color-surface;
+    border-bottom: 1px solid $color-border;
+
+    &__back {
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $color-text;
+        cursor: pointer;
+        padding: $space-1;
+    }
+
+    &__titles {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__title {
+        font-size: 17px;
+        font-weight: 700;
+        color: $color-text;
+        margin: 0;
+    }
+
+    &__subtitle {
+        font-size: 13px;
+        color: $color-text-muted;
+        margin: 2px 0 0;
+    }
+
+    &__right {
+        display: flex;
+        align-items: center;
+    }
+}

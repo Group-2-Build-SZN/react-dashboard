@@ -1,0 +1,206 @@
+@import '../styles/tokens';
+
+.map-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: $color-bg;
+    font-family: $font-family;
+    position: relative;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: $space-4;
+        background: $color-surface;
+        border-bottom: 1px solid $color-border;
+    }
+
+    &__title {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    &__icon-btn {
+        background: none;
+        border: none;
+        color: $color-text;
+        cursor: pointer;
+        display: flex;
+    }
+
+    &__filters {
+        display: flex;
+        gap: $space-2;
+        padding: $space-3 $space-4;
+        background: $color-surface;
+        overflow-x: auto;
+        border-bottom: 1px solid $color-border;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    &__map {
+        flex: 1;
+        position: relative;
+        // min-height: 260px;
+    }
+
+    &__locate-btn {
+        position: absolute;
+        bottom: $space-4;
+        right: $space-4;
+        z-index: 500;
+        width: 40px;
+        height: 40px;
+        border-radius: $radius-full;
+        background: $color-surface;
+        border: 1px solid $color-border;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+}
+
+.filter-chip {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: $radius-full;
+    border: 1px solid $color-border;
+    background: $color-surface;
+    color: $color-text;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &--active {
+        background: $color-primary;
+        border-color: $color-primary;
+        color: white;
+    }
+}
+
+:global(.price-pin) {
+    background: transparent;
+    border: none;
+}
+
+:global(.price-pin__inner) {
+    background: $color-primary;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: $radius-full;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+    transform: translate(-50%, -100%);
+}
+
+.property-sheet {
+    position: relative;
+    z-index: 400;
+    display: flex;
+    gap: $space-3;
+    background: $color-surface;
+    padding: $space-3;
+    border-top: 1px solid $color-border;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+
+    &__image {
+        width: 88px;
+        height: 88px;
+        border-radius: $radius-md;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    &__body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: $color-success-bg;
+        color: $color-success;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: $radius-full;
+    }
+
+    &__title {
+        font-weight: 700;
+        font-size: 14px;
+        margin: 4px 0 0;
+    }
+
+    &__location {
+        font-size: 12px;
+        color: $color-text-muted;
+        margin: 2px 0 4px;
+    }
+
+    &__specs {
+        display: flex;
+        gap: $space-3;
+        font-size: 11px;
+        color: $color-text-muted;
+        margin-bottom: 4px;
+
+        span {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+    }
+
+    &__price {
+        font-size: 14px;
+        font-weight: 700;
+        color: $color-primary;
+        margin: 0 0 $space-2;
+
+        span {
+            font-weight: 400;
+            color: $color-text-muted;
+        }
+    }
+
+    &__cta {
+        @include button-primary;
+        padding: 10px;
+        font-size: 13px;
+    }
+}
+.map-screen__back-to-property {
+  position: absolute;
+  top: 80px; // below header + filters
+  left: 16px;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  background: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}

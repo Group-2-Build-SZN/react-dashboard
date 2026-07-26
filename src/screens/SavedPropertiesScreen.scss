@@ -1,0 +1,176 @@
+@import '../styles/tokens';
+
+.saved-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: $color-bg;
+    font-family: $font-family;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: $space-4;
+        background: $color-surface;
+    }
+
+    &__back {
+        background: none;
+        border: none;
+        color: $color-text;
+        cursor: pointer;
+        display: flex;
+    }
+
+    &__title {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    &__spacer {
+        width: 20px;
+    }
+
+    &__tabs {
+        display: flex;
+        justify-content: center;
+        gap: $space-5;
+        padding: $space-2 $space-4 $space-3;
+        background: $color-surface;
+        border-bottom: 1px solid $color-border;
+    }
+
+    &__list {
+        flex: 1;
+        overflow-y: auto;
+        padding: $space-4;
+        display: flex;
+        flex-direction: column;
+        gap: $space-4;
+    }
+
+    &__empty {
+        text-align: center;
+        color: $color-text-muted;
+        font-size: 14px;
+        padding: $space-6 0;
+    }
+}
+
+.saved-tab {
+    background: none;
+    border: none;
+    padding: $space-2 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: $color-text-muted;
+    cursor: pointer;
+    position: relative;
+
+    &--active {
+        color: $color-primary;
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
+            background: $color-primary;
+            border-radius: $radius-full;
+        }
+    }
+}
+
+.saved-card {
+    @include card;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+
+    &__image-wrap {
+        position: relative;
+    }
+
+    &__image {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        display: block;
+    }
+
+    &__badge {
+        position: absolute;
+        bottom: $space-3;
+        left: $space-3;
+        font-size: 12px;
+        font-weight: 700;
+        color: white;
+        padding: 5px 12px;
+        border-radius: $radius-md;
+
+        &--for_rent {
+            background: $color-primary;
+        }
+
+        &--for_sale {
+            background: $color-success;
+        }
+    }
+
+    &__heart {
+        position: absolute;
+        top: $space-3;
+        right: $space-3;
+        width: 34px;
+        height: 34px;
+        border-radius: $radius-full;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        color: $color-text-muted;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &--active {
+            color: #E11D48;
+        }
+    }
+
+    &__body {
+        padding: $space-4;
+    }
+
+    &__title {
+        font-weight: 700;
+        font-size: 15px;
+        color: $color-text;
+        margin: 0 0 4px;
+    }
+
+    &__meta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__location {
+        font-size: 13px;
+        color: $color-text-muted;
+    }
+
+    &__price {
+        font-size: 14px;
+        font-weight: 700;
+        color: $color-primary;
+
+        span {
+            font-weight: 400;
+            color: $color-text-muted;
+        }
+    }
+}

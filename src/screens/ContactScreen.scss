@@ -1,0 +1,164 @@
+@import '../styles/tokens';
+
+.contact-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: $color-surface;
+    font-family: $font-family;
+
+    &__header {
+        padding: $space-4;
+    }
+
+    &__back {
+        background: none;
+        border: none;
+        color: $color-text;
+        cursor: pointer;
+        display: flex;
+    }
+
+    &__body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 $space-5 $space-5;
+        display: flex;
+        flex-direction: column;
+        gap: $space-6;
+    }
+
+    &__intro {
+        text-align: center;
+    }
+
+    &__title {
+        font-size: 20px;
+        font-weight: 700;
+        color: $color-text;
+        margin: 0 0 $space-2;
+    }
+
+    &__subtitle {
+        font-size: 13px;
+        color: $color-text-muted;
+        line-height: 1.5;
+        margin: 0;
+    }
+}
+
+.contact-hero {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: $space-4 0;
+
+    &__ring {
+        width: 240px;
+        height: 240px;
+        border-radius: $radius-full;
+        background: $color-primary-light;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    &__image {
+        width: 200px;
+        height: 200px;
+        border-radius: $radius-lg;
+        object-fit: cover;
+    }
+
+    &__bubble {
+        position: absolute;
+        width: 44px;
+        height: 44px;
+        border-radius: $radius-full;
+        background: $color-primary;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(61, 53, 209, 0.3);
+
+        &--call {
+            top: 8px;
+            left: 50px;
+        }
+
+        &--chat {
+            top: 8px;
+            right: 40px;
+        }
+
+        &--pin {
+            bottom: 40px;
+            left: 24px;
+        }
+    }
+}
+
+.method-cards {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+}
+
+.method-card {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    background: $color-surface;
+    border: 1.5px solid $color-border;
+    border-radius: $radius-lg;
+    padding: $space-4;
+    cursor: pointer;
+    text-align: left;
+
+    &__icon {
+        width: 36px;
+        height: 36px;
+        border-radius: $radius-full;
+        background: $color-primary-light;
+        color: $color-primary;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    &__text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    &__title {
+        font-weight: 600;
+        font-size: 15px;
+        color: $color-text;
+    }
+
+    &__detail {
+        font-size: 13px;
+        color: $color-text-muted;
+    }
+
+    &__badge {
+        background: $color-success-bg;
+        color: $color-success;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: $radius-full;
+        flex-shrink: 0;
+    }
+
+    &__chevron {
+        color: $color-text-muted;
+        flex-shrink: 0;
+    }
+}

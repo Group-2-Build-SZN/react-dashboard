@@ -1,122 +1,205 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import 'leaflet/dist/leaflet.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { UnlockContactScreen } from './screens/unclockContactScreen';
+import { ReviewsScreen } from './screens/ReviewsScreen';
+import { InteractiveMapScreen } from './screens/InteractiveMap';
+import { ProcessingPaymentScreen } from './screens/ProcessingPaymentScreen';
+import { ContactUsScreen } from './screens/ContactUsScreen';
+import { SavedPropertiesScreen } from './screens/SavedPropertiesScreen';
+import { ReportPropertyScreen } from './screens/ReportPropertyScreen';
+import { ReportSuccessScreen } from './screens/ReportSuccessScreen';
+import { ProfileScreen } from './screens/ProfileScreen';
+import { SettingsScreen } from './screens/SettingsScreen';
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+import {
+  mockProperty,
+  mockNearbyProperties,
+  mockAmenities,
+  mockRatingBreakdown,
+  mockReviews,
+  mockPaymentSteps,
+  mockContactMethods,
+  mockSavedProperties,
+  mockUserProfile,
+  mockSettingsSections,
+  mockReportConfirmation,
+} from './data/mockData';
 
-      <div className="ticks"></div>
+import type { PaymentMethod, Property, ReportReason } from './types';
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+const ALL_PROPERTIES: Property[] = [mockProperty, ...mockNearbyProperties, ...mockSavedProperties];
+
+function findPropertyById(id: string | undefined): Property | undefined {
+  return ALL_PROPERTIES.find((p) => p.id === id) ?? (id ? undefined : mockProperty);
 }
 
-export default App
+function MapRoute() {
+  const navigate = useNavigate();
+  return (
+    <InteractiveMapScreen
+      centerProperty={mockProperty}
+      nearbyProperties={mockNearbyProperties}
+      amenities={mockAmenities}
+      onBack={() => navigate(-1)}
+      onViewDetails={(id) => navigate(`/reviews/${id}`)}
+    />
+  );
+}
+
+function SavedRoute() {
+  const navigate = useNavigate();
+  return (
+    <SavedPropertiesScreen
+      properties={mockSavedProperties}
+      onBack={() => navigate(-1)}
+      onToggleFavorite={(id) => console.log('toggle favorite', id)}
+      onSelectProperty={(id) => navigate(`/reviews/${id}`)}
+    />
+  );
+}
+
+function ReviewsRoute() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const property = findPropertyById(id);
+
+  return (
+    <ReviewsScreen
+      property={property as Property}
+      overallRating={4.6}
+      reviewCount={128}
+      breakdown={mockRatingBreakdown}
+      reviews={mockReviews}
+      onBack={() => navigate(-1)}
+      onUnlockContact={() => navigate(`/unlock/${id}`)}
+      onWriteReview={() => console.log('open write-review form for', id)}
+    />
+  );
+}
+
+function UnlockRoute() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const property = findPropertyById(id);
+  const [, setSelectedMethod] = useState<PaymentMethod | null>(null);
+
+  return (
+    <UnlockContactScreen
+      property={property as Property}
+      onBack={() => navigate(-1)}
+      onConfirmPayment={async (method) => {
+        setSelectedMethod(method);
+
+        navigate(`/processing/${id}`);
+      }}
+    />
+  );
+}
+
+function ProcessingRoute() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const property = findPropertyById(id);
+
+  return (
+    <ProcessingPaymentScreen
+      property={property as Property}
+      steps={mockPaymentSteps}
+      onBack={() => navigate(-1)}
+    />
+  );
+}
+
+function ContactRoute() {
+  const navigate = useNavigate();
+  return (
+    <ContactUsScreen
+      heroImageUrl={mockProperty.coverImageUrl}
+      methods={mockContactMethods}
+      onBack={() => navigate(-1)}
+      onSelectMethod={(method) => {
+        if (method.type === 'call') window.location.href = `tel:${method.detail.replace(/\s/g, '')}`;
+        if (method.type === 'email') window.location.href = `mailto:${method.detail}`;
+        // chat / office: wire to your own handlers as those flows get built
+      }}
+    />
+  );
+}
+
+function ReportRoute() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const property = findPropertyById(id);
+
+  return (
+    <ReportPropertyScreen
+      property={property as Property}
+      onBack={() => navigate(-1)}
+      onSubmit={async (reason: ReportReason, description, files) => {
+        console.log('Report submitted', { propertyId: id, reason, description, fileCount: files.length });
+        await new Promise((r) => setTimeout(r, 800));
+        navigate('/report-success');
+      }}
+    />
+  );
+}
+
+function ReportSuccessRoute() {
+  const navigate = useNavigate();
+  return (
+    <ReportSuccessScreen
+      confirmation={mockReportConfirmation}
+      onBackToHome={() => navigate('/map')}
+    />
+  );
+}
+
+function ProfileRoute() {
+  const navigate = useNavigate();
+  return (
+    <ProfileScreen
+      user={mockUserProfile}
+      onEditAvatar={() => console.log('open avatar editor')}
+      onOpenSettings={() => navigate('/settings')}
+      onNavigate={(destination) => {
+        if (destination === 'saved') navigate('/saved');
+        // wire other destinations (inquiries, payment_methods, refer, help) as those screens get built
+      }}
+      onLogout={() => console.log('log out user')}
+    />
+  );
+}
+
+function SettingsRoute() {
+  const navigate = useNavigate();
+  return (
+    <SettingsScreen
+      sections={mockSettingsSections}
+      onBack={() => navigate(-1)}
+      onSelectItem={(itemId) => console.log('open setting', itemId)}
+      onLogout={() => console.log('log out')}
+      onDeleteAccount={() => console.log('delete account requested')}
+    />
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/map" element={<MapRoute />} />
+      <Route path="/saved" element={<SavedRoute />} />
+      <Route path="/reviews/:id" element={<ReviewsRoute />} />
+      <Route path="/unlock/:id" element={<UnlockRoute />} />
+      <Route path="/processing/:id" element={<ProcessingRoute />} />
+      <Route path="/contact" element={<ContactRoute />} />
+      <Route path="/report/:id" element={<ReportRoute />} />
+      <Route path="/report-success" element={<ReportSuccessRoute />} />
+      <Route path="/profile" element={<ProfileRoute />} />
+      <Route path="/settings" element={<SettingsRoute />} />
+      <Route path="*" element={<Navigate to="/map" replace />} />
+    </Routes>
+  );
+}
