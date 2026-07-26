@@ -40,7 +40,6 @@ function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
   return (
     <div className="flex min-h-screen flex-col bg-white px-5 pb-[60px] pt-[61px]">
 
-      {/* Back */}
       <button
         onClick={onBack}
         aria-label="Go back"
@@ -49,7 +48,6 @@ function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
         <ArrowLeft size={20} strokeWidth={2} />
       </button>
 
-      {/* Logo and tagline */}
       <div className="mt-[14.08px] flex flex-col items-center">
         <img src={logo} alt="My Ulo" className="h-24 w-24" />
 
@@ -58,7 +56,6 @@ function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
         </p>
       </div>
 
-      {/* Heading */}
       <div className="mt-[45px] text-center">
         <h1 className="text-[20px] font-bold leading-none text-gray-900">
           Choose User Type
@@ -69,7 +66,6 @@ function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
         </p>
       </div>
 
-      {/* Role cards */}
       <div className="mt-[23px] flex flex-col gap-5">
         {roles.map((role) => (
           <RoleCard
@@ -84,7 +80,6 @@ function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
         ))}
       </div>
 
-    
       <div className="mt-auto">
 
         <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500">

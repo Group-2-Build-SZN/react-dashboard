@@ -26,7 +26,7 @@ function Search({
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const handleApplyFilters = (filters: PropertyFilters) => {
-    // Keep the type chip row in sync with whatever was picked in the sheet.
+
     if (propertyTypes.includes(filters.propertyType as (typeof propertyTypes)[number])) {
       setActiveType(filters.propertyType as (typeof propertyTypes)[number]);
     }
@@ -36,7 +36,6 @@ function Search({
   return (
     <div className="min-h-screen bg-white pb-8">
 
-      {/* Header */}
       <div className="flex items-center gap-3 px-5 pt-5">
 
         <button
@@ -76,7 +75,6 @@ function Search({
 
       </div>
 
-      {/* Property type chips */}
       <div className="scrollbar-hide mt-4 flex gap-2.5 overflow-x-auto px-5 pb-1">
         {propertyTypes.map((type) => (
           <FilterChip
@@ -88,12 +86,10 @@ function Search({
         ))}
       </div>
 
-      {/* Results count */}
       <p className="mt-4 px-5 text-sm text-gray-500">
         346 properties found
       </p>
 
-      {/* Results list */}
       <div className="mt-3 flex flex-col gap-3 px-5">
         {properties.map((property) => (
           <SearchResultCard

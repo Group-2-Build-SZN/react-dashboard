@@ -64,7 +64,6 @@ function Onboarding({ onComplete }: OnboardingProps) {
   return (
     <div className="flex min-h-screen flex-col bg-white px-6 pb-8 pt-5">
 
-      {/* Skip */}
       <div className="flex justify-end">
         <button
           onClick={onComplete}
@@ -74,7 +73,6 @@ function Onboarding({ onComplete }: OnboardingProps) {
         </button>
       </div>
 
-      {/* Heading and Body */}
       <div className="mt-6">
         <h1 className="text-[28px] font-bold leading-9 text-gray-900">
           {slide.heading}
@@ -85,7 +83,6 @@ function Onboarding({ onComplete }: OnboardingProps) {
         </p>
       </div>
 
-      {/* Illustration */}
       <div className="mt-8 flex flex-1 items-center justify-center">
         <img
           src={slide.image}
@@ -94,7 +91,6 @@ function Onboarding({ onComplete }: OnboardingProps) {
         />
       </div>
 
-      {/* Pagination plus Action */}
       <div className="mt-6 flex items-center justify-between">
         <PaginationDots total={slides.length} activeIndex={activeIndex} />
 

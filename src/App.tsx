@@ -34,7 +34,6 @@ type View =
 function App() {
   const [view, setView] = useState<View>({ screen: "splash" });
 
-  // Splash auto-advances into Onboarding after 2s
   useEffect(() => {
     if (view.screen !== "splash") return;
     const timer = setTimeout(() => setView({ screen: "onboarding" }), 2000);
@@ -57,8 +56,7 @@ function App() {
       )}
 
       {view.screen === "signup" && (
-        // Continue with Google falls through to home for now — will
-        // repoint once that flow is defined.
+
         <SignUp
           onBack={() => setView({ screen: "welcome" })}
           onContinueWithEmail={(email) => setView({ screen: "verify-email", email })}
@@ -75,7 +73,7 @@ function App() {
       )}
 
       {view.screen === "login" && (
-        // Continue with Google falls through to home for now.
+
         <Login
           onBack={() => setView({ screen: "welcome" })}
           onContinueWithEmail={() => setView({ screen: "enter-code" })}
@@ -102,8 +100,7 @@ function App() {
       )}
 
       {view.screen === "kyc-verification" && (
-        // Continue falls through to home for now — will repoint to the
-        // verification-pending state once it exists.
+
         <KYCVerification
           onBack={() => setView({ screen: "choose-user-type" })}
           onContinue={() => setView({ screen: "home" })}

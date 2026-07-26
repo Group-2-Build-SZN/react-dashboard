@@ -21,14 +21,12 @@ function PropertyDetails({ propertyId = 1, onClose, onOpenVideo }: PropertyDetai
   const property = properties.find((p) => p.id === propertyId) ?? properties[0];
 
   return (
-    <div className="min-h-screen bg-white pb-36">
+    <div className="flex min-h-screen flex-col bg-white">
 
-      {/* Image Gallery */}
       <ImageGallery images={property.images} onClose={onClose} />
 
       <div className="mt-4 flex flex-col gap-5 px-4">
 
-        {/* Trust Bar */}
         <DetailTrustBar
           trustScore={property.trustScore}
           trustRating={property.trustRating}
@@ -37,7 +35,6 @@ function PropertyDetails({ propertyId = 1, onClose, onOpenVideo }: PropertyDetai
           security={property.security}
         />
 
-        {/* Title and Price */}
         <PropertyOverview
           name={property.name}
           location={property.location}
@@ -47,7 +44,6 @@ function PropertyDetails({ propertyId = 1, onClose, onOpenVideo }: PropertyDetai
           verified={property.verified}
         />
 
-        {/* Bed, Bath, Size and Type */}
         <PropertySpecs
           bedrooms={property.bedrooms}
           bathrooms={property.bathrooms}
@@ -55,13 +51,10 @@ function PropertyDetails({ propertyId = 1, onClose, onOpenVideo }: PropertyDetai
           propertyType={property.propertyType}
         />
 
-        {/* About */}
         <AboutSection text={property.about} />
 
-        {/* Amenities */}
         <AmenitiesGrid amenities={property.amenities} />
 
-        {/* Owner */}
         <PropertyOwnerCard
           name={property.owner.name}
           memberSince={property.owner.memberSince}
@@ -70,8 +63,7 @@ function PropertyDetails({ propertyId = 1, onClose, onOpenVideo }: PropertyDetai
 
       </div>
 
-      {/* Bottom Actions */}
-      <div className="fixed inset-x-0 bottom-0 mx-auto flex max-w-md gap-3 border-t border-gray-100 bg-white px-4 py-3">
+      <div className="sticky bottom-0 mx-auto mt-6 flex w-full max-w-md flex-shrink-0 gap-3 border-t border-gray-100 bg-white px-4 py-3">
 
         <Button
           variant="outline"

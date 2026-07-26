@@ -38,10 +38,9 @@ function PriceRangeSlider({
   return (
     <div>
       <div className="relative h-6">
-        {/* Track */}
+
         <div className="absolute top-1/2 h-1 w-full -translate-y-1/2 rounded-full bg-border-light" />
 
-        {/* Active range */}
         <div
           className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-primary-800"
           style={{ left: `${lowPercent}%`, right: `${100 - highPercent}%` }}

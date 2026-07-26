@@ -25,7 +25,6 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
   return (
     <div className="flex min-h-screen flex-col bg-white px-6 pb-8 pt-5">
 
-      {/* Back */}
       <button
         onClick={onBack}
         aria-label="Go back"
@@ -34,7 +33,6 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
         <ArrowLeft size={20} strokeWidth={2} />
       </button>
 
-      {/* Heading */}
       <div className="mt-4 text-center">
         <h1 className="text-[28px] font-bold leading-9 text-gray-900">
           KYC Verification
@@ -46,7 +44,6 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
         </p>
       </div>
 
-      {/* Toggle */}
       <div className="mt-6">
         <p className="mb-2 text-sm font-medium text-gray-700">
           I am verifying as
@@ -97,7 +94,6 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
         </div>
       </div>
 
-      {/* Info card and form*/}
       <div className="mt-5 rounded-xl bg-blue-tint p-4">
 
         <div className="flex items-start gap-3">
@@ -118,7 +114,6 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
           </div>
         </div>
 
-        {/* Form */}
         <div className="mt-4 flex flex-col gap-4">
 
           {type === "individual" ? (
@@ -186,7 +181,6 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
 
       </div>
 
-      {/* Encryption note */}
       <div className="mt-5 flex items-start gap-2 text-xs text-gray-500">
         <Lock size={14} className="mt-0.5 flex-shrink-0" />
         <span>
@@ -195,7 +189,6 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
         </span>
       </div>
 
-      {/* Continue */}
       <div className="mt-6">
         <Button
           variant="primary"

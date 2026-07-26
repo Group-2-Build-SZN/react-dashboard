@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Mail } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
@@ -25,7 +25,6 @@ function Login({
   return (
     <div className="flex min-h-screen flex-col bg-blue-tint px-6 pb-8 pt-5">
 
-      
       <button
         onClick={onBack}
         aria-label="Go back"
@@ -34,7 +33,6 @@ function Login({
         <ArrowLeft size={20} strokeWidth={2} />
       </button>
 
-     
       <div className="flex flex-1 flex-col justify-center gap-8">
 
         <div className="flex justify-center">
@@ -60,7 +58,6 @@ function Login({
           label="Email"
           type="email"
           placeholder="Enter your email"
-          icon={<Mail size={18} />}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         />

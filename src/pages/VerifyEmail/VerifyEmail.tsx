@@ -43,7 +43,6 @@ function VerifyEmail({ email = "example@gmail.com", onVerified, onResend }: Veri
   return (
     <div className="flex min-h-screen flex-col bg-blue-tint px-6 pb-8 pt-10">
 
-      {/* Content centers as a group in the available space */}
       <div className="flex flex-1 flex-col justify-center gap-8">
 
         <div>
@@ -75,7 +74,6 @@ function VerifyEmail({ email = "example@gmail.com", onVerified, onResend }: Veri
 
       </div>
 
-      
       <div className="flex items-center justify-center gap-1.5 text-center text-xs text-gray-500">
         <CheckCircle2 size={14} className="flex-shrink-0 text-secondary-600" />
         <span>Didn't receive a code? Check inbox or spam folder</span>

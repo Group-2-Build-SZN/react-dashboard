@@ -50,12 +50,11 @@ function PropertyCard({
   return (
     <div
       onClick={onClick}
-      className="overflow-hidden rounded-3xl bg-white shadow-sm"
+      className="overflow-hidden rounded-xl bg-white shadow-sm"
     >
 
       <div className="flex gap-3 p-4">
 
-        {/* Image thumbnail */}
         <PropertyImage
           image={image}
           uploadCount={views}
@@ -64,10 +63,8 @@ function PropertyCard({
           compact
         />
 
-        {/* Content */}
         <div className="flex min-w-0 flex-1 flex-col">
 
-          {/* Verified + Favourite Row */}
           <div className="flex items-center justify-between">
 
             {verified ? <VerifiedBadge /> : <span />}
@@ -82,12 +79,10 @@ function PropertyCard({
 
           </div>
 
-          {/* Title */}
           <h2 className="mt-1.5 truncate text-sm font-semibold text-gray-900">
             {name}
           </h2>
 
-          {/* Address */}
           <div className="mt-1">
 
             <div className="flex items-center gap-1">
@@ -109,7 +104,6 @@ function PropertyCard({
 
           </div>
 
-          {/* Price */}
           <p className="mt-1.5 text-sm font-bold text-primary-800">
 
             {price}
@@ -120,7 +114,6 @@ function PropertyCard({
 
           </p>
 
-          {/* Property Details */}
           <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-gray-500">
 
             <div className="flex items-center gap-1">
@@ -144,7 +137,6 @@ function PropertyCard({
 
       </div>
 
-      {/* Trust Section*/}
       <TrustScoreCard
         trustScore={trustScore}
         trustRating={trustRating}

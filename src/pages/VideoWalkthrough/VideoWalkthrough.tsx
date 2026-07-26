@@ -20,9 +20,8 @@ function VideoWalkthrough({ propertyId = 1, onBack }: VideoWalkthroughProps) {
   const property = properties.find((p) => p.id === propertyId) ?? properties[0];
 
   return (
-    <div className="min-h-screen bg-white pb-36">
+    <div className="flex min-h-screen flex-col bg-white">
 
-      {/* Header */}
       <PageHeader
         title="Video Walkthrough"
         subtitle={property.name}
@@ -37,14 +36,12 @@ function VideoWalkthrough({ propertyId = 1, onBack }: VideoWalkthroughProps) {
         }
       />
 
-      {/* Video */}
       <div className="mt-4">
         <VideoPreview thumbnail={property.image} duration={property.videoDuration} />
       </div>
 
       <div className="mt-5 flex flex-col gap-5 px-4">
 
-        {/* Title and Price */}
         <PropertyOverview
           name={property.name}
           location={property.location}
@@ -54,7 +51,6 @@ function VideoWalkthrough({ propertyId = 1, onBack }: VideoWalkthroughProps) {
           verified={property.verified}
         />
 
-        {/* Bed, Bath, Size and Type */}
         <PropertySpecs
           bedrooms={property.bedrooms}
           bathrooms={property.bathrooms}
@@ -62,13 +58,10 @@ function VideoWalkthrough({ propertyId = 1, onBack }: VideoWalkthroughProps) {
           propertyType={property.propertyType}
         />
 
-        {/* About */}
         <AboutSection text={property.about} />
 
-        {/* Amenities */}
         <AmenitiesGrid amenities={property.amenities} />
 
-        {/* Trust Score */}
         <TrustScorePanel
           trustScore={property.trustScore}
           water={property.water}
@@ -79,8 +72,7 @@ function VideoWalkthrough({ propertyId = 1, onBack }: VideoWalkthroughProps) {
 
       </div>
 
-      {/* Bottom Action */}
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-gray-100 bg-white px-4 py-3">
+      <div className="sticky bottom-0 mx-auto mt-6 w-full max-w-md flex-shrink-0 border-t border-gray-100 bg-white px-4 py-3">
         <Button variant="primary" className="w-full">
           Unlock Contact - {property.unlockPrice}
         </Button>

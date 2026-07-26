@@ -22,15 +22,12 @@ function PropertyListing({ onSelectProperty, onNavigate }: PropertyListingProps)
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
 
-      {/* Header */}
       <ListingHeader />
 
-      {/* Search */}
       <div className="mt-5 px-4">
         <SearchBar />
       </div>
 
-      {/* Filter Chips */}
       <div className="mt-4 flex gap-2.5 overflow-x-auto px-5 pb-2">
         {listingFilters.map((filter) => (
           <FilterChip
@@ -42,7 +39,6 @@ function PropertyListing({ onSelectProperty, onNavigate }: PropertyListingProps)
         ))}
       </div>
 
-      {/* Property Cards */}
       <div className="mt-5 flex flex-col gap-4 px-4">
 
         {properties.map((property) => (
@@ -69,7 +65,6 @@ function PropertyListing({ onSelectProperty, onNavigate }: PropertyListingProps)
 
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNav active="explore" onNavigate={onNavigate} />
 
     </div>

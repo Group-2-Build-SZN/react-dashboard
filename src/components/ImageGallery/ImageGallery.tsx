@@ -12,7 +12,6 @@ function ImageGallery({ images, onClose }: ImageGalleryProps) {
   return (
     <div className="relative bg-white">
 
-      {/* Main Image */}
       <div className="relative h-80 w-full overflow-hidden">
 
         <img
@@ -31,7 +30,6 @@ function ImageGallery({ images, onClose }: ImageGalleryProps) {
 
       </div>
 
-      {/* Thumbnails */}
       <div className="relative -mt-8 flex gap-3 overflow-x-auto px-4 pb-1">
 
         {images.map((image, index) => (

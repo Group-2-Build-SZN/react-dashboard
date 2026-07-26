@@ -16,7 +16,6 @@ function VideoPreview({ thumbnail, duration, onPlay }: VideoPreviewProps) {
         className="h-full w-full object-cover opacity-90"
       />
 
-      {/* Play Button */}
       <button
         onClick={onPlay}
         aria-label="Play video"
@@ -25,7 +24,6 @@ function VideoPreview({ thumbnail, duration, onPlay }: VideoPreviewProps) {
         <Play size={22} fill="white" className="ml-0.5" />
       </button>
 
-      {/* Time / Controls */}
       <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3 py-2 text-xs font-medium text-white">
         <span>00:00</span>
         <div className="flex items-center gap-3">

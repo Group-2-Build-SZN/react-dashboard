@@ -38,7 +38,6 @@ function HomeDashboard({
   return (
     <div className="min-h-screen bg-white pb-24">
 
-      {/* Top bar */}
       <div className="flex items-center justify-between px-5 pt-5">
 
         <button onClick={onOpenMenu} aria-label="Menu">
@@ -57,7 +56,6 @@ function HomeDashboard({
 
       </div>
 
-      {/* Greeting */}
       <div className="mt-8 px-5">
         <p className="text-sm text-gray-500">
           Hello, {userName} 👋
@@ -68,7 +66,6 @@ function HomeDashboard({
         </h1>
       </div>
 
-      {/* Search */}
       <div className="mt-8 px-5">
         <SearchBar
           placeholder="Search by location, area or keyword"
@@ -78,7 +75,6 @@ function HomeDashboard({
         />
       </div>
 
-      
       <div className="mt-9 flex justify-center gap-[100px] px-5">
         {quickActions.map(({ id, label, icon: Icon, colorClass }) => (
           <button key={id} className="flex flex-col items-center gap-2">
@@ -90,7 +86,6 @@ function HomeDashboard({
         ))}
       </div>
 
-      {/* Verified banner */}
       <div className="relative mx-5 mt-10 flex h-40 items-center gap-4 overflow-hidden rounded-2xl bg-blue-tint p-5">
         <span className="z-10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary-600 text-white">
           <ShieldCheck size={24} />
@@ -112,7 +107,6 @@ function HomeDashboard({
         />
       </div>
 
-     
       <div className="mt-10">
 
         <div className="flex items-center justify-between px-5">

@@ -10,7 +10,6 @@ function ListingHeader() {
 
       <div className="flex items-center justify-between">
 
-        {/* Left */}
         <div className="flex items-center gap-4">
 
           <button className="flex h-10 w-10 items-center justify-center rounded-full border border-border-light">
@@ -30,8 +29,6 @@ function ListingHeader() {
           </div>
 
         </div>
-
-        {/* Right */}
 
         <div className="flex items-center gap-3">
 

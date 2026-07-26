@@ -9,17 +9,17 @@ type WelcomeProps = {
 
 function Welcome({ onGetStarted, onLogIn }: WelcomeProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
+    <div className="flex h-screen flex-col overflow-hidden bg-gray-50">
 
-      
-      <img
-        src={houseImage}
-        alt="Modern house"
-        className="w-full flex-shrink-0"
-      />
+      <div className="relative min-h-0 flex-1">
+        <img
+          src={houseImage}
+          alt="Modern house"
+          className="h-full w-full object-cover"
+        />
+      </div>
 
-      
-      <div className="-mt-10 mx-4 mb-6 flex flex-col gap-3 rounded-2xl bg-white px-6 py-6 shadow-[0_4px_16px_rgba(0,0,0,0.12)]">
+      <div className="-mt-10 mx-4 mb-6 flex flex-shrink-0 flex-col gap-3 rounded-2xl bg-white px-6 py-6 shadow-[0_4px_16px_rgba(0,0,0,0.12)]">
 
         <div>
           <h1 className="text-[28px] font-bold leading-9 text-gray-900">

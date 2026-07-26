@@ -58,22 +58,18 @@ function FilterBottomSheet({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
 
-      {/* Backdrop */}
       <button
         aria-label="Close filters"
         onClick={onClose}
         className="absolute inset-0 bg-black/40"
       />
 
-      {/* Sheet */}
       <div className="relative flex max-h-[85vh] w-full max-w-md flex-col rounded-t-3xl bg-white">
 
-        {/* Drag handle */}
         <div className="flex justify-center pt-3">
           <span className="h-1 w-10 rounded-full bg-border-light" />
         </div>
 
-        {/* Header */}
         <div className="flex items-center justify-between px-5 pb-4 pt-3">
           <h2 className="text-lg font-bold text-gray-900">
             Filter Properties
@@ -89,7 +85,6 @@ function FilterBottomSheet({
 
         <div className="flex-1 overflow-y-auto scrollbar-hide px-5 pb-4">
 
-          {/* Property Type */}
           <div>
             <p className="mb-2.5 text-sm font-semibold text-gray-900">
               Property Type
@@ -107,7 +102,6 @@ function FilterBottomSheet({
             </div>
           </div>
 
-          {/* Price Range */}
           <div className="mt-6">
             <p className="mb-3 text-sm font-semibold text-gray-900">
               Price Range (per year)
@@ -121,7 +115,6 @@ function FilterBottomSheet({
             />
           </div>
 
-          {/* Bedrooms */}
           <div className="mt-6">
             <p className="mb-2.5 text-sm font-semibold text-gray-900">
               Bedrooms
@@ -140,7 +133,6 @@ function FilterBottomSheet({
             </div>
           </div>
 
-          {/* Bathrooms */}
           <div className="mt-6">
             <p className="mb-2.5 text-sm font-semibold text-gray-900">
               Bathrooms
@@ -159,7 +151,6 @@ function FilterBottomSheet({
             </div>
           </div>
 
-          {/* Amenities */}
           <div className="mt-6">
             <p className="mb-2.5 text-sm font-semibold text-gray-900">
               Amenities
@@ -190,7 +181,6 @@ function FilterBottomSheet({
 
         </div>
 
-        {/* Apply */}
         <div className="border-t border-border-light px-5 py-4">
           <Button
             variant="primary"

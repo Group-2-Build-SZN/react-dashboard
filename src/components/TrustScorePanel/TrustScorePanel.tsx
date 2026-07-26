@@ -29,7 +29,6 @@ function TrustScorePanel({
   return (
     <div className="flex items-center gap-5 rounded-2xl border border-border-light p-4 shadow-sm">
 
-      {/* Circular Score */}
       <div className="flex flex-shrink-0 flex-col items-center">
 
         <div className="relative flex h-24 w-24 items-center justify-center">
@@ -71,10 +70,8 @@ function TrustScorePanel({
 
       </div>
 
-      {/* Divider */}
       <span className="h-24 w-px bg-border-light" />
 
-      {/* Status List */}
       <div className="flex flex-1 flex-col gap-3">
 
         {items.map((item) => (

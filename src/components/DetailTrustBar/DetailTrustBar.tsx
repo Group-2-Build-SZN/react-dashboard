@@ -18,7 +18,6 @@ function DetailTrustBar({
   return (
     <div className="flex items-center gap-4 rounded-2xl bg-secondary-50 px-4 py-4">
 
-      {/* Trust Score */}
       <div className="flex flex-1 items-center gap-2">
 
         <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-secondary-600 text-white">
@@ -43,7 +42,6 @@ function DetailTrustBar({
 
       <span className="h-10 w-px bg-secondary-200" />
 
-      {/* Water */}
       <div className="flex flex-col items-center gap-1 text-center">
         <Droplets size={18} className="text-primary-600" />
         <p className="text-xs font-medium text-gray-500">Water</p>
@@ -52,7 +50,6 @@ function DetailTrustBar({
 
       <span className="h-10 w-px bg-secondary-200" />
 
-      {/* Power */}
       <div className="flex flex-col items-center gap-1 text-center">
         <Zap size={18} className="text-accent-500" />
         <p className="text-xs font-medium text-gray-500">Power</p>
@@ -61,7 +58,6 @@ function DetailTrustBar({
 
       <span className="h-10 w-px bg-secondary-200" />
 
-      {/* Security */}
       <div className="flex flex-col items-center gap-1 text-center">
         <Shield size={18} className="text-secondary-600" />
         <p className="text-xs font-medium text-gray-500">Security</p>

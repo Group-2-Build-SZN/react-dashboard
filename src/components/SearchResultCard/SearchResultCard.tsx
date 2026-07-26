@@ -29,6 +29,8 @@ function SearchResultCard({
       <img
         src={image}
         alt={name}
+        loading="lazy"
+        decoding="async"
         className="h-[92px] w-[92px] flex-shrink-0 rounded-xl object-cover"
       />
 

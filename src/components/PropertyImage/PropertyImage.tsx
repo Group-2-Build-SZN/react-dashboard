@@ -20,10 +20,11 @@ function PropertyImage({
       <img
         src={image}
         alt="Property"
+        loading="lazy"
+        decoding="async"
         className="h-full w-full object-cover"
       />
 
-      {/* Upload Count */}
       <div
         className={`absolute flex items-center gap-1 rounded-md bg-black/70 text-white ${
           compact
@@ -35,7 +36,6 @@ function PropertyImage({
         <span>{uploadCount}</span>
       </div>
 
-      {/* Video Duration */}
       <div
         className={`absolute rounded-md bg-black/70 text-white ${
           compact

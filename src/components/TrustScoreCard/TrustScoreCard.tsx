@@ -16,7 +16,6 @@ function TrustScoreCard({
   return (
     <div className="flex items-center justify-between bg-secondary-50 px-4 py-3">
 
-      {/* Trust Score */}
       <div className="flex items-center gap-3 flex-1">
 
         <div className="rounded-lg bg-secondary-600 px-3 py-2 text-sm font-bold text-white">
@@ -36,8 +35,6 @@ function TrustScoreCard({
       </div>
 
       <div className="mx-4 h-10 w-px bg-secondary-200"></div>
-
-      {/* Water */}
 
       <div className="flex flex-1 items-center gap-2">
 
@@ -61,8 +58,6 @@ function TrustScoreCard({
       </div>
 
       <div className="mx-4 h-10 w-px bg-secondary-200"></div>
-
-      {/* Security */}
 
       <div className="flex flex-1 items-center gap-2">
 
