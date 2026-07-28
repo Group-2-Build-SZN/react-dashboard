@@ -7,18 +7,22 @@ import type {
   ApiPropertySearchParams,
 } from './types';
 
-function toQueryString(params: Record<string, unknown>): string {
+function toQueryString(params: ApiPropertySearchParams): string {
   const usp = new URLSearchParams();
+
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null || value === '') continue;
     usp.set(key, String(value));
   }
+
   const qs = usp.toString();
   return qs ? `?${qs}` : '';
 }
 
 export function listProperties(params: ApiPropertySearchParams = {}) {
-  return api.get<ApiPaginatedList<ApiPropertyListItem>>(`/properties${toQueryString(params)}`);
+  return api.get<ApiPaginatedList<ApiPropertyListItem>>(
+    `/properties${toQueryString(params)}`
+  );
 }
 
 export function getRecommendedProperties() {
@@ -28,7 +32,9 @@ export function getRecommendedProperties() {
 }
 
 export function getProperty(id: string) {
-  return api.get<ApiEnvelope<ApiPropertyDetail>>(`/properties/${id}`).then((r) => r.data);
+  return api
+    .get<ApiEnvelope<ApiPropertyDetail>>(`/properties/${id}`)
+    .then((r) => r.data);
 }
 
 export function saveProperty(id: string) {
