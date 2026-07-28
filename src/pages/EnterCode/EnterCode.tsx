@@ -7,6 +7,7 @@ type EnterCodeProps = {
   email?: string;
   onVerified?: (code: string) => void;
   onResend?: () => void;
+  error?: string | null;
 };
 
 const RESEND_SECONDS = 45;
@@ -19,7 +20,7 @@ function formatTime(seconds: number) {
   return `${mins}:${secs}`;
 }
 
-function EnterCode({ email = "example@gmail.com", onVerified, onResend }: EnterCodeProps) {
+function EnterCode({ email = "example@gmail.com", onVerified, onResend, error }: EnterCodeProps) {
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
 
   useEffect(() => {
@@ -56,6 +57,8 @@ function EnterCode({ email = "example@gmail.com", onVerified, onResend }: EnterC
         </div>
 
         <OTPInput onChange={handleChange} />
+
+        {error && <p className="text-sm text-error-600">{error}</p>}
 
         <p className="text-sm text-gray-500">
           {secondsLeft > 0 ? (

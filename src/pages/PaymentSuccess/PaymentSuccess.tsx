@@ -1,15 +1,19 @@
+import { useEffect, useState } from "react";
 import { Phone, MessageCircle } from "lucide-react";
 
 import Button from "../../components/Button/Button";
 import VerifiedBadge from "../../components/VerifiedBadge/VerifiedBadge";
 
-import { properties } from "../../data/properties";
+import { getProperty } from "../../api/properties";
+import { apiPropertyToProperty } from "../../api/adapters";
+import type { Property } from "../../types";
+import { UNLOCK_FEE_NGN } from "../../types";
 
 import confetti from "../../assets/branding/confetti-streamers.png";
 import checkmark from "../../assets/branding/success-checkmark.png";
 
 type PaymentSuccessProps = {
-  propertyId?: number;
+  propertyId?: string;
   transactionId?: string;
   date?: string;
   onContactUs?: () => void;
@@ -17,13 +21,26 @@ type PaymentSuccessProps = {
 };
 
 function PaymentSuccess({
-  propertyId = 1,
+  propertyId,
   transactionId = "psk_8f7g2h9k3l",
   date = "11 Jul 2026, 10:30 AM",
   onContactUs,
   onBackToHome,
 }: PaymentSuccessProps) {
-  const property = properties.find((p) => p.id === propertyId) ?? properties[0];
+  const [property, setProperty] = useState<Property | null>(null);
+
+  useEffect(() => {
+    if (!propertyId) return;
+    let cancelled = false;
+    getProperty(propertyId)
+      .then((detail) => {
+        if (!cancelled) setProperty(apiPropertyToProperty(detail));
+      })
+      .catch((err) => console.error("Failed to load property", err));
+    return () => {
+      cancelled = true;
+    };
+  }, [propertyId]);
 
   return (
     <div className="flex min-h-screen flex-col bg-secondary-50 px-6 pb-10 pt-12">
@@ -52,12 +69,12 @@ function PaymentSuccess({
         <div className="mt-4 flex flex-col gap-3">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">Property</span>
-            <span className="font-semibold text-gray-900">{property.name}</span>
+            <span className="font-semibold text-gray-900">{property?.listingTitle ?? "—"}</span>
           </div>
 
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">Amount paid</span>
-            <span className="font-semibold text-gray-900">{property.unlockPrice}</span>
+            <span className="font-semibold text-gray-900">₦{UNLOCK_FEE_NGN.toLocaleString('en-NG')}</span>
           </div>
 
           <div className="flex items-center justify-between text-sm">
@@ -89,7 +106,7 @@ function PaymentSuccess({
 
           <div>
             <p className="text-sm font-semibold text-gray-900">
-              {property.owner.name}
+              {property?.owner?.name ?? "Property Owner"}
             </p>
             <VerifiedBadge text="Verified Owner" />
           </div>
@@ -98,7 +115,7 @@ function PaymentSuccess({
         <div className="mt-5 flex items-center justify-between rounded-xl border border-border-light px-4 py-3">
           <span className="flex items-center gap-3 text-sm font-semibold text-gray-900">
             <Phone size={16} className="text-gray-500" />
-            {property.owner.phone}
+            {property?.owner?.phone ?? "Not available"}
           </span>
 
           <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-border-light">

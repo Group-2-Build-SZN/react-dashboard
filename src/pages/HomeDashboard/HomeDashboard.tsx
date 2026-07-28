@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Menu, ChevronDown, Bell, MapPin, Map as MapIcon, Heart, ShieldCheck } from "lucide-react";
 
 import SearchBar from "../../components/SearchBar/SearchBar";
@@ -5,7 +6,9 @@ import RecommendedPropertyCard from "../../components/RecommendedPropertyCard/Re
 import BottomNav from "../../components/BottomNav/BottomNav";
 import type { BottomNavTab } from "../../components/BottomNav/BottomNav";
 
-import { properties } from "../../data/properties";
+import { getRecommendedProperties } from "../../api/properties";
+import { apiPropertyToProperty, toPropertyCardViewModel } from "../../api/adapters";
+import type { Property } from "../../types";
 import verifiedBannerImage from "../../assets/images/unsplash_DI3MlpRdYeE (1).png";
 
 type HomeDashboardProps = {
@@ -14,19 +17,13 @@ type HomeDashboardProps = {
   onSearch?: (query: string) => void;
   onOpenSearch?: (query?: string) => void;
   onOpenFilters?: () => void;
-  onSelectProperty?: (propertyId: number) => void;
+  onSelectProperty?: (propertyId: string) => void;
   onSeeAll?: () => void;
   onNavigate?: (tab: BottomNavTab) => void;
 };
 
-const quickActions = [
-  { id: "nearby", label: "Nearby", icon: MapPin, colorClass: "text-primary-800" },
-  { id: "map", label: "Map", icon: MapIcon, colorClass: "text-secondary-600" },
-  { id: "saved", label: "Saved", icon: Heart, colorClass: "text-error-500" },
-] as const;
-
 function HomeDashboard({
-  userName = "Chinazor",
+  userName = "there",
   onOpenMenu,
   onSearch,
   onOpenSearch,
@@ -35,6 +32,26 @@ function HomeDashboard({
   onSeeAll,
   onNavigate,
 }: HomeDashboardProps) {
+  const [recommended, setRecommended] = useState<Property[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getRecommendedProperties()
+      .then((items) => {
+        if (!cancelled) setRecommended(items.map(apiPropertyToProperty));
+      })
+      .catch((err) => console.error("Failed to load recommended properties", err));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const quickActions = [
+    { id: "nearby", label: "Nearby", icon: MapPin, colorClass: "text-primary-800", onClick: () => onOpenSearch?.() },
+    { id: "map", label: "Map", icon: MapIcon, colorClass: "text-secondary-600", onClick: () => onNavigate?.("map") },
+    { id: "saved", label: "Saved", icon: Heart, colorClass: "text-error-500", onClick: () => onNavigate?.("saved") },
+  ] as const;
+
   return (
     <div className="min-h-screen bg-white pb-24">
 
@@ -76,8 +93,8 @@ function HomeDashboard({
       </div>
 
       <div className="mt-9 flex justify-center gap-[100px] px-5">
-        {quickActions.map(({ id, label, icon: Icon, colorClass }) => (
-          <button key={id} className="flex flex-col items-center gap-2">
+        {quickActions.map(({ id, label, icon: Icon, colorClass, onClick }) => (
+          <button key={id} onClick={onClick} className="flex flex-col items-center gap-2">
             <span className={`flex h-12 w-12 items-center justify-center rounded-full border border-border-light ${colorClass}`}>
               <Icon size={20} />
             </span>
@@ -120,20 +137,29 @@ function HomeDashboard({
         </div>
 
         <div className="scrollbar-hide mt-4 flex gap-4 overflow-x-auto px-5 pb-2">
-          {properties.map((property) => (
-            <RecommendedPropertyCard
-              key={property.id}
-              image={property.image}
-              name={property.name}
-              location={property.location}
-              price={property.price}
-              bedrooms={property.bedrooms}
-              bathrooms={property.bathrooms}
-              size={property.size}
-              verified={property.verified}
-              onClick={() => onSelectProperty?.(property.id)}
-            />
-          ))}
+          {recommended.length === 0 ? (
+            <p className="px-1 text-sm text-gray-500">
+              No recommended properties yet — check back soon.
+            </p>
+          ) : (
+            recommended.map((property) => {
+              const card = toPropertyCardViewModel(property);
+              return (
+                <RecommendedPropertyCard
+                  key={property.id}
+                  image={card.image}
+                  name={card.name}
+                  location={card.location}
+                  price={card.price}
+                  bedrooms={card.bedrooms}
+                  bathrooms={card.bathrooms}
+                  size={card.size}
+                  verified={card.verified}
+                  onClick={() => onSelectProperty?.(property.id)}
+                />
+              );
+            })
+          )}
         </div>
 
       </div>

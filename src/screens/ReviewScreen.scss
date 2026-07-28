@@ -1,0 +1,163 @@
+@use '../styles/tokens' as *;
+
+.reviews-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $color-bg;
+  font-family: $font-family;
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: $space-4;
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+  }
+
+  &__footer {
+    padding: $space-4;
+    background: $color-surface;
+    border-top: 1px solid $color-border;
+  }
+
+  &__cta { @include button-primary; }
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+  color: $color-star;
+  &__star { color: $color-star; }
+}
+
+.rating-summary {
+  @include card;
+  background: $color-primary-light;
+  border: none;
+  position: relative;
+
+  &__score { display: flex; align-items: center; gap: $space-2; flex-wrap: wrap; }
+  &__number { font-size: 32px; font-weight: 800; color: $color-text; }
+  &__count { font-size: 13px; color: $color-text-muted; width: 100%; }
+
+  &__badge {
+    position: absolute;
+    top: $space-4;
+    right: $space-4;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: $color-success-bg;
+    color: $color-success;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: $radius-full;
+  }
+
+  &__caption { margin: $space-1 0 0; font-size: 12px; color: $color-text-muted; }
+}
+
+.breakdown {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__row { display: flex; align-items: center; gap: $space-3; }
+  &__icon { color: $color-text-muted; flex-shrink: 0; }
+  &__label { font-size: 13px; color: $color-text; width: 120px; flex-shrink: 0; }
+
+  &__bar {
+    flex: 1;
+    height: 6px;
+    border-radius: $radius-full;
+    background: $color-border;
+    overflow: hidden;
+  }
+
+  &__bar-fill { height: 100%; background: $color-success; border-radius: $radius-full; }
+  &__value { font-size: 13px; font-weight: 600; color: $color-text; width: 28px; text-align: right; }
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    h2 { font-size: 15px; font-weight: 700; margin: 0; }
+  }
+
+  &__write-btn {
+    background: $color-primary;
+    color: white;
+    border: none;
+    border-radius: $radius-full;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    cursor: pointer;
+  }
+}
+
+.review-item {
+  @include card;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-3;
+    margin-bottom: $space-2;
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-full;
+    object-fit: cover;
+    flex-shrink: 0;
+
+    &--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $color-primary-light;
+      color: $color-primary;
+      font-weight: 700;
+    }
+  }
+
+  &__meta { flex: 1; }
+  &__name-row { display: flex; align-items: center; gap: $space-2; }
+  &__name { font-weight: 600; font-size: 14px; color: $color-text; }
+
+  &__verified {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+    color: $color-success;
+    font-weight: 600;
+  }
+
+  &__date { font-size: 12px; color: $color-text-muted; }
+  &__text { font-size: 13px; color: $color-text; line-height: 1.5; margin: 0 0 $space-2; }
+  &__tags { display: flex; gap: $space-2; flex-wrap: wrap; }
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: $radius-md;
+  background: $color-bg;
+  color: $color-text-muted;
+
+  &--good { background: $color-success-bg; color: $color-success; }
+}

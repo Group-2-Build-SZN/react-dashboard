@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Lock, MapPin, ChevronDown, Eye, EyeOff, ShieldCheck } from "lucide-react";
 
 import Input from "../../components/Input/Input";
@@ -7,16 +7,32 @@ import CardBrandBadges from "../../components/CardBrandBadges/CardBrandBadges";
 import TrustBadge from "../../components/TrustBadge/TrustBadge";
 import PaystackIcon from "../../components/PaystackIcon/PaystackIcon";
 
-import { properties } from "../../data/properties";
+import { getProperty } from "../../api/properties";
+import { apiPropertyToProperty } from "../../api/adapters";
+import type { Property } from "../../types";
+import { UNLOCK_FEE_NGN } from "../../types";
 
 type EnterCardDetailsProps = {
-  propertyId?: number;
+  propertyId?: string;
   onBack?: () => void;
-  onPaymentSuccess?: (propertyId: number) => void;
+  onPaymentSuccess?: (propertyId: string) => void;
 };
 
-function EnterCardDetails({ propertyId = 1, onBack, onPaymentSuccess }: EnterCardDetailsProps) {
-  const property = properties.find((p) => p.id === propertyId) ?? properties[0];
+function EnterCardDetails({ propertyId, onBack, onPaymentSuccess }: EnterCardDetailsProps) {
+  const [property, setProperty] = useState<Property | null>(null);
+
+  useEffect(() => {
+    if (!propertyId) return;
+    let cancelled = false;
+    getProperty(propertyId)
+      .then((detail) => {
+        if (!cancelled) setProperty(apiPropertyToProperty(detail));
+      })
+      .catch((err) => console.error("Failed to load property", err));
+    return () => {
+      cancelled = true;
+    };
+  }, [propertyId]);
 
   const [cardNumber, setCardNumber] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
@@ -51,19 +67,19 @@ function EnterCardDetails({ propertyId = 1, onBack, onPaymentSuccess }: EnterCar
 
       <div className="mt-8 flex gap-3 rounded-xl border border-border-light p-4">
         <img
-          src={property.image}
-          alt={property.name}
+          src={property?.coverImageUrl ?? ""}
+          alt={property?.listingTitle ?? "Property"}
           className="h-16 w-20 flex-shrink-0 rounded-lg object-cover"
         />
 
         <div>
           <p className="text-sm font-semibold text-gray-900">
-            {property.name}
+            {property?.listingTitle ?? "Loading…"}
           </p>
 
           <p className="mt-1 flex items-center gap-1 text-xs text-gray-500">
             <MapPin size={12} />
-            {property.location}
+            {property?.neighborhood ?? ""}
           </p>
 
           <p className="mt-1 text-xs text-gray-500">
@@ -71,7 +87,7 @@ function EnterCardDetails({ propertyId = 1, onBack, onPaymentSuccess }: EnterCar
           </p>
 
           <p className="mt-2 text-base font-bold text-primary-800">
-            {property.unlockPrice}
+            ₦{UNLOCK_FEE_NGN.toLocaleString('en-NG')}
           </p>
         </div>
       </div>
@@ -195,9 +211,9 @@ function EnterCardDetails({ propertyId = 1, onBack, onPaymentSuccess }: EnterCar
           variant="primary"
           size="lg"
           className="w-full"
-          onClick={() => onPaymentSuccess?.(property.id)}
+          onClick={() => propertyId && onPaymentSuccess?.(propertyId)}
         >
-          Pay {property.unlockPrice}
+          Pay ₦{UNLOCK_FEE_NGN.toLocaleString('en-NG')}
         </Button>
 
         <p className="mt-4 flex items-center justify-center gap-1 text-center text-xs text-gray-500">

@@ -4,7 +4,15 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
-function ListingHeader() {
+interface ListingHeaderProps {
+  resultCount?: number;
+  activeFilterCount?: number;
+  onBack?: () => void;
+  onOpenMap?: () => void;
+  onOpenFilters?: () => void;
+}
+
+function ListingHeader({ resultCount, activeFilterCount = 0, onBack, onOpenMap, onOpenFilters }: ListingHeaderProps) {
   return (
     <div className="bg-white px-5 pt-5">
 
@@ -12,7 +20,11 @@ function ListingHeader() {
 
         <div className="flex items-center gap-4">
 
-          <button className="flex h-10 w-10 items-center justify-center rounded-full border border-border-light">
+          <button
+            onClick={onBack}
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border-light"
+          >
             <ArrowLeft size={22} strokeWidth={2} />
           </button>
 
@@ -23,7 +35,7 @@ function ListingHeader() {
             </h1>
 
             <p className="mt-1 text-[13px] text-gray-500">
-              1,248 properties found
+              {resultCount === undefined ? "Loading…" : `${resultCount.toLocaleString()} properties found`}
             </p>
 
           </div>
@@ -32,14 +44,21 @@ function ListingHeader() {
 
         <div className="flex items-center gap-3">
 
-          <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-border-light bg-white">
+          <button
+            onClick={onOpenMap}
+            aria-label="View on map"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border-light bg-white"
+          >
             <Map
               size={18}
               strokeWidth={2}
             />
           </button>
 
-          <button className="flex h-9 items-center gap-2 rounded-xl border border-border-light bg-white px-3">
+          <button
+            onClick={onOpenFilters}
+            className="flex h-9 items-center gap-2 rounded-xl border border-border-light bg-white px-3"
+          >
 
             <SlidersHorizontal
               size={16}
@@ -50,9 +69,11 @@ function ListingHeader() {
               Filter
             </span>
 
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-800 text-[11px] font-semibold text-white">
-              2
-            </span>
+            {activeFilterCount > 0 && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-800 text-[11px] font-semibold text-white">
+                {activeFilterCount}
+              </span>
+            )}
 
           </button>
 

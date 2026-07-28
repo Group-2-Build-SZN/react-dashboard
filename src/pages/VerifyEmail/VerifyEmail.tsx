@@ -7,6 +7,7 @@ type VerifyEmailProps = {
   email?: string;
   onVerified?: (code: string) => void;
   onResend?: () => void;
+  error?: string | null;
 };
 
 const RESEND_SECONDS = 45;
@@ -19,7 +20,7 @@ function formatTime(seconds: number) {
   return `${mins}:${secs}`;
 }
 
-function VerifyEmail({ email = "example@gmail.com", onVerified, onResend }: VerifyEmailProps) {
+function VerifyEmail({ email = "example@gmail.com", onVerified, onResend, error }: VerifyEmailProps) {
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
 
   useEffect(() => {
@@ -56,6 +57,8 @@ function VerifyEmail({ email = "example@gmail.com", onVerified, onResend }: Veri
         </div>
 
         <OTPInput onChange={handleChange} />
+
+        {error && <p className="text-sm text-error-600">{error}</p>}
 
         <p className="text-sm text-gray-500">
           {secondsLeft > 0 ? (

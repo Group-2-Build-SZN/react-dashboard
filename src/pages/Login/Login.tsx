@@ -12,6 +12,7 @@ type LoginProps = {
   onContinueWithEmail?: (email: string) => void;
   onContinueWithGoogle?: () => void;
   onSignUp?: () => void;
+  error?: string | null;
 };
 
 function Login({
@@ -19,6 +20,7 @@ function Login({
   onContinueWithEmail,
   onContinueWithGoogle,
   onSignUp,
+  error,
 }: LoginProps) {
   const [email, setEmail] = useState("");
 
@@ -61,6 +63,8 @@ function Login({
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         />
+
+        {error && <p className="-mt-4 text-sm text-error-600">{error}</p>}
 
         <div className="flex flex-col gap-4">
           <Button

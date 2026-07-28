@@ -1,50 +1,60 @@
-import {
-  House,
-  Compass,
-  Map,
-  Heart,
-  User,
-} from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import { House, Compass, Map, Heart, User } from 'lucide-react';
 
-export type BottomNavTab = "home" | "explore" | "map" | "saved" | "profile";
+// Merged from two near-identical BottomNav components (one SCSS/BEM, one
+// Tailwind). Kept the Tailwind styling since it's a closer match to the
+// rest of the auth/browse flow. Supports both call-site conventions that
+// existed across the two codebases so neither side had to change its props:
+//   - `onChange`   (used by ContactUsScreen / SavedPropertiesScreen / ProfileScreen / InteractiveMap)
+//   - `onNavigate` (used by HomeDashboard / PropertyListing)
+// If neither is passed, it falls back to `navigate(/${tab})`.
 
-type BottomNavProps = {
-  active?: BottomNavTab;
-  onNavigate?: (tab: BottomNavTab) => void;
-};
+export type NavTab = 'home' | 'explore' | 'map' | 'saved' | 'profile';
+export type BottomNavTab = NavTab;
 
-const tabs: { id: BottomNavTab; label: string; icon: typeof House }[] = [
-  { id: "home", label: "Home", icon: House },
-  { id: "explore", label: "Explore", icon: Compass },
-  { id: "map", label: "Map", icon: Map },
-  { id: "saved", label: "Saved", icon: Heart },
-  { id: "profile", label: "Profile", icon: User },
+interface BottomNavProps {
+  active: NavTab;
+  onChange?: (tab: NavTab) => void;
+  onNavigate?: (tab: NavTab) => void;
+}
+
+const TABS: { id: NavTab; label: string; Icon: typeof House }[] = [
+  { id: 'home', label: 'Home', Icon: House },
+  { id: 'explore', label: 'Explore', Icon: Compass },
+  { id: 'map', label: 'Map', Icon: Map },
+  { id: 'saved', label: 'Saved', Icon: Heart },
+  { id: 'profile', label: 'Profile', Icon: User },
 ];
 
-function BottomNav({ active = "home", onNavigate }: BottomNavProps) {
+function BottomNav({ active, onChange, onNavigate }: BottomNavProps) {
+  const navigate = useNavigate();
+
+  function handleClick(tab: NavTab) {
+    if (onChange) onChange(tab);
+    else if (onNavigate) onNavigate(tab);
+    else navigate(`/${tab}`);
+  }
+
   return (
-    <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-border-light bg-white">
-
+    <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md border-t border-border-light bg-white">
       <div className="mx-auto flex max-w-md justify-around py-3">
-
-        {tabs.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            onClick={() => onNavigate?.(id)}
-            className={`flex flex-col items-center ${
-              active === id ? "text-primary-800" : "text-gray-400"
-            }`}
-          >
-            <Icon size={22} />
-            <span className={`mt-1 text-xs ${active === id ? "font-medium" : ""}`}>
-              {label}
-            </span>
-          </button>
-        ))}
-
+        {TABS.map(({ id, label, Icon }) => {
+          const isActive = id === active;
+          return (
+            <button
+              key={id}
+              onClick={() => handleClick(id)}
+              className={`flex flex-col items-center gap-1 text-xs ${
+                isActive ? 'font-semibold text-primary-600' : 'text-muted'
+              }`}
+            >
+              <Icon size={22} strokeWidth={isActive ? 2.4 : 2} />
+              <span>{label}</span>
+            </button>
+          );
+        })}
       </div>
-
-    </div>
+    </nav>
   );
 }
 

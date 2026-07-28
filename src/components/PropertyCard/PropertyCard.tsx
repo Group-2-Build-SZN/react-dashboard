@@ -26,6 +26,8 @@ type PropertyCardProps = {
   trustRating: string;
   security: string;
   water: string;
+  isFavorited?: boolean;
+  onToggleFavorite?: () => void;
   onClick?: () => void;
 };
 
@@ -45,6 +47,8 @@ function PropertyCard({
   trustRating,
   security,
   water,
+  isFavorited = false,
+  onToggleFavorite,
   onClick,
 }: PropertyCardProps) {
   return (
@@ -69,11 +73,18 @@ function PropertyCard({
 
             {verified ? <VerifiedBadge /> : <span />}
 
-            <button className="rounded-full p-1 hover:bg-gray-100">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFavorite?.();
+              }}
+              aria-label={isFavorited ? "Remove from saved" : "Save property"}
+              className="rounded-full p-1 hover:bg-gray-100"
+            >
               <Heart
                 size={18}
                 strokeWidth={2}
-                className="text-gray-500"
+                className={isFavorited ? "fill-error-500 text-error-500" : "text-gray-500"}
               />
             </button>
 
