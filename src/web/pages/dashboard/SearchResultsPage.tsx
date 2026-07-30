@@ -8,7 +8,6 @@ import {
   LayoutGrid,
   List,
 } from "lucide-react";
-import { DashboardNavbar } from "../../components/dashboard/DashboardNavbar";
 import { Footer } from "../../components/layout/Footer";
 import property1 from "../../assets/images/ImageWithFallback.png";
 import property2 from "../../assets/images/Rectangle 35.png";
