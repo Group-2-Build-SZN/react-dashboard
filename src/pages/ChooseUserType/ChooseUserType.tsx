@@ -19,6 +19,7 @@ export interface ChooseUserTypeSubmission {
 type ChooseUserTypeProps = {
   onBack?: () => void;
   onContinue?: (submission: ChooseUserTypeSubmission) => void;
+  error?: string | null;
 };
 
 const roles: { id: UserRole; title: string; subtitle: string; iconBg: string }[] = [
@@ -42,7 +43,7 @@ const roles: { id: UserRole; title: string; subtitle: string; iconBg: string }[]
   },
 ];
 
-function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
+function ChooseUserType({ onBack, onContinue, error }: ChooseUserTypeProps) {
   const [selectedRole, setSelectedRole] = useState<UserRole>("tenant");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -134,6 +135,8 @@ function ChooseUserType({ onBack, onContinue }: ChooseUserTypeProps) {
           <ShieldCheck size={14} className="text-secondary-600" />
           <span>All users go through verification</span>
         </div>
+
+        {error && <p className="mt-3 text-center text-sm text-error-600">{error}</p>}
 
         <div className="mt-[42px]">
           <Button

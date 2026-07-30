@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Lock, MapPin, ChevronDown, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Lock, MapPin, Eye, EyeOff, ShieldCheck } from "lucide-react";
 
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
@@ -38,6 +38,7 @@ function EnterCardDetails({ propertyId, onBack, onPaymentSuccess }: EnterCardDet
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
   const [cardholderName, setCardholderName] = useState("");
+  const [billingAddress, setBillingAddress] = useState("");
   const [showCvv, setShowCvv] = useState(false);
   const [saveCard, setSaveCard] = useState(false);
 
@@ -171,21 +172,17 @@ function EnterCardDetails({ propertyId, onBack, onPaymentSuccess }: EnterCardDet
             onChange={(event) => setCardholderName(event.target.value)}
           />
 
-          <div>
-            <label className="mb-[13px] block text-sm font-medium text-gray-700">
-              Billing Address
-            </label>
+          <Input
+            id="billing-address"
+            label="Billing Address"
+            placeholder="Enter your billing address"
+            value={billingAddress}
+            onChange={(event) => setBillingAddress(event.target.value)}
+          />
 
-            <button className="flex h-12 w-full items-center gap-2 rounded-xl border border-gray-100 bg-white px-4 text-left text-sm text-gray-900">
-              <MapPin size={16} className="text-muted" />
-              <span className="flex-1">Use my saved address</span>
-              <ChevronDown size={16} className="text-muted" />
-            </button>
-
-            <p className="mt-2 text-xs text-gray-500">
-              This should match the address associated with your card.
-            </p>
-          </div>
+          <p className="-mt-2 text-xs text-gray-500">
+            This should match the address associated with your card.
+          </p>
         </div>
       </div>
 

@@ -49,7 +49,7 @@ export interface Property {
     };
 }
 
-export type AmenityType = 'school' | 'hospital' | 'market' | 'filling_station';
+export type AmenityType = 'school' | 'hospital' | 'market' | 'filling_station' | 'shop' | 'town_center';
 
 export interface Amenity {
     id: string;
@@ -122,7 +122,7 @@ export interface UserProfile {
     fullName: string;
     email: string;
     phone: string;
-    avatarUrl: string;
+    avatarUrl: string | null;
     isVerified: boolean;
     savedPropertiesCount: number;
     viewedPropertiesCount: number;

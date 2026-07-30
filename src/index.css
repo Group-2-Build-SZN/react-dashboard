@@ -85,7 +85,9 @@ img {
   max-width: 100%;
 }
 
-
+/* Hides the native scrollbar on horizontally-scrollable rows
+   (e.g. "Recommended for you") while keeping scroll functional.
+   Apply via className="scrollbar-hide" */
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
@@ -95,7 +97,10 @@ img {
   display: none; /* Chrome, Safari, Opera */
 }
 
-
+/* Dual-thumb price range slider: two overlapping <input type="range">
+   share one track. The track/input itself ignores pointer events so
+   clicks pass through; only the thumb re-enables them, so each thumb
+   drags independently. */
 .range-thumb::-webkit-slider-thumb {
   pointer-events: auto;
   -webkit-appearance: none;

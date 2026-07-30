@@ -6,13 +6,25 @@ import Button from "../../components/Button/Button";
 
 export type VerificationType = "individual" | "business";
 
+export interface KYCSubmission {
+  type: VerificationType;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  ninNumber: string;
+  companyName: string;
+  rcNumber: string;
+}
+
 type KYCVerificationProps = {
   onBack?: () => void;
-  onContinue?: (type: VerificationType) => void;
+  onContinue?: (submission: KYCSubmission) => Promise<void> | void;
+  error?: string | null;
 };
 
-function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
+function KYCVerification({ onBack, onContinue, error }: KYCVerificationProps) {
   const [type, setType] = useState<VerificationType>("individual");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -21,6 +33,29 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
 
   const [companyName, setCompanyName] = useState("");
   const [rcNumber, setRcNumber] = useState("");
+
+  const canContinue =
+    type === "individual"
+      ? firstName.trim() !== "" && lastName.trim() !== "" && dob !== "" && ninNumber.trim().length === 11
+      : companyName.trim() !== "" && rcNumber.trim() !== "";
+
+  async function handleContinue() {
+    if (!onContinue) return;
+    setIsSubmitting(true);
+    try {
+      await onContinue({
+        type,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        dateOfBirth: dob,
+        ninNumber: ninNumber.trim(),
+        companyName: companyName.trim(),
+        rcNumber: rcNumber.trim(),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-white px-6 pb-8 pt-5">
@@ -189,14 +224,19 @@ function KYCVerification({ onBack, onContinue }: KYCVerificationProps) {
         </span>
       </div>
 
+      {error && (
+        <p className="mt-4 text-center text-sm text-error-600">{error}</p>
+      )}
+
       <div className="mt-6">
         <Button
           variant="primary"
           size="lg"
           className="w-full"
-          onClick={() => onContinue?.(type)}
+          disabled={!canContinue || isSubmitting}
+          onClick={handleContinue}
         >
-          Continue
+          {isSubmitting ? "Verifying…" : "Continue"}
         </Button>
       </div>
 

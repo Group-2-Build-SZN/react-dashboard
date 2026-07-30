@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
-import { Menu, ChevronDown, Bell, MapPin, Map as MapIcon, Heart, ShieldCheck } from "lucide-react";
+import { ChevronDown, MapPin, Map as MapIcon, Heart, ShieldCheck } from "lucide-react";
 
 import SearchBar from "../../components/SearchBar/SearchBar";
 import RecommendedPropertyCard from "../../components/RecommendedPropertyCard/RecommendedPropertyCard";
 import BottomNav from "../../components/BottomNav/BottomNav";
 import type { BottomNavTab } from "../../components/BottomNav/BottomNav";
 
-import { getRecommendedProperties } from "../../api/properties";
+import { getRecommendedProperties, listProperties } from "../../api/properties";
 import { apiPropertyToProperty, toPropertyCardViewModel } from "../../api/adapters";
 import type { Property } from "../../types";
 import verifiedBannerImage from "../../assets/images/unsplash_DI3MlpRdYeE (1).png";
 
 type HomeDashboardProps = {
   userName?: string;
-  onOpenMenu?: () => void;
   onSearch?: (query: string) => void;
   onOpenSearch?: (query?: string) => void;
   onOpenFilters?: () => void;
@@ -24,7 +23,6 @@ type HomeDashboardProps = {
 
 function HomeDashboard({
   userName = "there",
-  onOpenMenu,
   onSearch,
   onOpenSearch,
   onOpenFilters,
@@ -33,12 +31,19 @@ function HomeDashboard({
   onNavigate,
 }: HomeDashboardProps) {
   const [recommended, setRecommended] = useState<Property[]>([]);
+  const [originalRecommended, setOriginalRecommended] = useState<Property[]>([]);
+  const [sectionTitle, setSectionTitle] = useState("Recommended for you");
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     getRecommendedProperties()
       .then((items) => {
-        if (!cancelled) setRecommended(items.map(apiPropertyToProperty));
+        if (cancelled) return;
+        const mapped = items.map(apiPropertyToProperty);
+        setRecommended(mapped);
+        setOriginalRecommended(mapped);
       })
       .catch((err) => console.error("Failed to load recommended properties", err));
     return () => {
@@ -46,7 +51,51 @@ function HomeDashboard({
     };
   }, []);
 
+  // "Recommended for you" is a fixed, non-location-aware list from the API
+  // (GET /properties/recommended takes no lat/lng params at all) — this
+  // swaps it out for a real proximity search using the plain /properties
+  // endpoint, which does support lat/lng/radiusKm. There's no geocoding
+  // service wired up anywhere in this app, so there's no way to turn
+  // coordinates into a real place name ("New Haven, Enugu" was always
+  // hardcoded) — showing "Near you" instead of pretending to know the
+  // address is the honest option here.
+  function handleUseMyLocation() {
+    if (!navigator.geolocation) {
+      setLocationError("Location isn't available in this browser");
+      return;
+    }
+    setIsLocating(true);
+    setLocationError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        listProperties({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          radiusKm: 10,
+        })
+          .then((res) => {
+            setRecommended(res.data.map(apiPropertyToProperty));
+            setSectionTitle("Near you");
+          })
+          .catch((err) => setLocationError(err instanceof Error ? err.message : "Failed to load nearby properties"))
+          .finally(() => setIsLocating(false));
+      },
+      (err) => {
+        setLocationError(err.message || "Location access was denied");
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  function handleShowAllRecommended() {
+    setRecommended(originalRecommended);
+    setSectionTitle("Recommended for you");
+    setLocationError(null);
+  }
+
   const quickActions = [
+
     { id: "nearby", label: "Nearby", icon: MapPin, colorClass: "text-primary-800", onClick: () => onOpenSearch?.() },
     { id: "map", label: "Map", icon: MapIcon, colorClass: "text-secondary-600", onClick: () => onNavigate?.("map") },
     { id: "saved", label: "Saved", icon: Heart, colorClass: "text-error-500", onClick: () => onNavigate?.("saved") },
@@ -55,23 +104,23 @@ function HomeDashboard({
   return (
     <div className="min-h-screen bg-white pb-24">
 
-      <div className="flex items-center justify-between px-5 pt-5">
+      <div className="flex items-center justify-center px-5 pt-5">
 
-        <button onClick={onOpenMenu} aria-label="Menu">
-          <Menu size={22} className="text-gray-700" />
-        </button>
-
-        <button className="flex items-center gap-1 text-sm font-medium text-gray-700">
+        <button
+          onClick={handleUseMyLocation}
+          disabled={isLocating}
+          className="flex items-center gap-1 text-sm font-medium text-gray-700"
+        >
           <MapPin size={14} className="text-primary-800" />
-          New Haven, Enugu
+          {isLocating ? "Finding you…" : sectionTitle === "Near you" ? "Using your location" : "Use my location"}
           <ChevronDown size={14} />
         </button>
 
-        <button aria-label="Notifications">
-          <Bell size={22} className="text-gray-700" />
-        </button>
-
       </div>
+
+      {locationError && (
+        <p className="mt-2 px-5 text-center text-sm text-error-600">{locationError}</p>
+      )}
 
       <div className="mt-8 px-5">
         <p className="text-sm text-gray-500">
@@ -128,19 +177,35 @@ function HomeDashboard({
 
         <div className="flex items-center justify-between px-5">
           <h2 className="text-base font-semibold text-gray-900">
-            Recommended for you
+            {sectionTitle}
           </h2>
 
-          <button onClick={onSeeAll} className="text-sm font-medium text-primary-800">
-            See all
-          </button>
+          <div className="flex items-center gap-3">
+            {sectionTitle === "Near you" && (
+              <button onClick={handleShowAllRecommended} className="text-sm font-medium text-gray-500">
+                Reset
+              </button>
+            )}
+            <button onClick={onSeeAll} className="text-sm font-medium text-primary-800">
+              See all
+            </button>
+          </div>
         </div>
 
         <div className="scrollbar-hide mt-4 flex gap-4 overflow-x-auto px-5 pb-2">
           {recommended.length === 0 ? (
-            <p className="px-1 text-sm text-gray-500">
-              No recommended properties yet — check back soon.
-            </p>
+            <div className="px-1">
+              <p className="text-sm text-gray-500">
+                {sectionTitle === "Near you"
+                  ? "No properties found near you right now."
+                  : "No recommended properties yet — check back soon."}
+              </p>
+              {sectionTitle === "Near you" && (
+                <button onClick={handleShowAllRecommended} className="mt-1 text-sm font-medium text-primary-800">
+                  Show recommended properties instead
+                </button>
+              )}
+            </div>
           ) : (
             recommended.map((property) => {
               const card = toPropertyCardViewModel(property);

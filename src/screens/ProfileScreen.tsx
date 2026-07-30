@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
     Settings, Pencil, Heart, Search, MessageSquare, MessageSquarePlus,
-    Wallet, ShieldCheck, UserPlus, HelpCircle, LogOut, ChevronRight,
+    Wallet, ShieldCheck, UserPlus, HelpCircle, LogOut, ChevronRight, UserRound,
 } from 'lucide-react';
 import { type NavTab } from '../components/BottomNav';
 import BottomNav from '../components/BottomNav';
@@ -10,7 +10,7 @@ import './ProfileScreen.scss';
 
 interface ProfileScreenProps {
     user: UserProfile;
-    onEditAvatar: () => void;
+    onAvatarSelected: (file: File) => void;
     onOpenSettings: () => void;
     onNavigate: (destination: string) => void;
     onLogout: () => void;
@@ -24,7 +24,7 @@ interface MenuItem {
     rightSlot?: React.ReactNode;
 }
 
-export function ProfileScreen({ user, onEditAvatar, onOpenSettings, onNavigate, onLogout }: ProfileScreenProps) {
+export function ProfileScreen({ user, onAvatarSelected, onOpenSettings, onNavigate, onLogout }: ProfileScreenProps) {
     const [activeNav, setActiveNav] = useState<NavTab>('profile');
 
     const menuItems: MenuItem[] = [
@@ -61,10 +61,25 @@ export function ProfileScreen({ user, onEditAvatar, onOpenSettings, onNavigate, 
             <div className="profile-screen__body">
                 <div className="profile-hero">
                     <div className="profile-hero__avatar-wrap">
-                        <img src={user.avatarUrl} alt={user.fullName} className="profile-hero__avatar" />
-                        <button className="profile-hero__edit" onClick={onEditAvatar} aria-label="Edit photo">
+                        {user.avatarUrl ? (
+                            <img src={user.avatarUrl} alt={user.fullName} className="profile-hero__avatar" />
+                        ) : (
+                            <div className="profile-hero__avatar profile-hero__avatar--empty" aria-label="No profile photo set">
+                                <UserRound size={32} />
+                            </div>
+                        )}
+                        <label className="profile-hero__edit" aria-label="Edit photo">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                hidden
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) onAvatarSelected(file);
+                                }}
+                            />
                             <Pencil size={12} />
-                        </button>
+                        </label>
                     </div>
                     <h1 className="profile-hero__name">{user.fullName}</h1>
                     <p className="profile-hero__email">{user.email}</p>

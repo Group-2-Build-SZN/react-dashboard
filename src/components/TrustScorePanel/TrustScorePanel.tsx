@@ -1,4 +1,5 @@
-import { Droplets, Zap, Shield, Route } from "lucide-react";
+import { useState } from "react";
+import { Droplets, Zap, Shield, Route, X } from "lucide-react";
 
 type TrustScorePanelProps = {
   trustScore: number;
@@ -15,6 +16,7 @@ function TrustScorePanel({
   security,
   road,
 }: TrustScorePanelProps) {
+  const [showInfo, setShowInfo] = useState(false);
   const radius = 34;
   const circumference = 2 * Math.PI * radius;
   const filled = (trustScore / 100) * circumference;
@@ -64,7 +66,7 @@ function TrustScorePanel({
           Trust Score
         </p>
 
-        <button className="text-xs font-medium text-primary-800">
+        <button onClick={() => setShowInfo(true)} className="text-xs font-medium text-primary-800">
           What is this?
         </button>
 
@@ -90,6 +92,30 @@ function TrustScorePanel({
         ))}
 
       </div>
+
+      {showInfo && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center"
+          onClick={() => setShowInfo(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-t-2xl bg-white p-5 sm:rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold text-gray-900">Trust Score</h3>
+              <button onClick={() => setShowInfo(false)} aria-label="Close">
+                <X size={18} className="text-muted" />
+              </button>
+            </div>
+            <p className="mt-2 text-sm text-gray-600">
+              The Trust Score is built from resident and community reviews of this property's
+              water supply, power reliability, security, and road accessibility. A higher score
+              means more people have reported a consistently good experience living here.
+            </p>
+          </div>
+        </div>
+      )}
 
     </div>
   );

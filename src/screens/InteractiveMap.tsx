@@ -11,7 +11,6 @@ import {
 import L from 'leaflet';
 import {
   ArrowLeft,
-  SlidersHorizontal,
   LocateFixed,
   BedDouble,
   Bath,
@@ -143,10 +142,6 @@ export function InteractiveMapScreen({
         </button>
 
         <h1 className="map-screen__title">Nearby & Map</h1>
-
-        <button className="map-screen__icon-btn">
-          <SlidersHorizontal size={18} />
-        </button>
       </header>
 
 

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  /* --- shared/mobile tokens (unchanged) --- */
+
   /* Primary — buttons, navigation, icons, headers, brand identity */
   --color-primary-50: #EFF6FF;
   --color-primary-100: #DBEAFE;
@@ -57,30 +59,102 @@
 
   /* Card/chip border (Section 2) — Colors/Borders-500, lighter than the auth "muted" border */
   --color-border-light: #E2EBF0;
+
+  /* --- desktop/web tokens (additive — same underlying hues as above, just
+     referenced without a shade number by web components, e.g. bg-primary
+     instead of bg-primary-800). These are inert unless a class explicitly
+     references them, so combining the two token sets here is safe — it's
+     never what caused the visual bleed into desktop. --- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-primary: #1E40AF;
+  --color-secondary: #16A34A;
+  --color-accent: #F59E0B;
+  --color-error: #DC2626;
+
+  --color-neutral-50: #F8FAFC;
+  --color-neutral-100: #F1F5F9;
+  --color-neutral-200: #E2E8F0;
+  --color-neutral-300: #CBD5E1;
+  --color-neutral-400: #94A3B8;
+  --color-neutral-500: #64748B;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1E293B;
+  --color-neutral: #0F172A;
+
+  --text-display: 56px;
+  --text-display--line-height: 64px;
+  --text-display--font-weight: 700;
+
+  --text-h1: 48px;
+  --text-h1--line-height: 56px;
+  --text-h1--font-weight: 700;
+
+  --text-h2: 40px;
+  --text-h2--line-height: 48px;
+  --text-h2--font-weight: 700;
+
+  --text-h3: 32px;
+  --text-h3--line-height: 40px;
+  --text-h3--font-weight: 600;
+
+  --text-h4: 24px;
+  --text-h4--line-height: 32px;
+  --text-h4--font-weight: 600;
+
+  --text-body-lg: 20px;
+  --text-body-lg--line-height: 32px;
+  --text-body-lg--font-weight: 400;
+
+  --text-body: 16px;
+  --text-body--line-height: 28px;
+  --text-body--font-weight: 400;
+
+  --text-small: 14px;
+  --text-small--line-height: 20px;
+  --text-small--font-weight: 400;
+
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-caption--font-weight: 500;
+
+  --text-button: 16px;
+  --text-button--line-height: 24px;
+  --text-button--font-weight: 600;
 }
 
-* {
+/* Everything below is scoped under .mobile-root (the wrapper RootApp puts
+   around <MobileApp />) instead of bare element selectors. Previously these
+   were global (`* {}`, `body {}`, `button {}`, `img {}`) which — now that
+   the desktop tree is loaded in the same document for instant switching —
+   was leaking onto desktop's buttons/images/spacing and making it look like
+   it was reusing mobile's styling. Scoping fixes that without changing a
+   single thing about how mobile itself looks or behaves. */
+
+.mobile-root * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
+.mobile-root {
   font-family: sans-serif;
   background-color: #e5e7eb;
+  min-height: 100vh;
 }
 
-a {
+.mobile-root a {
   text-decoration: none;
   color: inherit;
 }
 
-button {
+.mobile-root button {
   font: inherit;
   cursor: pointer;
 }
 
-img {
+.mobile-root img {
   display: block;
   max-width: 100%;
 }
@@ -123,4 +197,13 @@ img {
   border: 2px solid var(--color-primary-800);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   cursor: pointer;
+}
+
+/* Desktop tree's own base rule (originally a bare `body {}` selector in its
+   standalone project) — scoped the same way, under .web-root (the wrapper
+   around <DesktopApp />), so it can't leak onto mobile either. */
+.web-root {
+  font-family: var(--font-sans);
+  color: var(--color-neutral);
+  min-height: 100vh;
 }

@@ -11,45 +11,21 @@ import type {
 } from '../types';
 
 export const mockProperty: Property = {
-  id: '1',
-  ownerId: 'owner_1',
-
-  listingTitle: '2 Bedroom Apartment in Lekki',
-  address: 'Lekki Phase 1, Lagos',
-  neighborhood: 'Lekki Phase 1',
-
-  price: 2500000,
-  pricePeriod: 'year',
-
-  bedrooms: 2,
-  bathrooms: 2,
-  areaSqm: 120,
-
-  lat: 6.4474,
-  lng: 3.4729,
-
-  coverImageUrl: 'https://picsum.photos/300/200',
-
-  photoUrls: [
-    'https://picsum.photos/600/400?1',
-    'https://picsum.photos/600/400?2',
-  ],
-
-  videoUrls: [],
-
-  features: [
-    'Water',
-    'Security',
-    'Parking',
-  ],
-
-  propertyType: 'two_bedroom_flat',
-
-  trustScore: 95,
-
-  isVerified: true,
-  listingCategory: 'for_rent',
-  isFavorited: false,
+    id: '1',
+    listingTitle: '2 Bedroom Apartment in Lekki',
+    address: 'Lekki Phase 1, Lagos',
+    neighborhood: 'Lekki Phase 1',
+    price: 2_500_000,
+    pricePeriod: 'year',
+    bedrooms: 2,
+    bathrooms: 2,
+    areaSqm: 120,
+    lat: 6.4474,
+    lng: 3.4729,
+    coverImageUrl: 'https://picsum.photos/300/200',
+    isVerified: true,
+    listingCategory: 'for_rent',
+    isFavorited: false,
 };
 
 export const mockNearbyProperties: Property[] = [

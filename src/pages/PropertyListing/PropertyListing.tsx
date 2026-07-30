@@ -10,6 +10,7 @@ import FilterBottomSheet from "../../components/FilterBottomSheet/FilterBottomSh
 import type { PropertyFilters } from "../../components/FilterBottomSheet/FilterBottomSheet";
 
 import { listProperties, saveProperty, unsaveProperty } from "../../api/properties";
+import { ApiError } from "../../api/client";
 import { apiPropertyToProperty, propertyFiltersToApiParams, toPropertyCardViewModel } from "../../api/adapters";
 import type { Property } from "../../types";
 
@@ -28,6 +29,7 @@ function PropertyListing({ onSelectProperty, onNavigate, onBack }: PropertyListi
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [favoriteError, setFavoriteError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,6 +76,12 @@ function PropertyListing({ onSelectProperty, onNavigate, onBack }: PropertyListi
         prev.map((p) => (p.id === property.id ? { ...p, isFavorited: wasFavorited } : p))
       );
       console.error('Failed to update saved status', err);
+      setFavoriteError(
+        err instanceof Error
+          ? `Couldn't save: ${err.message}`
+          : "Couldn't save this property — try again"
+      );
+      setTimeout(() => setFavoriteError(null), 4000);
     }
   }
 
@@ -113,6 +121,7 @@ function PropertyListing({ onSelectProperty, onNavigate, onBack }: PropertyListi
 
       {isLoading && <p className="mt-6 px-4 text-sm text-muted">Loading properties…</p>}
       {error && <p className="mt-6 px-4 text-sm text-error-600">{error}</p>}
+      {favoriteError && <p className="mt-2 px-4 text-sm text-error-600">{favoriteError}</p>}
 
       {!isLoading && !error && properties.length === 0 && (
         <div className="mt-10 flex flex-col items-center gap-2 px-8 text-center">

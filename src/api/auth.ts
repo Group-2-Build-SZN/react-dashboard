@@ -59,3 +59,9 @@ export function getMyStats() {
     )
     .then((r) => r.data);
 }
+
+export function uploadAvatar(file: File) {
+  const formData = new FormData();
+  formData.set('avatar', file);
+  return api.patch<ApiEnvelope<ApiUser>>('/users/me/avatar', formData).then((r) => r.data);
+}

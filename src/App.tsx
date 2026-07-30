@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 
 // --- your screens ---
@@ -25,6 +25,7 @@ import EnterCode from './pages/EnterCode/EnterCode';
 import ChooseUserType from './pages/ChooseUserType/ChooseUserType';
 import type { ChooseUserTypeSubmission } from './pages/ChooseUserType/ChooseUserType';
 import KYCVerification from './pages/KYCVerification/KYCVerification';
+import type { KYCSubmission } from './pages/KYCVerification/KYCVerification';
 import HomeDashboard from './pages/HomeDashboard/HomeDashboard';
 import Search from './pages/Search/Search';
 import PropertyListing from './pages/PropertyListing/PropertyListing';
@@ -35,29 +36,44 @@ import PaymentSuccess from './pages/PaymentSuccess/PaymentSuccess';
 
 import {
   mockProperty,
-  mockNearbyProperties,
-  mockAmenities,
   mockRatingBreakdown,
   mockReviews,
   mockPaymentSteps,
   mockContactMethods,
-  mockSavedProperties,
   mockUserProfile,
   mockSettingsSections,
   mockReportConfirmation,
 } from './data/mockData';
 
-import type { PaymentMethod, Property, ReportReason } from './types';
+import type { Amenity, Property, ReportReason } from './types';
 
 import * as authApi from './api/auth';
-import { getMyStats } from './api/auth';
+import { useProperty } from './hooks/useProperty';
+import { listProperties, listSavedProperties, reportProperty, unsaveProperty } from './api/properties';
+import { apiPropertyToProperty } from './api/adapters';
+import { listAmenities } from './api/amenities';
+import { getMyStats, uploadAvatar } from './api/auth';
 import { initSubscription } from './api/payments';
+import { verifyNin, verifyCac } from './api/kyc';
 import { useAuth } from './context/AuthContext';
 
-const ALL_PROPERTIES: Property[] = [mockProperty, ...mockNearbyProperties, ...mockSavedProperties];
+function LoadingScreen() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <p className="text-sm text-muted">Loading…</p>
+    </div>
+  );
+}
 
-function findPropertyById(id: string | undefined): Property | undefined {
-  return ALL_PROPERTIES.find((p) => p.id === id) ?? (id ? undefined : mockProperty);
+function NotFoundScreen({ message, onBack }: { message?: string | null; onBack: () => void }) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-white px-6 text-center">
+      <p className="text-sm text-error-600">{message ?? 'Property not found'}</p>
+      <button onClick={onBack} className="rounded-xl border border-border-light px-4 py-2 text-sm font-medium">
+        Go back
+      </button>
+    </div>
+  );
 }
 
 const NAV_TAB_PATHS: Record<string, string> = {
@@ -74,11 +90,45 @@ const NAV_TAB_PATHS: Record<string, string> = {
 
 function MapRoute() {
   const navigate = useNavigate();
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([listProperties({ limit: 20 }), listAmenities()])
+      .then(([propsRes, amenitiesRes]) => {
+        if (cancelled) return;
+        setProperties(propsRes.data.map(apiPropertyToProperty));
+        setAmenities(amenitiesRes);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('Failed to load map data', err);
+        setError(err instanceof Error ? err.message : 'Failed to load map data');
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (isLoading) return <LoadingScreen />;
+  if (error) return <NotFoundScreen message={error} onBack={() => navigate(-1)} />;
+  if (properties.length === 0) {
+    return <NotFoundScreen message="No properties to show on the map yet" onBack={() => navigate(-1)} />;
+  }
+
+  const [centerProperty, ...nearbyProperties] = properties;
+
   return (
     <InteractiveMapScreen
-      centerProperty={mockProperty}
-      nearbyProperties={mockNearbyProperties}
-      amenities={mockAmenities}
+      centerProperty={centerProperty}
+      nearbyProperties={nearbyProperties}
+      amenities={amenities}
       onBack={() => navigate(-1)}
       onViewDetails={(id) => navigate(`/reviews/${id}`)}
     />
@@ -87,11 +137,48 @@ function MapRoute() {
 
 function SavedRoute() {
   const navigate = useNavigate();
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    listSavedProperties()
+      .then((items) => {
+        if (!cancelled) setProperties(items.map((item) => apiPropertyToProperty(item.property)));
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('Failed to load saved properties', err);
+        setError(err instanceof Error ? err.message : 'Failed to load saved properties');
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (isLoading) return <LoadingScreen />;
+  if (error) return <NotFoundScreen message={error} onBack={() => navigate(-1)} />;
+
   return (
     <SavedPropertiesScreen
-      properties={mockSavedProperties}
+      properties={properties}
       onBack={() => navigate(-1)}
-      onToggleFavorite={(id) => console.log('toggle favorite', id)}
+      onToggleFavorite={async (id) => {
+        // Everything on this screen is, by definition, already saved —
+        // toggling here always means "remove from saved."
+        const removed = properties.find((p) => p.id === id);
+        setProperties((prev) => prev.filter((p) => p.id !== id));
+        try {
+          await unsaveProperty(id);
+        } catch (err) {
+          console.error('Failed to unsave property', err);
+          if (removed) setProperties((prev) => [...prev, removed]);
+        }
+      }}
       onSelectProperty={(id) => navigate(`/reviews/${id}`)}
       onNavigateTab={(tab) => navigate(NAV_TAB_PATHS[tab] ?? `/${tab}`)}
     />
@@ -101,11 +188,14 @@ function SavedRoute() {
 function ReviewsRoute() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const property = findPropertyById(id);
+  const { property, isLoading, error } = useProperty(id);
+
+  if (isLoading) return <LoadingScreen />;
+  if (error || !property) return <NotFoundScreen message={error} onBack={() => navigate(-1)} />;
 
   return (
     <ReviewsScreen
-      property={property as Property}
+      property={property}
       overallRating={4.6}
       reviewCount={128}
       breakdown={mockRatingBreakdown}
@@ -125,38 +215,54 @@ function ReviewsRoute() {
 function UnlockRoute() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const property = findPropertyById(id);
-  const [, setSelectedMethod] = useState<PaymentMethod | null>(null);
+  const { property, isLoading, error } = useProperty(id);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+
+  if (isLoading) return <LoadingScreen />;
+  if (error || !property) return <NotFoundScreen message={error} onBack={() => navigate(-1)} />;
 
   return (
-    <UnlockContactScreen
-      property={property as Property}
-      onBack={() => navigate(-1)}
-      onConfirmPayment={async (method) => {
-        setSelectedMethod(method);
-        navigate(`/processing/${id}`);
-      }}
-    />
+    <>
+      {paymentError && (
+        <p className="fixed inset-x-0 top-0 z-50 bg-error-600 px-4 py-2 text-center text-sm text-white">
+          {paymentError}
+        </p>
+      )}
+      <UnlockContactScreen
+        property={property}
+        onBack={() => navigate(-1)}
+        onConfirmPayment={async () => {
+          // This previously just navigated to the processing screen without
+          // ever calling the real payment API — a fake "unlock" that
+          // charged nobody and unlocked nothing. Now it actually starts the
+          // real subscription and sends the browser to Paystack's checkout,
+          // same as the other unlock flow (EnterCardDetailsRoute) does.
+          try {
+            const { authorization_url } = await initSubscription();
+            window.location.href = authorization_url;
+          } catch (e) {
+            setPaymentError(e instanceof Error ? e.message : 'Failed to start payment — try again');
+          }
+        }}
+      />
+    </>
   );
 }
 
 function ProcessingRoute() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const property = findPropertyById(id);
+  const { property, isLoading, error } = useProperty(id);
 
-  // ProcessingPaymentScreen mocks a multi-step "processing" animation via
-  // `steps`. Real payment confirmation happens async, via Paystack's redirect
-  // + the /payments/webhook — this screen currently doesn't call
-  // initSubscription()/redirect itself. See UnlockRoute two functions up:
-  // that's where the real POST /payments/subscribe call + Paystack redirect
-  // actually happens today, one step before this screen. If you want THIS
-  // screen to own the redirect instead, add an onMount callback prop to
-  // ProcessingPaymentScreen and call initSubscription() from it — its
-  // internals weren't in scope for this pass so I didn't guess at that edit.
-  return (
-    <ProcessingPaymentScreen property={property as Property} steps={mockPaymentSteps} onBack={() => navigate(-1)} />
-  );
+  if (isLoading) return <LoadingScreen />;
+  if (error || !property) return <NotFoundScreen message={error} onBack={() => navigate(-1)} />;
+
+  // NOTE: this route is currently unreachable — UnlockRoute now redirects
+  // straight to Paystack's checkout instead of routing through here first
+  // (see the payment fix in UnlockRoute above). Left in place in case you
+  // want to reintroduce a "processing" step between confirming and the
+  // Paystack redirect, but nothing navigates to /processing/:id right now.
+  return <ProcessingPaymentScreen property={property} steps={mockPaymentSteps} onBack={() => navigate(-1)} />;
 }
 
 function ContactRoute() {
@@ -178,15 +284,21 @@ function ContactRoute() {
 function ReportRoute() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const property = findPropertyById(id);
+  const { property, isLoading, error } = useProperty(id);
+
+  if (isLoading) return <LoadingScreen />;
+  if (error || !property) return <NotFoundScreen message={error} onBack={() => navigate(-1)} />;
 
   return (
     <ReportPropertyScreen
-      property={property as Property}
+      property={property}
       onBack={() => navigate(-1)}
       onSubmit={async (reason: ReportReason, description, files) => {
-        console.log('Report submitted', { propertyId: id, reason, description, fileCount: files.length });
-        await new Promise((r) => setTimeout(r, 800));
+        const formData = new FormData();
+        formData.set('reason', reason);
+        if (description) formData.set('description', description);
+        files.forEach((file) => formData.append('evidence', file));
+        await reportProperty(property.id, formData);
         navigate('/report-success');
       }}
     />
@@ -205,12 +317,23 @@ function ReportSuccessRoute() {
 
 function ProfileRoute() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [stats, setStats] = useState<{ savedProperties: number; viewedProperties: number; inquiriesMade: number } | null>(null);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
 
   useState(() => {
     if (user) getMyStats().then(setStats).catch(() => setStats(null));
   });
+
+  async function handleAvatarSelected(file: File) {
+    setAvatarError(null);
+    try {
+      const updatedUser = await uploadAvatar(file);
+      setUser(updatedUser);
+    } catch (e) {
+      setAvatarError(e instanceof Error ? e.message : 'Failed to upload photo — try again');
+    }
+  }
 
   // Falls back to mock data only when logged out / still loading — real
   // user data (name, email, phone, verification status) is used once
@@ -224,7 +347,7 @@ function ProfileRoute() {
         fullName: [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email,
         email: user.email,
         phone: user.phone ?? '',
-        avatarUrl: user.avatarUrl ?? mockUserProfile.avatarUrl,
+        avatarUrl: user.avatarUrl,
         isVerified: user.isPremium,
         savedPropertiesCount: stats?.savedProperties ?? 0,
         viewedPropertiesCount: stats?.viewedProperties ?? 0,
@@ -233,25 +356,32 @@ function ProfileRoute() {
     : mockUserProfile;
 
   return (
-    <ProfileScreen
-      user={profile}
-      onEditAvatar={() => console.log('open avatar editor')}
-      onOpenSettings={() => navigate('/settings')}
-      onNavigate={(destination) => {
-        if (destination in NAV_TAB_PATHS) {
-          navigate(NAV_TAB_PATHS[destination]);
-        } else {
-          // Profile menu items (inquiries, payment methods, verification,
-          // refer & earn, help) don't have screens built yet — no route to
-          // send them to. Logging rather than navigating to '*' → splash.
-          console.log('Profile menu item not yet implemented:', destination);
-        }
-      }}
-      onLogout={async () => {
-        await authApi.logout();
-        navigate('/welcome');
-      }}
-    />
+    <>
+      {avatarError && (
+        <p className="fixed inset-x-0 top-0 z-50 bg-error-600 px-4 py-2 text-center text-sm text-white">
+          {avatarError}
+        </p>
+      )}
+      <ProfileScreen
+        user={profile}
+        onAvatarSelected={handleAvatarSelected}
+        onOpenSettings={() => navigate('/settings')}
+        onNavigate={(destination) => {
+          if (destination in NAV_TAB_PATHS) {
+            navigate(NAV_TAB_PATHS[destination]);
+          } else {
+            // Profile menu items (inquiries, payment methods, verification,
+            // refer & earn, help) don't have screens built yet — no route to
+            // send them to. Logging rather than navigating to '*' → splash.
+            console.log('Profile menu item not yet implemented:', destination);
+          }
+        }}
+        onLogout={async () => {
+          await authApi.logout();
+          navigate('/welcome');
+        }}
+      />
+    </>
   );
 }
 
@@ -394,21 +524,24 @@ function EnterCodeRoute() {
 
 function ChooseUserTypeRoute() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
+  const [error, setError] = useState<string | null>(null);
   return (
     <ChooseUserType
       onBack={() => navigate(-1)}
+      error={error}
       onContinue={async ({ role, firstName, lastName, phone }: ChooseUserTypeSubmission) => {
+        setError(null);
         try {
-          await authApi.completeProfile({
-            firstName,
-            lastName,
-            phone,
-            role,
-          });
+          const updatedUser = await authApi.completeProfile({ firstName, lastName, phone, role });
+          // Without this, the app kept showing stale/blank profile data
+          // until the next full login — completeProfile's response was
+          // being discarded instead of updating the in-memory user.
+          setUser(updatedUser);
+          navigate(role === 'tenant' ? '/home' : '/kyc-verification');
         } catch (e) {
-          console.error('Failed to complete profile', e);
+          setError(e instanceof Error ? e.message : 'Failed to save your profile — try again');
         }
-        navigate(role === 'tenant' ? '/home' : '/kyc-verification');
       }}
     />
   );
@@ -416,8 +549,44 @@ function ChooseUserTypeRoute() {
 
 function KYCVerificationRoute() {
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
   return (
-    <KYCVerification onBack={() => navigate('/choose-user-type')} onContinue={() => navigate('/home')} />
+    <KYCVerification
+      onBack={() => navigate('/choose-user-type')}
+      error={error}
+      onContinue={async (submission: KYCSubmission) => {
+        setError(null);
+        try {
+          const result =
+            submission.type === 'individual'
+              ? await verifyNin({
+                  firstName: submission.firstName,
+                  lastName: submission.lastName,
+                  dateOfBirth: submission.dateOfBirth,
+                  ninNumber: submission.ninNumber,
+                })
+              : await verifyCac({
+                  companyName: submission.companyName,
+                  rcNumber: submission.rcNumber,
+                });
+
+          if (result.status === 'rejected') {
+            setError('Verification was rejected — double-check your details and try again.');
+            return;
+          }
+          if (result.status === 'review_needed') {
+            // Backend couldn't auto-verify; an admin resolves it later via
+            // PATCH /admin/kyc/{id}/resolve. Nothing more the user can do
+            // here — let them into the app and they can check status later.
+            navigate('/home');
+            return;
+          }
+          navigate('/home');
+        } catch (e) {
+          setError(e instanceof Error ? e.message : 'Verification failed — try again');
+        }
+      }}
+    />
   );
 }
 

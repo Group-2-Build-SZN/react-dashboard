@@ -71,7 +71,16 @@ export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDet
       coverImageUrl: item.photo_urls?.[0] ?? '',
       lat,
       lng,
-      isVerified: item.availability_status === 'available' && item.is_published,
+      // Publishing a listing requires the owner's KYC to already be
+      // verified (see PATCH /properties/{id}/publish in the docs), so
+      // is_published is actually a reasonable proxy for "verified owner" —
+      // availability_status was an unrelated condition that had nothing to
+      // do with verification and was making almost every normal listing
+      // show a "Verified" badge while ?verifiedOnly=true still returned
+      // nothing. If that mismatch persists after this, the backend's
+      // definition of "verified" likely isn't is_published at all — worth
+      // confirming with the backend team what that flag actually checks.
+      isVerified: item.is_published,
       listingCategory: item.listing_purpose === 'rent' ? 'for_rent' : 'for_sale',
       isFavorited: item.is_saved ?? false,
       description: item.description ?? undefined,
@@ -99,7 +108,7 @@ export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDet
     coverImageUrl: item.photoUrls?.[0] ?? '',
     lat,
     lng,
-    isVerified: item.availabilityStatus === 'available' && item.isPublished,
+    isVerified: item.isPublished,
     listingCategory: item.listingPurpose === 'rent' ? 'for_rent' : 'for_sale',
     isFavorited: item.isSaved ?? false,
     description: item.description ?? undefined,

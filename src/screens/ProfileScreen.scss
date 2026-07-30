@@ -50,6 +50,14 @@
         object-fit: cover;
     }
 
+    &__avatar--empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $color-border;
+        color: $color-text-muted;
+    }
+
     &__edit {
         position: absolute;
         bottom: 0;
