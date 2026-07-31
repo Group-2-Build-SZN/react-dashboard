@@ -24,6 +24,7 @@ interface ReviewsScreenProps {
     onBack: () => void;
     onWriteReview: () => void;
     onUnlockContact: () => void;
+    onReviewSubmitted?: () => void;
 }
 
 const BREAKDOWN_ROWS: {
@@ -80,6 +81,7 @@ export function ReviewsScreen({
     reviews,
     onBack,
     onUnlockContact,
+    onReviewSubmitted,
 }: ReviewsScreenProps) {
 
 
@@ -355,6 +357,7 @@ export function ReviewsScreen({
                                 submittedLng: lng,
                             });
 
+                            onReviewSubmitted?.();
                         }}
                     />
 

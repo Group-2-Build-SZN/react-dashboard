@@ -1,0 +1,18 @@
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import RootApp from './RootApp.tsx'
+import { AuthProvider } from './context/AuthContext.tsx'
+import './styles/tailwind-base.css'
+import 'leaflet/dist/leaflet.css'
+import { BrowserRouter } from 'react-router-dom'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <RootApp />
+      </AuthProvider>
+    </BrowserRouter>
+
+  </StrictMode>,
+)

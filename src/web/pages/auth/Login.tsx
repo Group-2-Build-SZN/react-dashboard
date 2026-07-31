@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Send, ShieldCheck } from "lucide-react";
 import { AuthLayout } from "../../components/layout/AuthLayout";
-import { GoogleSignInButton } from "../../components/auth/GoogleSignInButton";
+import { GoogleSignInButton } from "../../../components/auth/GoogleSignInButton";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import logo from "../../assets/images/logo-icon.svg";
@@ -77,7 +77,7 @@ export function Login() {
           <span className="h-px flex-1 bg-neutral-200" />
         </div>
 
-        <GoogleSignInButton fullWidth />
+        <GoogleSignInButton fullWidth redirectTo="/dashboard" />
 
         <p className="flex items-center justify-center gap-1.5 text-small text-neutral-500">
           <ShieldCheck size={14} className="text-secondary" />

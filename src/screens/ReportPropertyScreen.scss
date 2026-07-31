@@ -245,3 +245,9 @@
         margin-top: 1px;
     }
 }
+
+.report-screen__error {
+    margin-top: $space-3;
+    font-size: 13px;
+    color: var(--color-error-600, #DC2626);
+}

@@ -29,7 +29,7 @@ type SearchProps = {
 };
 
 function Search({
-  initialQuery = "New Haven, Enugu",
+  initialQuery = "",
   onBack,
   onSelectProperty,
 }: SearchProps) {
@@ -88,6 +88,7 @@ function Search({
             type="text"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search by location, estate or keyword"
             className="h-full w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-muted"
           />
 

@@ -16,9 +16,10 @@
 // either dropping those fields from the card UI or asking the backend team
 // to add them — that's a product decision, not something to paper over here.
 
-import type { Property, PropertyType } from '../types';
+import type { Property, PropertyType, Review, RatingBreakdown } from '../types';
 import type { ApiPropertyDetail, ApiPropertyListItem, ApiPropertySearchParams } from './types';
 import type { PropertyFilters } from '../components/FilterBottomSheet/FilterBottomSheet';
+import type { ApiReview } from './reviews';
 
 // The API is PostGIS-flavoured: list endpoints give `location` as a WKB hex
 // string we don't decode (lat/lng come from the `lat`/`lng` query instead
@@ -86,6 +87,21 @@ function isListItem(
   return 'listing_title' in item;
 }
 
+// trustSummary's water_rating/electricity_rating/security_rating/
+// road_accessiblity_rating are literal averages of the 1–5 star ratings
+// submitted via POST /properties/{id}/reviews (see WriteReviewForm — the
+// star picker only ever sends 1–5). trust_score, in contrast, is a
+// separately-computed 0–100 composite. Every consumer of Property.waterScore
+// etc. (TrustScorePanel, scoreLabel, the trust circle) assumes a 0–100
+// scale, same as trustScore — so a genuinely good 4.2/5 water rating was
+// being read as "4.2 out of 100" and landing in scoreLabel's "Poor" bucket
+// every time, while an unrelated 96% trust_score displayed fine right next
+// to it. This normalizes the 0–5 ratings up to the same 0–100 scale before
+// they reach the UI.
+function ratingToScore(rating: number): number {
+  return Math.max(0, Math.min(100, rating * 20));
+}
+
 /** Normalizes either raw API shape into the app's canonical Property type. */
 export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDetail): Property {
   const { lat, lng } = extractLatLng(item);
@@ -149,10 +165,10 @@ export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDet
     features: item.features ?? [],
     propertyType: item.propertyType as PropertyType,
     trustScore: item.trustSummary ? Number(item.trustSummary.trust_score) : 0,
-    waterScore: item.trustSummary ? Number(item.trustSummary.water_rating) : undefined,
-    powerScore: item.trustSummary ? Number(item.trustSummary.electricity_rating) : undefined,
-    securityScore: item.trustSummary ? Number(item.trustSummary.security_rating) : undefined,
-    roadScore: item.trustSummary ? Number(item.trustSummary.road_accessiblity_rating) : undefined,
+    waterScore: item.trustSummary ? ratingToScore(Number(item.trustSummary.water_rating)) : undefined,
+    powerScore: item.trustSummary ? ratingToScore(Number(item.trustSummary.electricity_rating)) : undefined,
+    securityScore: item.trustSummary ? ratingToScore(Number(item.trustSummary.security_rating)) : undefined,
+    roadScore: item.trustSummary ? ratingToScore(Number(item.trustSummary.road_accessiblity_rating)) : undefined,
     ownerId: item.ownerId,
     owner: item.owner
       ? {
@@ -210,6 +226,58 @@ export function featureLabel(feature: string): string {
     .split(/[_\s]+/)
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
+}
+
+// The API scores 5 separate categories per review (water/electricity/
+// security/roadAccessibility/cleanliness) but the UI's `Review` type only
+// has a single `overallRating` star score — this averages the 4 categories
+// the trust-score breakdown actually cares about (cleanliness has no home
+// in the UI, so it's left out of the average rather than silently folded
+// into "security" or similar).
+function averageReviewRating(item: ApiReview): number {
+  const scores = [item.waterRating, item.electricityRating, item.securityRating, item.roadAccessibilityRating];
+  const sum = scores.reduce((total, s) => total + (Number(s) || 0), 0);
+  return sum / scores.length;
+}
+
+/** Normalizes a raw API review into the app's canonical Review type. */
+export function apiReviewToReview(item: ApiReview): Review {
+  const name = [item.reviewer_first_name, item.reviewer_last_name].filter(Boolean).join(' ').trim();
+  return {
+    id: item.id,
+    reviewerName: name || 'Anonymous',
+    reviewType: item.reviewType,
+    overallRating: averageReviewRating(item),
+    createdAt: new Date(item.createdAt).toLocaleDateString('en-NG', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }),
+    text: item.reviewText ?? '',
+  };
+}
+
+/** Averages the per-category ratings across every review into the summary bars at the top of the Reviews screen. */
+export function reviewsToBreakdown(items: ApiReview[]): RatingBreakdown {
+  if (items.length === 0) {
+    return { water: 0, electricity: 0, security: 0, amenityAccessibility: 0 };
+  }
+  const totals = items.reduce(
+    (acc, item) => ({
+      water: acc.water + (Number(item.waterRating) || 0),
+      electricity: acc.electricity + (Number(item.electricityRating) || 0),
+      security: acc.security + (Number(item.securityRating) || 0),
+      amenityAccessibility: acc.amenityAccessibility + (Number(item.roadAccessibilityRating) || 0),
+    }),
+    { water: 0, electricity: 0, security: 0, amenityAccessibility: 0 }
+  );
+  const n = items.length;
+  return {
+    water: totals.water / n,
+    electricity: totals.electricity / n,
+    security: totals.security / n,
+    amenityAccessibility: totals.amenityAccessibility / n,
+  };
 }
 
 /** Display-formatted shape for teammate's PropertyCard / RecommendedPropertyCard / SearchResultCard. */

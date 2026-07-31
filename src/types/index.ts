@@ -101,13 +101,17 @@ export interface ContactMethod {
     detail: string;
     isOnline?: boolean;
 }
+// NOTE: previously used values here (wrong_photos, agent_unresponsive,
+// price_mismatch, already_taken, scam_suspected) didn't match the backend's
+// actual enum for POST /properties/{id}/report, so submitting a report with
+// any of those reasons was rejected by the API with a 400 validation error.
+// Corrected to match the backend exactly.
 export type ReportReason =
     | 'fake_listing'
-    | 'wrong_photos'
-    | 'agent_unresponsive'
-    | 'price_mismatch'
-    | 'already_taken'
-    | 'scam_suspected'
+    | 'scam_or_fraud'
+    | 'misleading_information'
+    | 'inappropriate_content'
+    | 'already_rented_or_sold'
     | 'other';
 
 export interface ReportSubmission {

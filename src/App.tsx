@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useParams, useSearchParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 
@@ -36,8 +36,6 @@ import PaymentSuccess from './pages/PaymentSuccess/PaymentSuccess';
 
 import {
   mockProperty,
-  mockRatingBreakdown,
-  mockReviews,
   mockPaymentSteps,
   mockContactMethods,
   mockUserProfile,
@@ -49,11 +47,12 @@ import type { Amenity, Property, ReportReason } from './types';
 
 import * as authApi from './api/auth';
 import { useProperty } from './hooks/useProperty';
+import { useReviews } from './hooks/useReviews';
 import { listProperties, listSavedProperties, reportProperty, unsaveProperty } from './api/properties';
 import { apiPropertyToProperty } from './api/adapters';
 import { listAmenities } from './api/amenities';
 import { getMyStats, uploadAvatar } from './api/auth';
-import { initSubscription } from './api/payments';
+import { initSubscription, getSubscriptionStatus } from './api/payments';
 import { verifyNin, verifyCac } from './api/kyc';
 import { useAuth } from './context/AuthContext';
 
@@ -189,20 +188,35 @@ function ReviewsRoute() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { property, isLoading, error } = useProperty(id);
+  const {
+    reviews,
+    breakdown,
+    overallRating,
+    reviewCount,
+    isLoading: reviewsLoading,
+    error: reviewsError,
+    refetch: refetchReviews,
+  } = useReviews(id);
 
-  if (isLoading) return <LoadingScreen />;
+  if (isLoading || reviewsLoading) return <LoadingScreen />;
   if (error || !property) return <NotFoundScreen message={error} onBack={() => navigate(-1)} />;
+
+  // A reviews-fetch failure shouldn't block the whole screen the way a
+  // missing property does — fall through and show an empty review list
+  // rather than a full-page error for what's a secondary fetch.
+  if (reviewsError) console.error('Failed to load reviews', reviewsError);
 
   return (
     <ReviewsScreen
       property={property}
-      overallRating={4.6}
-      reviewCount={128}
-      breakdown={mockRatingBreakdown}
-      reviews={mockReviews}
+      overallRating={overallRating}
+      reviewCount={reviewCount}
+      breakdown={breakdown}
+      reviews={reviews}
       onBack={() => navigate(-1)}
       onUnlockContact={() => navigate(`/unlock/${id}`)}
       onWriteReview={() => console.log('open write-review form for', id)}
+      onReviewSubmitted={refetchReviews}
     />
   );
 }
@@ -239,6 +253,7 @@ function UnlockRoute() {
           // same as the other unlock flow (EnterCardDetailsRoute) does.
           try {
             const { authorization_url } = await initSubscription();
+            sessionStorage.setItem('myulo:postPaymentPropertyId', property.id);
             window.location.href = authorization_url;
           } catch (e) {
             setPaymentError(e instanceof Error ? e.message : 'Failed to start payment — try again');
@@ -273,8 +288,26 @@ function ContactRoute() {
       methods={mockContactMethods}
       onBack={() => navigate(-1)}
       onSelectMethod={(method) => {
+        // 'chat' and 'office' previously had no handling at all — tapping
+        // them did nothing, despite looking tappable (chevron + "Online"
+        // badge on chat). Chat opens WhatsApp using the same support
+        // number as "Call Us"; office opens directions in Google Maps.
         if (method.type === 'call') window.location.href = `tel:${method.detail.replace(/\s/g, '')}`;
         if (method.type === 'email') window.location.href = `mailto:${method.detail}`;
+        if (method.type === 'chat') {
+          const whatsappNumber = mockContactMethods
+            .find((m) => m.type === 'call')
+            ?.detail.replace(/[^\d]/g, '')
+            .replace(/^0/, '234');
+          window.open(`https://wa.me/${whatsappNumber}`, '_blank', 'noopener,noreferrer');
+        }
+        if (method.type === 'office') {
+          window.open(
+            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(method.detail)}`,
+            '_blank',
+            'noopener,noreferrer'
+          );
+        }
       }}
       onNavigateTab={(tab) => navigate(NAV_TAB_PATHS[tab] ?? `/${tab}`)}
     />
@@ -298,8 +331,8 @@ function ReportRoute() {
         formData.set('reason', reason);
         if (description) formData.set('description', description);
         files.forEach((file) => formData.append('evidence', file));
-        await reportProperty(property.id, formData);
-        navigate('/report-success');
+        const result = await reportProperty(property.id, formData);
+        navigate('/report-success', { state: { referenceId: result.referenceId } });
       }}
     />
   );
@@ -307,9 +340,14 @@ function ReportRoute() {
 
 function ReportSuccessRoute() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const referenceId = (location.state as { referenceId?: string } | null)?.referenceId;
   return (
     <ReportSuccessScreen
-      confirmation={mockReportConfirmation}
+      confirmation={{
+        reportId: referenceId ?? mockReportConfirmation.reportId,
+        submittedAt: new Date().toISOString(),
+      }}
       onBackToHome={() => navigate('/map')}
     />
   );
@@ -442,7 +480,6 @@ function SignUpRoute() {
           setError(e instanceof Error ? e.message : 'Failed to send code — try again');
         }
       }}
-      onContinueWithGoogle={() => navigate('/home')}
       onSignIn={() => navigate('/login')}
     />
   );
@@ -490,7 +527,6 @@ function LoginRoute() {
           setError(e instanceof Error ? e.message : 'Failed to send code — try again');
         }
       }}
-      onContinueWithGoogle={() => navigate('/home')}
       onSignUp={() => navigate('/signup')}
     />
   );
@@ -659,9 +695,11 @@ function PropertyDetailsRoute() {
 function VideoWalkthroughRoute() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   return (
     <VideoWalkthrough
       propertyId={id}
+      isPremium={!!user?.isPremium}
       onBack={() => navigate(`/property/${id}`)}
       onUnlockContact={(propertyId) => navigate(`/pay/${propertyId}`)}
     />
@@ -682,21 +720,128 @@ function VideoWalkthroughRoute() {
 function EnterCardDetailsRoute() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   return (
-    <EnterCardDetails
-      propertyId={id}
-      onBack={() => navigate(`/video/${id}`)}
-      onPaymentSuccess={async (propertyId) => {
-        try {
-          const { authorization_url } = await initSubscription();
-          window.location.href = authorization_url;
-        } catch (e) {
-          console.error('Failed to start subscription', e);
-          navigate(`/payment-success/${propertyId}`);
-        }
-      }}
-    />
+    <>
+      {paymentError && (
+        <p className="fixed inset-x-0 top-0 z-50 bg-error-600 px-4 py-2 text-center text-sm text-white">
+          {paymentError}
+        </p>
+      )}
+      <EnterCardDetails
+        propertyId={id}
+        onBack={() => navigate(`/video/${id}`)}
+        onPaymentSuccess={async (propertyId) => {
+          setPaymentError(null);
+          // This previously fell back to navigating straight to the
+          // "Payment Successful!" screen if `initSubscription` threw — i.e.
+          // a failed payment showed a fake success page. Now a failure
+          // shows an error instead, and only a real Paystack redirect
+          // counts as "success" (the actual success screen is reached via
+          // /payment/callback once the backend confirms the subscription).
+          try {
+            const { authorization_url } = await initSubscription();
+            sessionStorage.setItem('myulo:postPaymentPropertyId', propertyId);
+            window.location.href = authorization_url;
+          } catch (e) {
+            console.error('Failed to start subscription', e);
+            setPaymentError(e instanceof Error ? e.message : 'Failed to start payment — try again');
+          }
+        }}
+      />
+    </>
   );
+}
+
+// Paystack redirects the browser back to whatever `callback_url` the
+// backend set when the transaction was initialized. Neither unlock flow
+// (UnlockRoute, EnterCardDetailsRoute) had anywhere for that redirect to
+// land — this route is that landing page. It polls /payments/subscription
+// until isPremium flips true, refreshes the logged-in user, then forwards
+// to the existing PaymentSuccess screen using the property id remembered
+// in sessionStorage before the Paystack redirect.
+// IMPORTANT: confirm with whoever owns the backend that the Paystack
+// transaction's callback_url actually points at <app-domain>/payment/callback
+// — otherwise this route is never reached.
+function PaymentCallbackRoute() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { setUser } = useAuth();
+  const [status, setStatus] = useState<'checking' | 'pending' | 'failed'>('checking');
+  const reference = searchParams.get('reference') || searchParams.get('trxref');
+  const propertyId = sessionStorage.getItem('myulo:postPaymentPropertyId');
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function confirm() {
+      if (!reference) {
+        if (!cancelled) setStatus('failed');
+        return;
+      }
+
+      for (let attempt = 0; attempt < 5; attempt++) {
+        if (cancelled) return;
+        try {
+          const subscription = await getSubscriptionStatus();
+          if (subscription.isPremium) {
+            const freshUser = await authApi.getMe();
+            if (cancelled) return;
+            setUser(freshUser);
+            sessionStorage.removeItem('myulo:postPaymentPropertyId');
+            navigate(propertyId ? `/payment-success/${propertyId}` : '/home', { replace: true });
+            return;
+          }
+        } catch (e) {
+          console.error('Failed to check subscription status', e);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+
+      if (!cancelled) setStatus('pending');
+    }
+
+    confirm();
+    return () => {
+      cancelled = true;
+    };
+  }, [reference, propertyId, navigate, setUser]);
+
+  if (status === 'pending') {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-white px-6 text-center">
+        <p className="text-sm text-gray-500">
+          Still confirming your payment — this can take a little longer for some methods. Check
+          your account in a few minutes, or try again.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="rounded-xl border border-border-light px-4 py-2 text-sm font-medium"
+        >
+          Check again
+        </button>
+        <button onClick={() => navigate('/home')} className="text-sm text-primary-800 underline">
+          Go to home
+        </button>
+      </div>
+    );
+  }
+
+  if (status === 'failed') {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-white px-6 text-center">
+        <p className="text-sm text-error-600">
+          We couldn't find a payment reference for this session. If you completed a payment on
+          Paystack, it may still be processing.
+        </p>
+        <button onClick={() => navigate('/home')} className="rounded-xl border border-border-light px-4 py-2 text-sm font-medium">
+          Go to home
+        </button>
+      </div>
+    );
+  }
+
+  return <LoadingScreen />;
 }
 
 function PaymentSuccessRoute() {
@@ -732,6 +877,7 @@ export default function App() {
       <Route path="/property/:id" element={<PropertyDetailsRoute />} />
       <Route path="/video/:id" element={<VideoWalkthroughRoute />} />
       <Route path="/pay/:id" element={<EnterCardDetailsRoute />} />
+      <Route path="/payment/callback" element={<PaymentCallbackRoute />} />
       <Route path="/payment-success/:id" element={<PaymentSuccessRoute />} />
 
       {/* Map / reviews / unlock-contact / account (yours) */}

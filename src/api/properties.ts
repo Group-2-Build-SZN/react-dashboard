@@ -77,12 +77,23 @@ export function listInquiries() {
     .then((r) => r.data);
 }
 
+export interface ApiPropertyReport {
+  id: string;
+  referenceId: string;
+  propertyId: string;
+  reporterId: string;
+  reason: string;
+  description: string | null;
+  evidenceUrls: string[] | null;
+  status: string;
+  createdAt: string;
+}
+
 export function reportProperty(
   propertyId: string,
   formData: FormData
 ) {
-  return api.post(
-    `/properties/${propertyId}/report`,
-    formData
-  );
+  return api
+    .post<ApiEnvelope<ApiPropertyReport>>(`/properties/${propertyId}/report`, formData)
+    .then((r) => r.data);
 }

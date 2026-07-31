@@ -11,11 +11,10 @@ interface ReportPropertyScreenProps {
 
 const REASONS: { id: ReportReason; label: string }[] = [
     { id: 'fake_listing', label: 'This listing looks fake' },
-    { id: 'wrong_photos', label: 'Photos don\'t match the property' },
-    { id: 'agent_unresponsive', label: 'Agent is unresponsive' },
-    { id: 'price_mismatch', label: 'Price shown is different from what was agreed' },
-    { id: 'already_taken', label: 'Property has already been rented/sold' },
-    { id: 'scam_suspected', label: 'I suspect this is a scam' },
+    { id: 'scam_or_fraud', label: 'I suspect this is a scam or fraud' },
+    { id: 'misleading_information', label: 'Listing information is misleading' },
+    { id: 'inappropriate_content', label: 'Contains inappropriate content' },
+    { id: 'already_rented_or_sold', label: 'Property has already been rented/sold' },
     { id: 'other', label: 'Other' },
 ];
 
@@ -27,6 +26,7 @@ export function ReportPropertyScreen({ property, onBack, onSubmit }: ReportPrope
     const [description, setDescription] = useState('');
     const [files, setFiles] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     if (!property) {
         return (
@@ -54,8 +54,14 @@ export function ReportPropertyScreen({ property, onBack, onSubmit }: ReportPrope
     async function handleSubmit() {
         if (!reason) return;
         setIsSubmitting(true);
+        setSubmitError(null);
         try {
             await onSubmit(reason, description, files);
+        } catch (err) {
+            // Previously uncaught here — a failed submission (e.g. a
+            // network error) just cleared the spinner with no feedback,
+            // making it look like nothing happened.
+            setSubmitError(err instanceof Error ? err.message : 'Failed to submit report. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -161,6 +167,12 @@ export function ReportPropertyScreen({ property, onBack, onSubmit }: ReportPrope
                     <Info size={16} />
                     <span>All reports are confidential. Our team will review and take action if necessary.</span>
                 </div>
+
+                {submitError && (
+                    <p className="report-screen__error" role="alert">
+                        {submitError}
+                    </p>
+                )}
             </div>
 
             <div className="report-screen__footer">

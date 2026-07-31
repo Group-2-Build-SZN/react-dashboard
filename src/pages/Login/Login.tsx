@@ -3,14 +3,13 @@ import { ArrowLeft } from "lucide-react";
 
 import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
-import GoogleIcon from "../../components/GoogleIcon/GoogleIcon";
+import { GoogleSignInButton } from "../../components/auth/GoogleSignInButton";
 
 import loginIllustration from "../../assets/branding/login-illustration.png";
 
 type LoginProps = {
   onBack?: () => void;
   onContinueWithEmail?: (email: string) => void;
-  onContinueWithGoogle?: () => void;
   onSignUp?: () => void;
   error?: string | null;
 };
@@ -18,7 +17,6 @@ type LoginProps = {
 function Login({
   onBack,
   onContinueWithEmail,
-  onContinueWithGoogle,
   onSignUp,
   error,
 }: LoginProps) {
@@ -82,15 +80,7 @@ function Login({
             <span className="h-px flex-1 bg-muted" />
           </div>
 
-          <Button
-            variant="outline"
-            size="lg"
-            className="w-full gap-2"
-            onClick={onContinueWithGoogle}
-          >
-            <GoogleIcon />
-            Continue with Google
-          </Button>
+          <GoogleSignInButton fullWidth redirectTo="/home" />
         </div>
 
         <div className="text-center text-xs leading-4 text-gray-500">

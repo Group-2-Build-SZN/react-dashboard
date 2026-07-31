@@ -1,0 +1,54 @@
+$color-primary: #3D35D1;
+$color-primary-dark: #2E27A8;
+$color-primary-light: #EEF0FF;
+
+$color-success: #1DA765;
+$color-success-bg: #E8F8EF;
+$color-text: #16181D;
+$color-text-muted: #6B7280;
+$color-border: #ECEDF1;
+$color-surface: #FFFFFF;
+$color-bg: #FAFAFC;
+$color-star: #F5A623;
+
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-full: 999px;
+
+$font-family: -apple-system, 'Inter', 'Segoe UI', sans-serif;
+
+@mixin card {
+    background: $color-surface;
+    border-radius: $radius-lg;
+    border: 1px solid $color-border;
+    padding: $space-4;
+}
+
+@mixin button-primary {
+    background: $color-primary;
+    color: white;
+    border: none;
+    border-radius: $radius-md;
+    font-weight: 600;
+    font-size: 16px;
+    padding: $space-4;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+        background: $color-primary-dark;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}

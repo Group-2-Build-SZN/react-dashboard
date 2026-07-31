@@ -6,6 +6,7 @@ import VerifiedBadge from "../../components/VerifiedBadge/VerifiedBadge";
 
 import { getProperty } from "../../api/properties";
 import { apiPropertyToProperty } from "../../api/adapters";
+import { getPaymentHistory } from "../../api/payments";
 import type { Property } from "../../types";
 import { UNLOCK_FEE_NGN } from "../../types";
 
@@ -14,20 +15,26 @@ import checkmark from "../../assets/branding/success-checkmark.png";
 
 type PaymentSuccessProps = {
   propertyId?: string;
-  transactionId?: string;
-  date?: string;
   onContactUs?: () => void;
   onBackToHome?: () => void;
 };
 
 function PaymentSuccess({
   propertyId,
-  transactionId = "psk_8f7g2h9k3l",
-  date = "11 Jul 2026, 10:30 AM",
   onContactUs,
   onBackToHome,
 }: PaymentSuccessProps) {
   const [property, setProperty] = useState<Property | null>(null);
+  // Was hardcoded to a fake reference/date on every single payment — this
+  // pulls the real, most recent entry from /payments/history instead. Falls
+  // back to "—" (not a made-up value) if the history call fails or is empty.
+  const [payment, setPayment] = useState<{
+    paystackReference: string;
+    amount: string;
+    cardType: string;
+    cardLast4: string;
+    paidAt: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!propertyId) return;
@@ -41,6 +48,26 @@ function PaymentSuccess({
       cancelled = true;
     };
   }, [propertyId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getPaymentHistory()
+      .then((history) => {
+        if (cancelled || history.length === 0) return;
+        const latest = [...history].sort(
+          (a, b) => new Date(b.paidAt ?? b.createdAt).getTime() - new Date(a.paidAt ?? a.createdAt).getTime()
+        )[0];
+        setPayment(latest);
+      })
+      .catch((err) => console.error("Failed to load payment history", err));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // ContactUsScreen builds the WhatsApp deep link the same way — strip
+  // everything but digits, then swap a leading 0 for the 234 country code.
+  const whatsappNumber = property?.owner?.phone?.replace(/[^\d]/g, "").replace(/^0/, "234");
 
   return (
     <div className="flex min-h-screen flex-col bg-secondary-50 px-6 pb-10 pt-12">
@@ -79,17 +106,31 @@ function PaymentSuccess({
 
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">Payment Method</span>
-            <span className="font-semibold text-gray-900">Card</span>
+            <span className="font-semibold text-gray-900">
+              {payment?.cardType && payment?.cardLast4
+                ? `${payment.cardType} •••• ${payment.cardLast4}`
+                : "Paystack"}
+            </span>
           </div>
 
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">Transaction ID</span>
-            <span className="font-semibold text-gray-900">{transactionId}</span>
+            <span className="font-semibold text-gray-900">{payment?.paystackReference ?? "—"}</span>
           </div>
 
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">Date</span>
-            <span className="font-semibold text-gray-900">{date}</span>
+            <span className="font-semibold text-gray-900">
+              {payment?.paidAt
+                ? new Date(payment.paidAt).toLocaleString('en-NG', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })
+                : "—"}
+            </span>
           </div>
         </div>
       </div>
@@ -112,7 +153,14 @@ function PaymentSuccess({
           </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-between rounded-xl border border-border-light px-4 py-3">
+        <button
+          type="button"
+          disabled={!property?.owner?.phone}
+          onClick={() => {
+            if (property?.owner?.phone) window.location.href = `tel:${property.owner.phone.replace(/\s/g, '')}`;
+          }}
+          className="mt-5 flex w-full items-center justify-between rounded-xl border border-border-light px-4 py-3 disabled:opacity-50"
+        >
           <span className="flex items-center gap-3 text-sm font-semibold text-gray-900">
             <Phone size={16} className="text-gray-500" />
             {property?.owner?.phone ?? "Not available"}
@@ -121,9 +169,16 @@ function PaymentSuccess({
           <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-border-light">
             <Phone size={14} className="text-gray-700" />
           </span>
-        </div>
+        </button>
 
-        <div className="mt-3 flex items-center justify-between rounded-xl border border-border-light px-4 py-3">
+        <button
+          type="button"
+          disabled={!whatsappNumber}
+          onClick={() => {
+            if (whatsappNumber) window.open(`https://wa.me/${whatsappNumber}`, '_blank', 'noopener,noreferrer');
+          }}
+          className="mt-3 flex w-full items-center justify-between rounded-xl border border-border-light px-4 py-3 disabled:opacity-50"
+        >
           <span className="flex items-center gap-3">
             <MessageCircle size={16} className="text-secondary-600" />
             <span>
@@ -139,7 +194,7 @@ function PaymentSuccess({
           <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-border-light text-secondary-600">
             <MessageCircle size={14} />
           </span>
-        </div>
+        </button>
       </div>
 
       <div className="mt-8 flex flex-col gap-3">
