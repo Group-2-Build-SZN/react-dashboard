@@ -117,6 +117,15 @@ export interface ApiPropertyDetail {
   trekCheck?: { type: string; name: string; distance_metres: number }[];
 }
 
+export interface ApiInquiry {
+  id: string;
+  propertyId: string;
+  tenantId: string;
+  message: string;
+  status: 'pending' | 'responded' | 'closed';
+  createdAt: string;
+}
+
 export interface ApiPropertySearchParams {
   page?: number;
   limit?: number;

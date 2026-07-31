@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
   ChevronLeft,
   ShieldCheck,
@@ -20,16 +20,16 @@ import {
   TwitterIcon,
   WhatsappIcon,
 } from "../components/ui/SocialIcons";
+import { getProperty } from "../../api/properties";
+import { apiPropertyToProperty, formatNaira, propertyTypeLabel } from "../../api/adapters";
+import type { Property } from "../../types";
 
 import mainImage from "../assets/images/Rectangle 3 (3).png";
-import thumbBedroom from "../assets/images/Rectangle 4.png";
-import thumbKitchen from "../assets/images/Rectangle 5.png";
-import thumbBathroom from "../assets/images/Rectangle 6.png";
 import mapImage from "../assets/images/Rectangle 52.png";
 
-const gallery = [mainImage, thumbBedroom, thumbKitchen, thumbBathroom];
+const FALLBACK_IMAGE = mainImage;
 
-const tabs = ["Overview", "Amenities", "Reviews (120)", "Location", "Similar Properties", "Nearby"];
+const tabs = ["Overview", "Amenities", "Reviews", "Location", "Similar Properties", "Nearby"];
 
 const aboutChecklist = [
   "All rooms ensuite",
@@ -40,29 +40,11 @@ const aboutChecklist = [
   "Good road network",
 ];
 
-const propertyInfo = [
-  { label: "Property ID", value: "MU-LEK-23456" },
-  { label: "Property Type", value: "Apartment" },
-  { label: "Purpose", value: "For Rent" },
-  { label: "Furnishing", value: "Semi-Furnishing" },
-  { label: "Tenure", value: "1 Year Minimum" },
-  { label: "Availability", value: "Available" },
-  { label: "Added on", value: "May 20, 2024" },
-];
-
 const verifiedChecklist = [
   "Property documents verified",
   "Agent identity verified",
   "Video walkthrough verified",
   "Location verified on map",
-];
-
-const nearby = [
-  { name: "Roban Store", distance: "1.2 km" },
-  { name: "Roots Restaurant", distance: "2.8 km" },
-  { name: "Unity Park", distance: "3.5 km" },
-  { name: "The Base Event Center", distance: "1.0 km" },
-  { name: "Anns Place", distance: "0.8 km" },
 ];
 
 const trustBadges = [
@@ -84,8 +66,83 @@ const trustBadges = [
 ];
 
 export function PropertyDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const [property, setProperty] = useState<Property | null>(null);
+  const [nearby, setNearby] = useState<{ type: string; name: string; distance_metres: number }[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    setIsLoading(true);
+    setError(null);
+
+    getProperty(id)
+      .then((detail) => {
+        if (cancelled) return;
+        setProperty(apiPropertyToProperty(detail));
+        setNearby(detail.trekCheck ?? []);
+        setActiveImage(0);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error("Failed to load property", err);
+        setError("We couldn't load this property. It may have been removed.");
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  const gallery = property?.photoUrls.length ? property.photoUrls : [FALLBACK_IMAGE];
+
+  const propertyInfo = property
+    ? [
+        { label: "Property Type", value: propertyTypeLabel(property.propertyType) },
+        { label: "Purpose", value: property.listingCategory === "for_rent" ? "For Rent" : "For Sale" },
+        { label: "Bedrooms", value: String(property.bedrooms) },
+        { label: "Bathrooms", value: String(property.bathrooms) },
+        { label: "Availability", value: property.isVerified ? "Verified Listing" : "Unverified Listing" },
+      ]
+    : [];
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+        <main className="flex-1 bg-white">
+          <div className="mx-auto max-w-5xl px-6 py-16 text-center text-body text-neutral-500">
+            Loading property…
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !property) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+        <main className="flex-1 bg-white">
+          <div className="mx-auto max-w-5xl px-6 py-16 text-center">
+            <p className="text-body text-neutral-500">{error ?? "Property not found."}</p>
+            <Link to="/search" className="mt-4 inline-block text-body font-medium text-primary">
+              Back to search results
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -102,59 +159,68 @@ export function PropertyDetailPage() {
 
           <div className="mt-4 flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
             <div>
-              <h1 className="text-h2 font-bold text-neutral">2 Bedroom Apartment</h1>
-              <p className="mt-1 text-body text-neutral-500">Independence Layout, Enugu</p>
+              <h1 className="text-h2 font-bold text-neutral">{property.listingTitle}</h1>
+              <p className="mt-1 text-body text-neutral-500">{property.address}</p>
             </div>
             <p className="text-h3 font-bold text-primary">
-              ₦2,500,000<span className="text-small font-normal text-neutral-500">/year</span>
+              {formatNaira(property.price)}
+              <span className="text-small font-normal text-neutral-500">/{property.pricePeriod}</span>
             </p>
           </div>
 
           <div className="mt-4 flex gap-2">
-            <span className="flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-caption font-medium text-neutral-700">
-              <ShieldCheck size={14} className="text-secondary" />
-              Verified Property
-            </span>
-            <span className="flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-caption font-medium text-neutral-700">
-              <Video size={14} className="text-primary" />
-              Video Walkthrough
-            </span>
+            {property.isVerified && (
+              <span className="flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-caption font-medium text-neutral-700">
+                <ShieldCheck size={14} className="text-secondary" />
+                Verified Property
+              </span>
+            )}
+            {property.videoUrls.length > 0 && (
+              <span className="flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-caption font-medium text-neutral-700">
+                <Video size={14} className="text-primary" />
+                Video Walkthrough
+              </span>
+            )}
           </div>
 
           <div className="mt-6">
             <img
               src={gallery[activeImage]}
-              alt="2 Bedroom Apartment"
+              alt={property.listingTitle}
               className="h-96 w-full rounded-2xl object-cover"
             />
-            <div className="mt-3 grid grid-cols-4 gap-3">
-              {gallery.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveImage(i)}
-                  className={`overflow-hidden rounded-xl border-2 ${
-                    activeImage === i ? "border-primary" : "border-transparent"
-                  }`}
-                >
-                  <img src={img} alt="" className="h-20 w-full object-cover" />
-                </button>
-              ))}
-            </div>
+            {gallery.length > 1 && (
+              <div className="mt-3 grid grid-cols-4 gap-3">
+                {gallery.map((img, i) => (
+                  <button
+                    key={img + i}
+                    onClick={() => setActiveImage(i)}
+                    className={`overflow-hidden rounded-xl border-2 ${
+                      activeImage === i ? "border-primary" : "border-transparent"
+                    }`}
+                  >
+                    <img src={img} alt="" className="h-20 w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-body text-neutral-600">
             <span className="flex items-center gap-1.5">
-              <BedDouble size={16} /> 2 Bedrooms
+              <BedDouble size={16} /> {property.bedrooms} Bedrooms
             </span>
             <span className="flex items-center gap-1.5">
-              <Bath size={16} /> 2 Bathrooms
+              <Bath size={16} /> {property.bathrooms} Bathrooms
             </span>
             <span className="flex items-center gap-1.5">
-              <Sofa size={16} /> 1 Living Room
+              <Sofa size={16} /> {propertyTypeLabel(property.propertyType)}
             </span>
-            <span className="flex items-center gap-1.5">
-              <Ruler size={16} /> 120m²
-            </span>
+            {property.features.length > 0 && (
+              <span className="flex items-center gap-1.5">
+                <Ruler size={16} /> {property.features.length} amenities
+              </span>
+            )}
           </div>
 
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -188,9 +254,7 @@ export function PropertyDetailPage() {
                 <div>
                   <h2 className="text-h4 font-bold text-neutral">About this property</h2>
                   <p className="mt-2 text-body text-neutral-500">
-                    Spacious 2 bedroom apartment with modern fittings in a
-                    secure estate. All rooms ensuite with a fitted kitchen,
-                    ample packing space and 24/7 electricity.
+                    {property.description || "No description provided for this property."}
                   </p>
                   <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {aboutChecklist.map((item) => (
@@ -261,12 +325,12 @@ export function PropertyDetailPage() {
 
               <div className="mt-10">
                 <h2 className="text-h4 font-bold text-neutral">Location</h2>
-                <p className="text-small text-neutral-500">Independence Layout, Enugu</p>
+                <p className="text-small text-neutral-500">{property.address}</p>
 
                 <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
                   <img
                     src={mapImage}
-                    alt="Map showing the property in New Haven, Enugu"
+                    alt={`Map showing ${property.listingTitle}`}
                     className="h-72 w-full rounded-2xl object-cover"
                   />
                   <div>
@@ -274,18 +338,24 @@ export function PropertyDetailPage() {
                       What's around?
                     </h3>
                     <div className="mt-3 flex flex-col gap-3">
-                      {nearby.map((place) => (
-                        <div
-                          key={place.name}
-                          className="flex items-center justify-between text-small"
-                        >
-                          <span className="flex items-center gap-2 text-neutral-600">
-                            <MapPin size={14} className="text-neutral-400" />
-                            {place.name}
-                          </span>
-                          <span className="text-neutral-400">{place.distance}</span>
-                        </div>
-                      ))}
+                      {nearby.length === 0 ? (
+                        <p className="text-small text-neutral-400">No nearby amenities found yet.</p>
+                      ) : (
+                        nearby.map((place, i) => (
+                          <div
+                            key={`${place.name}-${i}`}
+                            className="flex items-center justify-between text-small"
+                          >
+                            <span className="flex items-center gap-2 text-neutral-600">
+                              <MapPin size={14} className="text-neutral-400" />
+                              {place.name}
+                            </span>
+                            <span className="text-neutral-400">
+                              {(place.distance_metres / 1000).toFixed(1)} km
+                            </span>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>

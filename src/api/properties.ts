@@ -1,6 +1,7 @@
 import { api } from './client';
 import type {
   ApiEnvelope,
+  ApiInquiry,
   ApiPaginatedList,
   ApiPropertyDetail,
   ApiPropertyListItem,
@@ -66,6 +67,14 @@ export function submitInquiry(
   return api.post(`/properties/${propertyId}/inquiries`, {
     message,
   });
+}
+
+export function listInquiries() {
+  return api
+    .get<ApiEnvelope<{ inquiry: ApiInquiry; property: ApiPropertyDetail }[]>>(
+      '/inquiries'
+    )
+    .then((r) => r.data);
 }
 
 export function reportProperty(

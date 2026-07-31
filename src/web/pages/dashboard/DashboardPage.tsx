@@ -40,7 +40,7 @@ export function DashboardPage() {
 
   const statCards = [
     { label: "Saved Properties", value: savedCount, icon: Heart, iconBg: "bg-secondary-50", iconColor: "text-secondary", to: "/dashboard/settings/profile" },
-    { label: "My Inquiries", value: stats.inquiriesMade, icon: MessageCircleQuestionMark, iconBg: "bg-accent-50", iconColor: "text-accent-600", to: "/dashboard/settings/profile" },
+    { label: "My Inquiries", value: stats.inquiriesMade, icon: MessageCircleQuestionMark, iconBg: "bg-accent-50", iconColor: "text-accent-600", to: "/dashboard/inquiries" },
     { label: "Properties Viewed", value: stats.viewedProperties, icon: Eye, iconBg: "bg-primary-50", iconColor: "text-primary", to: "/dashboard/settings/profile" },
     { label: "Search Properties", value: undefined, icon: Search, iconBg: "bg-primary-100", iconColor: "text-primary-700", to: "/search" },
   ];

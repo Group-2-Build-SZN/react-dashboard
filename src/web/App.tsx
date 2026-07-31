@@ -13,6 +13,8 @@ import { AccountPage } from "./pages/dashboard/AccountPage";
 import { SecurityPage } from "./pages/dashboard/SecurityPage";
 import { NotificationsPage } from "./pages/dashboard/NotificationsPage";
 import { SearchResultsPage } from "./pages/dashboard/SearchResultsPage";
+import { InquiriesPage } from "./pages/dashboard/InquiriesPage";
+import { SavedPropertiesPage } from "./pages/dashboard/SavedPropertiesPage";
 import { PropertyDetailPage } from "./pages/PropertyDetailPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { TermsOfServicePage } from "./pages/TermsOfServicePage";
@@ -41,6 +43,8 @@ function App() {
       <Route path="/dashboard/settings/account" element={<RequireAuth><AccountPage /></RequireAuth>} />
       <Route path="/dashboard/settings/security" element={<RequireAuth><SecurityPage /></RequireAuth>} />
       <Route path="/dashboard/settings/notifications" element={<RequireAuth><NotificationsPage /></RequireAuth>} />
+      <Route path="/dashboard/inquiries" element={<RequireAuth><InquiriesPage /></RequireAuth>} />
+      <Route path="/dashboard/saved" element={<RequireAuth><SavedPropertiesPage /></RequireAuth>} />
       <Route path="/search" element={<SearchResultsPage />} />
       <Route path="/property/:id" element={<PropertyDetailPage />} />
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
