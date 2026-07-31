@@ -11,6 +11,10 @@ import {
   MapPin,
   Link2,
   CircleCheckBig,
+  X,
+  Phone,
+  Mail,
+  Lock,
 } from "lucide-react";
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
@@ -20,8 +24,11 @@ import {
   TwitterIcon,
   WhatsappIcon,
 } from "../components/ui/SocialIcons";
-import { getProperty } from "../../api/properties";
+import { getProperty, submitInquiry } from "../../api/properties";
 import { apiPropertyToProperty, formatNaira, propertyTypeLabel } from "../../api/adapters";
+import { getReviews, type ApiReview } from "../../api/reviews";
+import { initSubscription } from "../../api/payments";
+import { useAuth } from "../lib/AuthContext";
 import type { Property } from "../../types";
 
 import mainImage from "../assets/images/Rectangle 3 (3).png";
@@ -67,12 +74,52 @@ const trustBadges = [
 
 export function PropertyDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const [property, setProperty] = useState<Property | null>(null);
   const [nearby, setNearby] = useState<{ type: string; name: string; distance_metres: number }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isUnlockPromptOpen, setIsUnlockPromptOpen] = useState(false);
+  const [isUnlocking, setIsUnlocking] = useState(false);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
+  const [isInspectionOpen, setIsInspectionOpen] = useState(false);
+  const [inspectionMessage, setInspectionMessage] = useState(
+    "Hi, I'd like to schedule an inspection for this property. Please let me know your availability."
+  );
+  const [isSubmittingInspection, setIsSubmittingInspection] = useState(false);
+  const [inspectionSent, setInspectionSent] = useState(false);
+  const [inspectionError, setInspectionError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
+  const [reviews, setReviews] = useState<{ verified: ApiReview[]; community: ApiReview[] } | null>(null);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsError, setReviewsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (activeTab !== 2 || !id || reviews || reviewsLoading) return;
+    let cancelled = false;
+    setReviewsLoading(true);
+    setReviewsError(null);
+
+    getReviews(id)
+      .then((res) => {
+        if (cancelled) return;
+        setReviews({ verified: res.verifiedResident, community: res.communityTip });
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error("Failed to load reviews", err);
+        setReviewsError("We couldn't load reviews for this property.");
+      })
+      .finally(() => {
+        if (!cancelled) setReviewsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab, id, reviews, reviewsLoading]);
 
   useEffect(() => {
     if (!id) return;
@@ -100,6 +147,34 @@ export function PropertyDetailPage() {
       cancelled = true;
     };
   }, [id]);
+
+  async function handleUnlockContact() {
+    setUnlockError(null);
+    setIsUnlocking(true);
+    try {
+      const { authorization_url } = await initSubscription();
+      window.location.href = authorization_url;
+    } catch (err) {
+      console.error("Failed to start subscription checkout", err);
+      setUnlockError("Couldn't start checkout. Please try again.");
+      setIsUnlocking(false);
+    }
+  }
+
+  async function handleSendInspectionRequest() {
+    if (!id) return;
+    setInspectionError(null);
+    setIsSubmittingInspection(true);
+    try {
+      await submitInquiry(id, inspectionMessage);
+      setInspectionSent(true);
+    } catch (err) {
+      console.error("Failed to send inspection request", err);
+      setInspectionError("Couldn't send your request. Please try again.");
+    } finally {
+      setIsSubmittingInspection(false);
+    }
+  }
 
   const gallery = property?.photoUrls.length ? property.photoUrls : [FALLBACK_IMAGE];
 
@@ -176,10 +251,18 @@ export function PropertyDetailPage() {
               </span>
             )}
             {property.videoUrls.length > 0 && (
-              <span className="flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-caption font-medium text-neutral-700">
-                <Video size={14} className="text-primary" />
+              <button
+                onClick={() => (user?.isPremium ? setIsVideoOpen(true) : setIsUnlockPromptOpen(true))}
+                disabled={isUnlocking}
+                className="flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-caption font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
+              >
+                {user?.isPremium ? (
+                  <Video size={14} className="text-primary" />
+                ) : (
+                  <Lock size={14} className="text-neutral-400" />
+                )}
                 Video Walkthrough
-              </span>
+              </button>
             )}
           </div>
 
@@ -224,13 +307,28 @@ export function PropertyDetailPage() {
           </div>
 
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <Button size="lg" fullWidth>
-              Unlock Contact
-            </Button>
-            <Button size="lg" variant="outline" fullWidth>
+            {user?.isPremium && property.owner?.phone ? (
+              <div className="flex flex-1 flex-col gap-2 rounded-xl border border-secondary-200 bg-secondary-50 p-4">
+                <p className="text-small font-medium text-neutral">Contact unlocked</p>
+                <a href={`tel:${property.owner.phone}`} className="flex items-center gap-2 text-body text-neutral">
+                  <Phone size={16} /> {property.owner.phone}
+                </a>
+                {property.owner.email && (
+                  <a href={`mailto:${property.owner.email}`} className="flex items-center gap-2 text-body text-neutral">
+                    <Mail size={16} /> {property.owner.email}
+                  </a>
+                )}
+              </div>
+            ) : (
+              <Button size="lg" fullWidth onClick={handleUnlockContact} disabled={isUnlocking}>
+                {isUnlocking ? "Redirecting…" : "Unlock Contact"}
+              </Button>
+            )}
+            <Button size="lg" variant="outline" fullWidth onClick={() => setIsInspectionOpen(true)}>
               Schedule Inspection
             </Button>
           </div>
+          {unlockError && <p className="mt-2 text-small text-red-500">{unlockError}</p>}
 
           <div className="mt-8 flex gap-6 overflow-x-auto border-b border-neutral-200">
             {tabs.map((tab, i) => (
@@ -377,6 +475,45 @@ export function PropertyDetailPage() {
                 ))}
               </div>
             </>
+          ) : activeTab === 2 ? (
+            <div className="mt-6">
+              {reviewsLoading ? (
+                <p className="text-small text-neutral-500">Loading reviews…</p>
+              ) : reviewsError ? (
+                <p className="text-small text-red-500">{reviewsError}</p>
+              ) : !reviews || (reviews.verified.length === 0 && reviews.community.length === 0) ? (
+                <div className="rounded-2xl border border-dashed border-neutral-300 p-10 text-center text-body text-neutral-400">
+                  No reviews yet for this property.
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {[...reviews.verified, ...reviews.community].map((review) => (
+                    <div key={review.id} className="rounded-2xl border border-neutral-200 p-5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-body font-semibold text-neutral">
+                          {review.reviewer_first_name || review.reviewer_last_name
+                            ? `${review.reviewer_first_name ?? ""} ${review.reviewer_last_name ?? ""}`.trim()
+                            : "Anonymous"}
+                        </p>
+                        <span className="text-caption font-medium text-neutral-400">
+                          {review.reviewType === "verified_resident" ? "Verified Resident" : "Community Tip"}
+                        </span>
+                      </div>
+                      {review.reviewText && (
+                        <p className="mt-2 text-small text-neutral-600">{review.reviewText}</p>
+                      )}
+                      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-caption text-neutral-500">
+                        <span>Water: {review.waterRating}/5</span>
+                        <span>Power: {review.electricityRating}/5</span>
+                        <span>Security: {review.securityRating}/5</span>
+                        <span>Roads: {review.roadAccessibilityRating}/5</span>
+                        <span>Cleanliness: {review.cleanlinessRating}/5</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           ) : (
             <div className="mt-10 rounded-2xl border border-dashed border-neutral-300 p-10 text-center text-body text-neutral-400">
               {tabs[activeTab]} content coming soon.
@@ -385,6 +522,129 @@ export function PropertyDetailPage() {
         </div>
       </main>
       <Footer />
+
+      {isUnlockPromptOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setIsUnlockPromptOpen(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-white p-6 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Lock size={28} className="mx-auto text-neutral-400" />
+            <h3 className="mt-3 text-h4 font-bold text-neutral">Unlock to watch</h3>
+            <p className="mt-2 text-body text-neutral-500">
+              The video walkthrough is part of My Ulo Premium. Unlock contact & videos to watch
+              it.
+            </p>
+            {unlockError && <p className="mt-2 text-small text-red-500">{unlockError}</p>}
+            <div className="mt-4 flex flex-col gap-2">
+              <Button
+                fullWidth
+                onClick={() => {
+                  setIsUnlockPromptOpen(false);
+                  handleUnlockContact();
+                }}
+                disabled={isUnlocking}
+              >
+                {isUnlocking ? "Redirecting…" : "Unlock Now"}
+              </Button>
+              <Button fullWidth variant="ghost" onClick={() => setIsUnlockPromptOpen(false)}>
+                Not now
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isVideoOpen && property.videoUrls[0] && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={() => setIsVideoOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-2xl rounded-2xl bg-black"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsVideoOpen(false)}
+              aria-label="Close video"
+              className="absolute -top-10 right-0 text-white"
+            >
+              <X size={24} />
+            </button>
+            <video src={property.videoUrls[0]} controls autoPlay className="w-full rounded-2xl" />
+          </div>
+        </div>
+      )}
+
+      {isInspectionOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setIsInspectionOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-h4 font-bold text-neutral">Schedule Inspection</h3>
+              <button
+                onClick={() => setIsInspectionOpen(false)}
+                aria-label="Close"
+                className="text-neutral-400 hover:text-neutral-600"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {inspectionSent ? (
+              <div className="mt-4">
+                <p className="text-body text-neutral-600">
+                  Your request has been sent to the property owner. They'll reach out to confirm a
+                  time.
+                </p>
+                <Button
+                  className="mt-4"
+                  fullWidth
+                  onClick={() => {
+                    setIsInspectionOpen(false);
+                    setInspectionSent(false);
+                  }}
+                >
+                  Done
+                </Button>
+              </div>
+            ) : (
+              <div className="mt-4">
+                <p className="text-small text-neutral-500">
+                  There's no dedicated booking calendar yet — this sends your request directly to
+                  the owner as an inquiry.
+                </p>
+                <textarea
+                  value={inspectionMessage}
+                  onChange={(e) => setInspectionMessage(e.target.value)}
+                  rows={4}
+                  maxLength={500}
+                  className="mt-3 w-full rounded-lg border border-neutral-300 p-3 text-body text-neutral-700"
+                />
+                {inspectionError && (
+                  <p className="mt-2 text-small text-red-500">{inspectionError}</p>
+                )}
+                <Button
+                  className="mt-3"
+                  fullWidth
+                  onClick={handleSendInspectionRequest}
+                  disabled={isSubmittingInspection || !inspectionMessage.trim()}
+                >
+                  {isSubmittingInspection ? "Sending…" : "Send Request"}
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

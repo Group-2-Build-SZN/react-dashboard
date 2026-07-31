@@ -18,6 +18,8 @@ export interface ApiReview {
   distanceFromPropertyMetres: number;
   createdAt: string;
   updatedAt: string;
+  reviewer_first_name?: string;
+  reviewer_last_name?: string;
 }
 
 export interface SubmitReviewPayload {
@@ -29,6 +31,19 @@ export interface SubmitReviewPayload {
   reviewText?: string;
   submittedLat: number;
   submittedLng: number;
+}
+
+export interface ApiReviewsResponse {
+  success: boolean;
+  verifiedResident: ApiReview[];
+  communityTip: ApiReview[];
+  pagination: { page: number; limit: number; total: number; totalPages: number };
+}
+
+export function getReviews(propertyId: string, page = 1, limit = 20) {
+  return api.get<ApiReviewsResponse>(
+    `/properties/${propertyId}/reviews?page=${page}&limit=${limit}`
+  );
 }
 
 export function submitReview(propertyId: string, payload: SubmitReviewPayload) {
