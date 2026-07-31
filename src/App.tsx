@@ -51,7 +51,7 @@ import { apiPropertyToProperty } from './api/adapters';
 import { listAmenities } from './api/amenities';
 import { getMyStats, uploadAvatar } from './api/auth';
 import { initSubscription, getSubscriptionStatus } from './api/payments';
-import { verifyNin, verifyCac } from './api/kyc';
+import { verifyNin, verifyCac, getKycStatus } from './api/kyc';
 import { useAuth } from './context/AuthContext';
 
 function LoadingScreen() {
@@ -539,6 +539,29 @@ function ChooseUserTypeRoute() {
 function KYCVerificationRoute() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [isChecking, setIsChecking] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    getKycStatus()
+      .then((record) => {
+        if (cancelled) return;
+        if (record.status === 'verified' || record.status === 'review_needed') {
+          navigate('/home', { replace: true });
+          return;
+        }
+        setIsChecking(false);
+      })
+      .catch(() => {
+        if (!cancelled) setIsChecking(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
+
+  if (isChecking) return <LoadingScreen />;
+
   return (
     <KYCVerification
       onBack={() => navigate('/choose-user-type')}
