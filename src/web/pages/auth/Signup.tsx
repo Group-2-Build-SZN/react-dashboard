@@ -6,15 +6,27 @@ import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import logo from "../../assets/images/logo-icon.svg";
 import signupImage from "../../assets/images/ChatGPT Image Jul 14, 2026, 03_09_47 PM 2.png";
+import { requestCode } from "../../../api/auth";
 
 export function Signup() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    navigate("/signup/check-email", { state: { email } });
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await requestCode(email);
+      navigate("/signup/check-email", { state: { email, fullName } });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send code — try again");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -38,8 +50,8 @@ export function Signup() {
 
       <h2 className="text-h2 font-bold text-neutral">Sign up to get started</h2>
       <p className="mt-2 text-body text-neutral-500">
-        Enter your email to get started. We'll send you a link to create your
-        account.
+        Enter your email to get started. We'll send you a 6-digit code to
+        create your account.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-6">
@@ -65,9 +77,11 @@ export function Signup() {
           required
         />
 
-        <Button type="submit" size="lg" fullWidth icon={<Send size={18} />}>
-          Send me a sign-up link
+        <Button type="submit" size="lg" fullWidth icon={<Send size={18} />} disabled={isSubmitting}>
+          {isSubmitting ? "Sending…" : "Send me a code"}
         </Button>
+
+        {error && <p className="text-small text-error">{error}</p>}
 
         <div className="flex items-center gap-3">
           <span className="h-px flex-1 bg-neutral-200" />

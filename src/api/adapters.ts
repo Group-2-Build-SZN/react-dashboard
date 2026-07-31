@@ -26,9 +26,41 @@ import type { PropertyFilters } from '../components/FilterBottomSheet/FilterBott
 // y = lat). Neither reliably gives lat/lng for map pins from a plain list
 // call — if you need map pins for a bare list fetch, request with lat/lng/
 // radiusKm set so distance-based results are meaningful, or fetch details.
+// The API is PostGIS-flavoured: list endpoints give `location` as an EWKB
+// (extended well-known binary) hex string, e.g.
+// "0101000020E6100000501C7E33F7B229409A455CEB34FA5240" — a 1-byte byte-order
+// flag, 4-byte geometry type, 4-byte SRID, then two little-endian 8-byte
+// doubles (X = lng, then Y = lat). Detail endpoints instead give an already-
+// decoded `{ x, y }` object. This decodes the hex form so list-endpoint
+// properties (used for map pins, proximity search results, etc.) get real
+// coordinates instead of silently falling back to 0,0.
+function decodeEwkbPoint(hex: string): { lat: number; lng: number } | null {
+  // 18 header hex chars (byte order + type + SRID) + 32 hex chars (two
+  // doubles) = 50 hex chars total for a 2D point.
+  if (hex.length < 50) return null;
+  try {
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < bytes.length; i++) {
+      bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+    }
+    const isLittleEndian = bytes[0] === 1;
+    const view = new DataView(bytes.buffer);
+    const lng = view.getFloat64(9, isLittleEndian);
+    const lat = view.getFloat64(17, isLittleEndian);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    return { lat, lng };
+  } catch {
+    return null;
+  }
+}
+
 function extractLatLng(item: ApiPropertyListItem | ApiPropertyDetail): { lat: number; lng: number } {
   if ('location' in item && item.location && typeof item.location === 'object') {
     return { lat: item.location.y, lng: item.location.x };
+  }
+  if ('location' in item && typeof item.location === 'string') {
+    const decoded = decodeEwkbPoint(item.location);
+    if (decoded) return decoded;
   }
   return { lat: 0, lng: 0 };
 }

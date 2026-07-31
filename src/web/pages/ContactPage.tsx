@@ -3,6 +3,8 @@ import { Phone, Mail, MapPin, Headphones, Send } from "lucide-react";
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 import { Button } from "../components/ui/Button";
+import { submitContactForm } from "../../api/contact";
+import { ApiError } from "../../api/client";
 import heroImage from "../assets/images/Ellipse 16.png";
 import mapImage from "../assets/images/Rectangle 51.png";
 
@@ -13,14 +15,34 @@ export function ContactPage() {
     subject: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSent, setIsSent] = useState(false);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await submitContactForm(form);
+      setIsSent(true);
+      setForm({ fullName: "", email: "", subject: "", message: "" });
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 429) {
+        setError("Too many messages sent — please try again later.");
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to send message — try again");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function update(field: keyof typeof form) {
-    return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setIsSent(false);
       setForm((f) => ({ ...f, [field]: e.target.value }));
+    };
   }
 
   return (
@@ -100,6 +122,8 @@ export function ContactPage() {
                     placeholder="Enter your full name"
                     value={form.fullName}
                     onChange={update("fullName")}
+                    maxLength={100}
+                    required
                     className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-body placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
@@ -112,6 +136,7 @@ export function ContactPage() {
                     placeholder="Enter your email"
                     value={form.email}
                     onChange={update("email")}
+                    required
                     className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-body placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
@@ -124,6 +149,8 @@ export function ContactPage() {
                     placeholder="How can we help?"
                     value={form.subject}
                     onChange={update("subject")}
+                    maxLength={50}
+                    required
                     className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-body placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
@@ -136,12 +163,21 @@ export function ContactPage() {
                     rows={4}
                     value={form.message}
                     onChange={update("message")}
+                    maxLength={200}
+                    required
                     className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-body placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
 
-                <Button type="submit" size="lg" icon={<Send size={16} />}>
-                  Send Message
+                {error && <p className="text-small text-error">{error}</p>}
+                {isSent && (
+                  <p className="text-small font-medium text-secondary">
+                    Message sent — we'll get back to you soon.
+                  </p>
+                )}
+
+                <Button type="submit" size="lg" icon={<Send size={16} />} disabled={isSubmitting}>
+                  {isSubmitting ? "Sending…" : "Send Message"}
                 </Button>
               </form>
             </div>

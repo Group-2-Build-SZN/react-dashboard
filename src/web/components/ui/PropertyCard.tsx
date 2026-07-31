@@ -8,6 +8,7 @@ interface PropertyCardProps {
   beds: number;
   baths: number;
   type: string;
+  verified?: boolean;
 }
 
 export function PropertyCard({
@@ -18,15 +19,18 @@ export function PropertyCard({
   beds,
   baths,
   type,
+  verified = true,
 }: PropertyCardProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-neutral-200 transition-shadow hover:shadow-md">
       <div className="relative">
-        <img src={image} alt={title} className="h-44 w-full object-cover" />
-        <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-caption font-semibold text-secondary">
-          <ShieldCheck size={12} />
-          VERIFIED
-        </span>
+        <img src={image} alt={title} className="h-44 w-full object-cover bg-neutral-100" />
+        {verified && (
+          <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-caption font-semibold text-secondary">
+            <ShieldCheck size={12} />
+            VERIFIED
+          </span>
+        )}
       </div>
       <div className="p-4">
         <h3 className="text-h4 font-semibold text-neutral">{title}</h3>

@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import type { ReactNode } from "react";
 import { LandingPage } from "./pages/LandingPage";
 import { Login } from "./pages/auth/Login";
 import { Signup } from "./pages/auth/Signup";
@@ -15,6 +16,14 @@ import { SearchResultsPage } from "./pages/dashboard/SearchResultsPage";
 import { PropertyDetailPage } from "./pages/PropertyDetailPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { TermsOfServicePage } from "./pages/TermsOfServicePage";
+import { useAuth } from "./lib/AuthContext";
+
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { isLoggedIn, isLoading } = useAuth();
+  if (isLoading) return null;
+  if (!isLoggedIn) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
 
 function App() {
   return (
@@ -27,11 +36,11 @@ function App() {
       <Route path="/map" element={<MapPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
-      <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/dashboard/settings/profile" element={<ProfilePage />} />
-      <Route path="/dashboard/settings/account" element={<AccountPage />} />
-      <Route path="/dashboard/settings/security" element={<SecurityPage />} />
-      <Route path="/dashboard/settings/notifications" element={<NotificationsPage />} />
+      <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />
+      <Route path="/dashboard/settings/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
+      <Route path="/dashboard/settings/account" element={<RequireAuth><AccountPage /></RequireAuth>} />
+      <Route path="/dashboard/settings/security" element={<RequireAuth><SecurityPage /></RequireAuth>} />
+      <Route path="/dashboard/settings/notifications" element={<RequireAuth><NotificationsPage /></RequireAuth>} />
       <Route path="/search" element={<SearchResultsPage />} />
       <Route path="/property/:id" element={<PropertyDetailPage />} />
       <Route path="/privacy" element={<PrivacyPolicyPage />} />

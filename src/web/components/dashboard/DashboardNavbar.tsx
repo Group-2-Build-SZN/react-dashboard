@@ -16,11 +16,11 @@ const navLinks = [
 
 export function DashboardNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    await logout();
     setMenuOpen(false);
     navigate("/");
   }
@@ -54,8 +54,8 @@ export function DashboardNavbar() {
           <div className="relative">
             <button onClick={() => setMenuOpen((v) => !v)}>
               <img
-                src={avatar}
-                alt="User avatar"
+                src={user?.avatarUrl || avatar}
+                alt={user ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || 'User avatar' : 'User avatar'}
                 className="h-9 w-9 rounded-full object-cover"
               />
             </button>

@@ -59,6 +59,7 @@ export interface ApiPropertyListItem {
   bathrooms: number;
   price: string; // decimal-as-string, e.g. "350000.00"
   address: string;
+  location?: string; // EWKB hex string, e.g. "0101000020E6100000..." — decoded in api/adapters.ts
   video_urls: string[] | null;
   photo_urls: string[] | null;
   flag_count: number;
