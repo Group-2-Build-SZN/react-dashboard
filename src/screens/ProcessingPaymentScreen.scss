@@ -144,7 +144,6 @@
         animation: spin 1.2s linear infinite;
     }
 
-    // Completed steps
     &__item--complete {
         .step-tracker__icon {
             background: $color-primary;
@@ -156,7 +155,6 @@
         }
     }
 
-    // Active step
     &__item--active {
         .step-tracker__icon {
             background: $color-primary;
@@ -168,7 +166,6 @@
         }
     }
 
-    // Pending steps stay muted (default styles above)
 }
 
 @keyframes spin {

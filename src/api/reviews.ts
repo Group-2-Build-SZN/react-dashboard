@@ -52,7 +52,6 @@ export function submitReview(propertyId: string, payload: SubmitReviewPayload) {
     .then((r) => r.data);
 }
 
-/** Wraps the browser Geolocation API in a promise — reviews are GPS-gated per the API. */
 export function getCurrentPosition(): Promise<{ lat: number; lng: number }> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {

@@ -92,14 +92,14 @@ function PropertyDetails({ propertyId, onClose, onOpenVideo, onReport }: Propert
           location={property.neighborhood}
           address={property.address}
           price={formatNaira(property.price)}
-          serviceCharge="—" // not provided by the API
+          serviceCharge="—"
           verified={property.isVerified}
         />
 
         <PropertySpecs
           bedrooms={property.bedrooms}
           bathrooms={property.bathrooms}
-          size="—" // no floor-area field in the API
+          size="—"
           propertyType={propertyTypeLabel(property.propertyType)}
         />
 

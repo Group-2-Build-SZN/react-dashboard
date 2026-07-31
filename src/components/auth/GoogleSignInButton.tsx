@@ -3,11 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { signInWithGoogle } from "../../api/auth";
 
-// Google Identity Services client ID for the app. Set this in .env — see
-// .env.example. Get one from https://console.cloud.google.com/apis/credentials
-// (OAuth 2.0 Client ID, type "Web application", with this site's origin(s)
-// added under "Authorized JavaScript origins" — for local dev that's
-// http://localhost:5173 or whatever port Vite prints).
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
 
 let scriptLoadPromise: Promise<void> | null = null;
@@ -33,17 +28,9 @@ function loadGoogleScript(): Promise<void> {
 
 interface GoogleSignInButtonProps {
   fullWidth?: boolean;
-  /** Where to navigate after a successful sign-in. Mobile uses "/home", desktop uses "/dashboard". */
   redirectTo: string;
 }
 
-/**
- * Renders Google's own Sign-In button (via Google Identity Services) and
- * wires the returned ID token into POST /auth/google (signInWithGoogle).
- * Requires VITE_GOOGLE_CLIENT_ID to be set — without it, this renders a
- * disabled placeholder instead of failing silently. Shared between mobile
- * and desktop auth screens.
- */
 export function GoogleSignInButton({ fullWidth, redirectTo }: GoogleSignInButtonProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();

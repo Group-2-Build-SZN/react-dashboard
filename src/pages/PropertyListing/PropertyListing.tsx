@@ -52,8 +52,8 @@ function PropertyListing({
   useEffect(() => {
     let cancelled = false;
 
-    
-    
+
+
 
     listProperties({
       verifiedOnly:
@@ -65,9 +65,6 @@ function PropertyListing({
             ? 2
             : undefined,
 
-      // Chip row and the full FilterBottomSheet are two separate controls
-      // over the same list. Advanced filters from the sheet win on
-      // bedrooms/bathrooms if both specify them.
       ...(advancedFilters
         ? propertyFiltersToApiParams(advancedFilters)
         : {}),
@@ -100,7 +97,6 @@ function PropertyListing({
   async function handleToggleFavorite(property: Property) {
     const wasFavorited = property.isFavorited;
 
-    // Optimistic update
     setProperties((prev) =>
       prev.map((p) =>
         p.id === property.id
@@ -116,7 +112,6 @@ function PropertyListing({
         await saveProperty(property.id);
       }
     } catch (err) {
-      // Revert on failure
       setProperties((prev) =>
         prev.map((p) =>
           p.id === property.id

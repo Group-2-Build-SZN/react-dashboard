@@ -37,7 +37,6 @@ export async function logout() {
   tokenStore.set(null);
 }
 
-/** Call on app boot to silently exchange the refresh cookie for an access token. */
 export async function bootstrapSession(): Promise<ApiUser | null> {
   try {
     const res = await api.post<ApiEnvelope<{ accessToken: string }>>('/auth/refresh');

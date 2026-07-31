@@ -1,43 +1,10 @@
-// Single place that absorbs the gap between what the API actually returns
-// and what the UI wants. Two jobs:
-//
-//   1. apiPropertyToProperty()   -> the app's canonical `Property` type
-//      (src/types/index.ts, originally yours). Use this everywhere.
-//
-//   2. toPropertyCardViewModel() -> the display-formatted shape teammate's
-//      PropertyCard / RecommendedPropertyCard / SearchResultCard components
-//      expect (pre-formatted price strings, "Good"/"Fair" labels, etc).
-//
-// Honest gap you should know about: teammate's card components render
-// `videoDuration`, `views`, and `size` (sqm) — none of which exist anywhere
-// in the backend. There's no video-length field, no view-counter, and no
-// floor-area field in the API. toPropertyCardViewModel() below fills these
-// with a placeholder ('—') rather than inventing numbers. The real fix is
-// either dropping those fields from the card UI or asking the backend team
-// to add them — that's a product decision, not something to paper over here.
 
 import type { Property, PropertyType, Review, RatingBreakdown } from '../types';
 import type { ApiPropertyDetail, ApiPropertyListItem, ApiPropertySearchParams } from './types';
 import type { PropertyFilters } from '../components/FilterBottomSheet/FilterBottomSheet';
 import type { ApiReview } from './reviews';
 
-// The API is PostGIS-flavoured: list endpoints give `location` as a WKB hex
-// string we don't decode (lat/lng come from the `lat`/`lng` query instead
-// when doing proximity search), detail endpoints give `{ x, y }` (x = lng,
-// y = lat). Neither reliably gives lat/lng for map pins from a plain list
-// call — if you need map pins for a bare list fetch, request with lat/lng/
-// radiusKm set so distance-based results are meaningful, or fetch details.
-// The API is PostGIS-flavoured: list endpoints give `location` as an EWKB
-// (extended well-known binary) hex string, e.g.
-// "0101000020E6100000501C7E33F7B229409A455CEB34FA5240" — a 1-byte byte-order
-// flag, 4-byte geometry type, 4-byte SRID, then two little-endian 8-byte
-// doubles (X = lng, then Y = lat). Detail endpoints instead give an already-
-// decoded `{ x, y }` object. This decodes the hex form so list-endpoint
-// properties (used for map pins, proximity search results, etc.) get real
-// coordinates instead of silently falling back to 0,0.
 function decodeEwkbPoint(hex: string): { lat: number; lng: number } | null {
-  // 18 header hex chars (byte order + type + SRID) + 32 hex chars (two
-  // doubles) = 50 hex chars total for a 2D point.
   if (hex.length < 50) return null;
   try {
     const bytes = new Uint8Array(hex.length / 2);
@@ -87,22 +54,10 @@ function isListItem(
   return 'listing_title' in item;
 }
 
-// trustSummary's water_rating/electricity_rating/security_rating/
-// road_accessiblity_rating are literal averages of the 1–5 star ratings
-// submitted via POST /properties/{id}/reviews (see WriteReviewForm — the
-// star picker only ever sends 1–5). trust_score, in contrast, is a
-// separately-computed 0–100 composite. Every consumer of Property.waterScore
-// etc. (TrustScorePanel, scoreLabel, the trust circle) assumes a 0–100
-// scale, same as trustScore — so a genuinely good 4.2/5 water rating was
-// being read as "4.2 out of 100" and landing in scoreLabel's "Poor" bucket
-// every time, while an unrelated 96% trust_score displayed fine right next
-// to it. This normalizes the 0–5 ratings up to the same 0–100 scale before
-// they reach the UI.
 function ratingToScore(rating: number): number {
   return Math.max(0, Math.min(100, rating * 20));
 }
 
-/** Normalizes either raw API shape into the app's canonical Property type. */
 export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDetail): Property {
   const { lat, lng } = extractLatLng(item);
 
@@ -119,15 +74,6 @@ export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDet
       coverImageUrl: item.photo_urls?.[0] ?? '',
       lat,
       lng,
-      // Publishing a listing requires the owner's KYC to already be
-      // verified (see PATCH /properties/{id}/publish in the docs), so
-      // is_published is actually a reasonable proxy for "verified owner" —
-      // availability_status was an unrelated condition that had nothing to
-      // do with verification and was making almost every normal listing
-      // show a "Verified" badge while ?verifiedOnly=true still returned
-      // nothing. If that mismatch persists after this, the backend's
-      // definition of "verified" likely isn't is_published at all — worth
-      // confirming with the backend team what that flag actually checks.
       isVerified: item.is_published,
       listingCategory: item.listing_purpose === 'rent' ? 'for_rent' : 'for_sale',
       isFavorited: item.is_saved ?? false,
@@ -173,9 +119,6 @@ export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDet
     owner: item.owner
       ? {
           name: `${item.owner.firstName} ${item.owner.lastName}`.trim(),
-          // The API's example response has `memberSince: true` (looks like a
-          // backend bug — a join-date field returning a boolean). Guard
-          // against that rather than displaying "true" as a date.
           memberSince: typeof item.owner.memberSince === 'string' ? item.owner.memberSince : 'Member',
           isVerified: true, // no explicit per-owner verified flag in the API; KYC-gated publishing implies it
           phone: item.owner.contact?.phone,
@@ -198,12 +141,6 @@ export function formatNaira(amount: number): string {
   return `₦${amount.toLocaleString('en-NG')}`;
 }
 
-// AmenitiesGrid's icon map keys on specific display labels ("24/7 Power",
-// "Water Supply", etc). The real API's `features` array is freeform strings
-// set by whoever created the listing — seed data uses simple lowercase keys
-// like "water_supply", "security", "generator", "parking". This maps the
-// ones we know about; anything else falls through to a title-cased version
-// of the raw string rather than silently dropping it.
 const FEATURE_LABELS: Record<string, string> = {
   water: 'Water Supply',
   water_supply: 'Water Supply',
@@ -228,19 +165,12 @@ export function featureLabel(feature: string): string {
     .join(' ');
 }
 
-// The API scores 5 separate categories per review (water/electricity/
-// security/roadAccessibility/cleanliness) but the UI's `Review` type only
-// has a single `overallRating` star score — this averages the 4 categories
-// the trust-score breakdown actually cares about (cleanliness has no home
-// in the UI, so it's left out of the average rather than silently folded
-// into "security" or similar).
 function averageReviewRating(item: ApiReview): number {
   const scores = [item.waterRating, item.electricityRating, item.securityRating, item.roadAccessibilityRating];
   const sum = scores.reduce((total, s) => total + (Number(s) || 0), 0);
   return sum / scores.length;
 }
 
-/** Normalizes a raw API review into the app's canonical Review type. */
 export function apiReviewToReview(item: ApiReview): Review {
   const name = [item.reviewer_first_name, item.reviewer_last_name].filter(Boolean).join(' ').trim();
   return {
@@ -257,7 +187,6 @@ export function apiReviewToReview(item: ApiReview): Review {
   };
 }
 
-/** Averages the per-category ratings across every review into the summary bars at the top of the Reviews screen. */
 export function reviewsToBreakdown(items: ApiReview[]): RatingBreakdown {
   if (items.length === 0) {
     return { water: 0, electricity: 0, security: 0, amenityAccessibility: 0 };
@@ -280,7 +209,6 @@ export function reviewsToBreakdown(items: ApiReview[]): RatingBreakdown {
   };
 }
 
-/** Display-formatted shape for teammate's PropertyCard / RecommendedPropertyCard / SearchResultCard. */
 export function toPropertyCardViewModel(p: Property) {
   return {
     image: p.coverImageUrl || '',
@@ -303,24 +231,12 @@ export function toPropertyCardViewModel(p: Property) {
 
 export type { PropertyType };
 
-// The FilterBottomSheet's UI options don't line up 1:1 with the API's actual
-// enum/param shapes — mapped as closely as possible, with the mismatches
-// called out inline rather than silently guessed at.
 
 const PROPERTY_TYPE_FILTER_MAP: Partial<Record<string, string>> = {
-  // "Flats" and "Self-Contain" in the UI are broader than any single API
-  // enum value (self_contained, one_bedroom_flat, two_bedroom_flat,
-  // three_bedroom_flat, single_room, shared_apartment all exist separately),
-  // so they're left unmapped — "All" behavior (no filter) rather than a
-  // wrong guess.
   Duplex: 'duplex',
   Bungalow: 'bungalow',
 };
 
-// UI amenity labels -> the lowercase snake_case values the API's `features`
-// examples use (e.g. "water_supply", "generator", "security", "parking").
-// "Pop Ceiling" / "Kitchen Cabinets" have no precedent in the example data —
-// best-effort snake_case guesses.
 const AMENITY_FEATURE_MAP: Record<string, string> = {
   Parking: 'parking',
   Security: 'security',
@@ -332,15 +248,9 @@ const AMENITY_FEATURE_MAP: Record<string, string> = {
 
 function parseBedroomBathroomOption(option: string): number | undefined {
   if (option === 'Any') return undefined;
-  // "5+" / "4+" -> API has no ">=" operator on these params (exact-match
-  // integer only per the swagger doc), so this sends the base number as
-  // the closest available approximation rather than silently dropping the
-  // filter. Worth a follow-up with the backend team if a real "or more"
-  // filter is needed.
   return parseInt(option, 10);
 }
 
-/** Maps the FilterBottomSheet's UI filter state onto real /properties query params. */
 export function propertyFiltersToApiParams(filters: PropertyFilters): ApiPropertySearchParams {
   return {
     propertyType: PROPERTY_TYPE_FILTER_MAP[filters.propertyType],

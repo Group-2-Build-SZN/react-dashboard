@@ -15,10 +15,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // On app boot, try to exchange the refresh-token cookie (if any) for a
-    // fresh access token + the logged-in user. If there's no valid cookie
-    // (first-time visitor, logged out, etc.) this just resolves to null —
-    // that's expected, not an error.
     bootstrapSession()
       .then(setUser)
       .finally(() => setIsLoading(false));

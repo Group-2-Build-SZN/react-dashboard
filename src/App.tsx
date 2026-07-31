@@ -2,7 +2,6 @@ import { Routes, Route, Navigate, useNavigate, useParams, useSearchParams, useLo
 import { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 
-// --- your screens ---
 import { UnlockContactScreen } from './screens/unclockContactScreen';
 import { ReviewsScreen } from './screens/ReviewsScreen';
 import { InteractiveMapScreen } from './screens/InteractiveMap';
@@ -14,7 +13,6 @@ import { ReportSuccessScreen } from './screens/ReportSuccessScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 
-// --- teammate's screens ---
 import Splash from './pages/Splash/Splash';
 import Onboarding from './pages/Onboarding/Onboarding';
 import Welcome from './pages/Welcome/Welcome';
@@ -83,9 +81,6 @@ const NAV_TAB_PATHS: Record<string, string> = {
   profile: '/profile',
 };
 
-// ============================================================
-// Your existing routes (unchanged behaviour)
-// ============================================================
 
 function MapRoute() {
   const navigate = useNavigate();
@@ -167,8 +162,6 @@ function SavedRoute() {
       properties={properties}
       onBack={() => navigate(-1)}
       onToggleFavorite={async (id) => {
-        // Everything on this screen is, by definition, already saved —
-        // toggling here always means "remove from saved."
         const removed = properties.find((p) => p.id === id);
         setProperties((prev) => prev.filter((p) => p.id !== id));
         try {
@@ -201,9 +194,6 @@ function ReviewsRoute() {
   if (isLoading || reviewsLoading) return <LoadingScreen />;
   if (error || !property) return <NotFoundScreen message={error} onBack={() => navigate(-1)} />;
 
-  // A reviews-fetch failure shouldn't block the whole screen the way a
-  // missing property does — fall through and show an empty review list
-  // rather than a full-page error for what's a secondary fetch.
   if (reviewsError) console.error('Failed to load reviews', reviewsError);
 
   return (
@@ -221,11 +211,6 @@ function ReviewsRoute() {
   );
 }
 
-// Both "unlock" flows in the app (this one, and teammate's
-// EnterCardDetailsRoute below) hit the SAME backend endpoint —
-// POST /payments/subscribe — because the API only has one flat
-// ₦7,500/month paywall, not per-property unlocks. Confirmed with the
-// project owner: keep both UIs, wire both to the same subscription call.
 function UnlockRoute() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -246,11 +231,6 @@ function UnlockRoute() {
         property={property}
         onBack={() => navigate(-1)}
         onConfirmPayment={async () => {
-          // This previously just navigated to the processing screen without
-          // ever calling the real payment API — a fake "unlock" that
-          // charged nobody and unlocked nothing. Now it actually starts the
-          // real subscription and sends the browser to Paystack's checkout,
-          // same as the other unlock flow (EnterCardDetailsRoute) does.
           try {
             const { authorization_url } = await initSubscription();
             sessionStorage.setItem('myulo:postPaymentPropertyId', property.id);
@@ -272,11 +252,6 @@ function ProcessingRoute() {
   if (isLoading) return <LoadingScreen />;
   if (error || !property) return <NotFoundScreen message={error} onBack={() => navigate(-1)} />;
 
-  // NOTE: this route is currently unreachable — UnlockRoute now redirects
-  // straight to Paystack's checkout instead of routing through here first
-  // (see the payment fix in UnlockRoute above). Left in place in case you
-  // want to reintroduce a "processing" step between confirming and the
-  // Paystack redirect, but nothing navigates to /processing/:id right now.
   return <ProcessingPaymentScreen property={property} steps={mockPaymentSteps} onBack={() => navigate(-1)} />;
 }
 
@@ -288,10 +263,6 @@ function ContactRoute() {
       methods={mockContactMethods}
       onBack={() => navigate(-1)}
       onSelectMethod={(method) => {
-        // 'chat' and 'office' previously had no handling at all — tapping
-        // them did nothing, despite looking tappable (chevron + "Online"
-        // badge on chat). Chat opens WhatsApp using the same support
-        // number as "Call Us"; office opens directions in Google Maps.
         if (method.type === 'call') window.location.href = `tel:${method.detail.replace(/\s/g, '')}`;
         if (method.type === 'email') window.location.href = `mailto:${method.detail}`;
         if (method.type === 'chat') {
@@ -373,12 +344,6 @@ function ProfileRoute() {
     }
   }
 
-  // Falls back to mock data only when logged out / still loading — real
-  // user data (name, email, phone, verification status) is used once
-  // /auth/refresh + /users/me resolve on app boot. If you're seeing mock
-  // data ("Chinazor Okafor" etc.) here, it means bootstrapSession() didn't
-  // find a valid refresh-token cookie — check that you're actually logged
-  // in (completed the /verify-email or /enter-code step successfully).
   const profile = user
     ? {
         id: user.id,
@@ -408,9 +373,6 @@ function ProfileRoute() {
           if (destination in NAV_TAB_PATHS) {
             navigate(NAV_TAB_PATHS[destination]);
           } else {
-            // Profile menu items (inquiries, payment methods, verification,
-            // refer & earn, help) don't have screens built yet — no route to
-            // send them to. Logging rather than navigating to '*' → splash.
             console.log('Profile menu item not yet implemented:', destination);
           }
         }}
@@ -439,15 +401,9 @@ function SettingsRoute() {
   );
 }
 
-// ============================================================
-// Teammate's routes, converted from local useState view-switching to
-// react-router. His page components didn't need internal changes for
-// this — they already took onXxx callback props, same pattern as yours.
-// ============================================================
 
 function SplashRoute() {
   const navigate = useNavigate();
-  // was a setTimeout in his old App.tsx; kept the same 2s beat here.
   useState(() => {
     setTimeout(() => navigate('/onboarding'), 2000);
   });
@@ -570,9 +526,6 @@ function ChooseUserTypeRoute() {
         setError(null);
         try {
           const updatedUser = await authApi.completeProfile({ firstName, lastName, phone, role });
-          // Without this, the app kept showing stale/blank profile data
-          // until the next full login — completeProfile's response was
-          // being discarded instead of updating the in-memory user.
           setUser(updatedUser);
           navigate(role === 'tenant' ? '/home' : '/kyc-verification');
         } catch (e) {
@@ -611,9 +564,6 @@ function KYCVerificationRoute() {
             return;
           }
           if (result.status === 'review_needed') {
-            // Backend couldn't auto-verify; an admin resolves it later via
-            // PATCH /admin/kyc/{id}/resolve. Nothing more the user can do
-            // here — let them into the app and they can check status later.
             navigate('/home');
             return;
           }
@@ -674,10 +624,6 @@ function ListingRoute() {
   );
 }
 
-// PropertyDetails / VideoWalkthrough / EnterCardDetails / PaymentSuccess are
-// now wired the same way as PropertyListing/HomeDashboard/Search: real fetch
-// via getProperty(id) + apiPropertyToProperty, string UUID ids throughout.
-// The local data/properties.ts mock is no longer used by these four screens.
 
 function PropertyDetailsRoute() {
   const { id } = useParams<{ id: string }>();
@@ -706,17 +652,6 @@ function VideoWalkthroughRoute() {
   );
 }
 
-// See the big comment on UnlockRoute above — this is the SECOND UI that
-// triggers the SAME POST /payments/subscribe call. His screen collects raw
-// card fields (number/expiry/cvv), but the real backend doesn't accept a raw
-// card charge at all — Paystack integration here is redirect-based: the API
-// just hands back an `authorization_url` to send the browser to. So the
-// entered card fields currently aren't actually sent anywhere; the button
-// triggers the real subscription init and redirects to Paystack's hosted
-// checkout, same as UnlockContactScreen does. Worth deciding with your
-// teammate whether to keep the custom card-entry UI (as pure decoration
-// before the redirect) or drop it in favor of a plain "Continue to Paystack"
-// button — right now it's the former.
 function EnterCardDetailsRoute() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -733,12 +668,6 @@ function EnterCardDetailsRoute() {
         onBack={() => navigate(`/video/${id}`)}
         onPaymentSuccess={async (propertyId) => {
           setPaymentError(null);
-          // This previously fell back to navigating straight to the
-          // "Payment Successful!" screen if `initSubscription` threw — i.e.
-          // a failed payment showed a fake success page. Now a failure
-          // shows an error instead, and only a real Paystack redirect
-          // counts as "success" (the actual success screen is reached via
-          // /payment/callback once the backend confirms the subscription).
           try {
             const { authorization_url } = await initSubscription();
             sessionStorage.setItem('myulo:postPaymentPropertyId', propertyId);
@@ -753,16 +682,6 @@ function EnterCardDetailsRoute() {
   );
 }
 
-// Paystack redirects the browser back to whatever `callback_url` the
-// backend set when the transaction was initialized. Neither unlock flow
-// (UnlockRoute, EnterCardDetailsRoute) had anywhere for that redirect to
-// land — this route is that landing page. It polls /payments/subscription
-// until isPremium flips true, refreshes the logged-in user, then forwards
-// to the existing PaymentSuccess screen using the property id remembered
-// in sessionStorage before the Paystack redirect.
-// IMPORTANT: confirm with whoever owns the backend that the Paystack
-// transaction's callback_url actually points at <app-domain>/payment/callback
-// — otherwise this route is never reached.
 function PaymentCallbackRoute() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -859,7 +778,7 @@ function PaymentSuccessRoute() {
 export default function App() {
   return (
     <Routes>
-      {/* Onboarding / auth (teammate) */}
+      {}
       <Route path="/" element={<SplashRoute />} />
       <Route path="/onboarding" element={<OnboardingRoute />} />
       <Route path="/welcome" element={<WelcomeRoute />} />
@@ -870,7 +789,7 @@ export default function App() {
       <Route path="/choose-user-type" element={<ChooseUserTypeRoute />} />
       <Route path="/kyc-verification" element={<KYCVerificationRoute />} />
 
-      {/* Browse (teammate) */}
+      {}
       <Route path="/home" element={<HomeRoute />} />
       <Route path="/search" element={<SearchRoute />} />
       <Route path="/listing" element={<ListingRoute />} />
@@ -880,7 +799,7 @@ export default function App() {
       <Route path="/payment/callback" element={<PaymentCallbackRoute />} />
       <Route path="/payment-success/:id" element={<PaymentSuccessRoute />} />
 
-      {/* Map / reviews / unlock-contact / account (yours) */}
+      {}
       <Route path="/map" element={<MapRoute />} />
       <Route path="/saved" element={<SavedRoute />} />
       <Route path="/reviews/:id" element={<ReviewsRoute />} />

@@ -1,15 +1,3 @@
-// Raw shapes as the backend actually returns them (see /api/v1/docs).
-//
-// IMPORTANT / heads up for whoever touches this next:
-// The backend is NOT consistent about casing between endpoints.
-//   - GET /properties and GET /properties/recommended return snake_case
-//     (listing_title, property_type, photo_urls, water_score, ...)
-//   - GET /properties/{id}, POST /properties, PATCH .../publish, and the
-//     media upload endpoint all return camelCase (listingTitle, photoUrls...)
-// Both variants are modeled below (ApiPropertyListItem vs ApiPropertyDetail).
-// Flag this to the backend team if possible — until then, the adapters in
-// src/api/adapters.ts are the single place that absorbs the difference so
-// the rest of the app never has to think about it.
 
 export interface ApiEnvelope<T> {
   success: boolean;
@@ -27,7 +15,6 @@ export interface ApiPaginatedList<T> extends ApiEnvelope<T[]> {
   pagination: ApiPagination;
 }
 
-// ---- Auth -------------------------------------------------------------
 
 export interface ApiUser {
   id: string;
@@ -46,9 +33,7 @@ export interface ApiUser {
   updatedAt: string;
 }
 
-// ---- Properties ---------------------------------------------------------
 
-/** Shape returned by GET /properties and GET /properties/recommended (snake_case). */
 export interface ApiPropertyListItem {
   id: string;
   owner_id: string;
@@ -57,9 +42,9 @@ export interface ApiPropertyListItem {
   property_type: string;
   bedrooms: number;
   bathrooms: number;
-  price: string; // decimal-as-string, e.g. "350000.00"
+  price: string;
   address: string;
-  location?: string; // EWKB hex string, e.g. "0101000020E6100000..." — decoded in api/adapters.ts
+  location?: string;
   video_urls: string[] | null;
   photo_urls: string[] | null;
   flag_count: number;
@@ -76,7 +61,6 @@ export interface ApiPropertyListItem {
   is_saved?: boolean;
 }
 
-/** Shape returned by GET /properties/{id}, POST /properties, publish, media upload (camelCase). */
 export interface ApiPropertyDetail {
   id: string;
   ownerId: string;
@@ -88,7 +72,7 @@ export interface ApiPropertyDetail {
   bathrooms: number;
   price: string;
   address: string;
-  location: { x: number; y: number }; // x = lng, y = lat (PostGIS point)
+  location: { x: number; y: number };
   videoUrls: string[] | null;
   photoUrls: string[] | null;
   features: string[] | null;
@@ -143,7 +127,6 @@ export interface ApiPropertySearchParams {
   radiusKm?: number;
 }
 
-// ---- Payments -------------------------------------------------------------
 
 export interface ApiSubscriptionInit {
   authorization_url: string;

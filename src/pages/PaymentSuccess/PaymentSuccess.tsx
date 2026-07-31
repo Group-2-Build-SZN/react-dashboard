@@ -25,9 +25,6 @@ function PaymentSuccess({
   onBackToHome,
 }: PaymentSuccessProps) {
   const [property, setProperty] = useState<Property | null>(null);
-  // Was hardcoded to a fake reference/date on every single payment — this
-  // pulls the real, most recent entry from /payments/history instead. Falls
-  // back to "—" (not a made-up value) if the history call fails or is empty.
   const [payment, setPayment] = useState<{
     paystackReference: string;
     amount: string;
@@ -65,8 +62,6 @@ function PaymentSuccess({
     };
   }, []);
 
-  // ContactUsScreen builds the WhatsApp deep link the same way — strip
-  // everything but digits, then swap a leading 0 for the 234 country code.
   const whatsappNumber = property?.owner?.phone?.replace(/[^\d]/g, "").replace(/^0/, "234");
 
   return (

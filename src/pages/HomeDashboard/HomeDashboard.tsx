@@ -51,14 +51,6 @@ function HomeDashboard({
     };
   }, []);
 
-  // "Recommended for you" is a fixed, non-location-aware list from the API
-  // (GET /properties/recommended takes no lat/lng params at all) — this
-  // swaps it out for a real proximity search using the plain /properties
-  // endpoint, which does support lat/lng/radiusKm. There's no geocoding
-  // service wired up anywhere in this app, so there's no way to turn
-  // coordinates into a real place name ("New Haven, Enugu" was always
-  // hardcoded) — showing "Near you" instead of pretending to know the
-  // address is the honest option here.
   function handleUseMyLocation() {
     if (!navigator.geolocation) {
       setLocationError("Location isn't available in this browser");
@@ -104,7 +96,7 @@ function HomeDashboard({
   return (
     <div className="min-h-screen bg-white pb-24">
 
-      <div className="flex items-center justify-center px-5 pt-5">
+      <div className="flex items-center justify-center px-5 pt-8">
 
         <button
           onClick={handleUseMyLocation}
@@ -141,7 +133,7 @@ function HomeDashboard({
         />
       </div>
 
-      <div className="mt-9 flex justify-center gap-[100px] px-5">
+      <div className="mt-14 flex justify-around px-5">
         {quickActions.map(({ id, label, icon: Icon, colorClass, onClick }) => (
           <button key={id} onClick={onClick} className="flex flex-col items-center gap-2">
             <span className={`flex h-12 w-12 items-center justify-center rounded-full border border-border-light ${colorClass}`}>

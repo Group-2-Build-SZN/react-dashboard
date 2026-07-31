@@ -47,7 +47,6 @@
     &__map {
         flex: 1;
         position: relative;
-        // min-height: 260px;
     }
 
     &__locate-btn {
@@ -185,7 +184,7 @@
 }
 .map-screen__back-to-property {
   position: absolute;
-  top: 80px; // below header + filters
+  top: 80px;
   left: 16px;
   z-index: 1000;
 

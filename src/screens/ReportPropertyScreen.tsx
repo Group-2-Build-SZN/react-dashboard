@@ -58,9 +58,6 @@ export function ReportPropertyScreen({ property, onBack, onSubmit }: ReportPrope
         try {
             await onSubmit(reason, description, files);
         } catch (err) {
-            // Previously uncaught here — a failed submission (e.g. a
-            // network error) just cleared the spinner with no feedback,
-            // making it look like nothing happened.
             setSubmitError(err instanceof Error ? err.message : 'Failed to submit report. Please try again.');
         } finally {
             setIsSubmitting(false);

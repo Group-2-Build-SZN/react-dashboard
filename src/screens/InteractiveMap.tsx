@@ -52,7 +52,6 @@ function priceMarkerIcon(price: number) {
   });
 }
 
-//locate yourself Button
 function LocateButton({
   setUserLocation,
 }: {

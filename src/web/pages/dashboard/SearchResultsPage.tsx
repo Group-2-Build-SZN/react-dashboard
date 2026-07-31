@@ -49,8 +49,6 @@ const sortOptions = [
   "Price: High to Low",
 ];
 
-// "Apartments" has no single matching backend enum.
-// Leave it unmapped rather than guessing incorrectly.
 const PROPERTY_TYPE_PARAM: Partial<Record<string, string>> = {
   Bungalow: "bungalow",
   Duplex: "duplex",
@@ -243,7 +241,6 @@ export function SearchResultsPage() {
   }
 
   async function toggleSaved(p: Property) {
-    // Optimistic update — flip immediately.
     setProperties((list) =>
       list.map((item) =>
         item.id === p.id
@@ -267,7 +264,6 @@ export function SearchResultsPage() {
         err
       );
 
-      // Roll back if the request fails.
       setProperties((list) =>
         list.map((item) =>
           item.id === p.id

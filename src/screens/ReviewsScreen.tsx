@@ -334,16 +334,6 @@ export function ReviewsScreen({
 
                         onSubmit={async (review) => {
 
-                            // The API scores 5 separate categories (water/
-                            // electricity/security/road/cleanliness) plus
-                            // requires GPS coordinates — this form only
-                            // collects one overall star rating + free-text
-                            // tags. Using the overall rating for all 5
-                            // categories as a functional starting point;
-                            // the real fix is rebuilding this form to
-                            // collect each category separately (that's what
-                            // the trust-score breakdown on this screen is
-                            // actually meant to reflect).
                             const { lat, lng } = await getCurrentPosition();
 
                             await submitReview(review.propertyId, {

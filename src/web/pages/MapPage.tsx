@@ -32,9 +32,6 @@ const bedroomOptions = [
   { label: "4+ Bedrooms", value: 4 },
 ];
 
-// Enugu, Nigeria — matches the seed data's addresses ("Hilltop UNN", "New
-// Haven", "Trans Ekulu", etc). Used only as a fallback center before any
-// properties have loaded / if none have usable coordinates.
 const DEFAULT_CENTER: [number, number] = [6.4413, 7.4988];
 
 function priceMarkerIcon(price: number) {

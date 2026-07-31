@@ -3,7 +3,6 @@ import { getReviews } from '../api/reviews';
 import { apiReviewToReview, reviewsToBreakdown } from '../api/adapters';
 import type { Review, RatingBreakdown } from '../types';
 
-/** Fetches real reviews for a property. Replaces the old mockReviews/mockRatingBreakdown used on the Reviews screen. */
 export function useReviews(propertyId: string | undefined) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [breakdown, setBreakdown] = useState<RatingBreakdown>({
@@ -53,8 +52,6 @@ export function useReviews(propertyId: string | undefined) {
 
   useEffect(() => fetchReviews(), [fetchReviews]);
 
-  // Overall star rating shown at the top — average of every review's
-  // averaged category score, same "4 categories" scope as reviewsToBreakdown.
   const overallRating =
     reviews.length === 0 ? 0 : reviews.reduce((sum, r) => sum + r.overallRating, 0) / reviews.length;
 

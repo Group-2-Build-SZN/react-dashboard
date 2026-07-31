@@ -4,7 +4,6 @@ import { apiPropertyToProperty } from '../api/adapters';
 import { ApiError } from '../api/client';
 import type { Property } from '../types';
 
-/** Fetches a single property by real API id. Replaces the old local-mock lookup used across several routes. */
 export function useProperty(id: string | undefined) {
   const [property, setProperty] = useState<Property | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,9 +24,6 @@ export function useProperty(id: string | undefined) {
       })
       .catch((err) => {
         if (cancelled) return;
-        // Include the real status/code so a 401 (auth issue) isn't
-        // indistinguishable from a genuine 404 (property doesn't exist) —
-        // these have very different fixes and previously looked identical.
         if (err instanceof ApiError) {
           console.error(`getProperty(${id}) failed: ${err.status} ${err.code ?? ''} — ${err.message}`);
           setError(`${err.message} (HTTP ${err.status}${err.code ? `, ${err.code}` : ''})`);

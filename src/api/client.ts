@@ -1,17 +1,7 @@
-// Thin fetch wrapper around the My Ulo API.
-//
-// - Base URL comes from VITE_API_BASE_URL (see .env.example).
-// - Access token is kept in memory (see tokenStore below) and sent as
-//   `Authorization: Bearer <token>`.
-// - The refresh token lives in an httpOnly cookie set by the backend, so we
-//   always send `credentials: 'include'` and let the browser handle it.
-// - On a 401 (except on the refresh call itself) we try POST /auth/refresh
-//   once, then replay the original request.
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 
 if (!BASE_URL) {
-  // Fails loudly in dev rather than silently hitting a relative path.
   console.warn(
     '[api] VITE_API_BASE_URL is not set — copy .env.example to .env'
   );
@@ -34,11 +24,6 @@ export class ApiError extends Error {
   }
 }
 
-// --- token store -----------------------------------------------------------
-// In-memory only. Access tokens are short-lived (see swagger example: ~15min
-// exp), so we don't persist them to localStorage. On a hard page refresh the
-// app should call /auth/refresh on boot to get a new one from the refresh
-// cookie — wire that in App.tsx / an AuthProvider.
 
 let accessToken: string | null = null;
 
@@ -49,11 +34,10 @@ export const tokenStore = {
   },
 };
 
-// --- core request ------------------------------------------------------------
 
 interface RequestOptions extends Omit<RequestInit, 'body'> {
-  body?: unknown; // will be JSON.stringify'd unless it's already FormData
-  skipAuthRetry?: boolean; // internal — prevents infinite refresh loops
+  body?: unknown;
+  skipAuthRetry?: boolean;
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -74,7 +58,6 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     body: body === undefined ? undefined : isFormData ? (body as FormData) : JSON.stringify(body),
   });
 
-  // Attempt a single silent refresh on 401, then replay the request.
   if (res.status === 401 && !skipAuthRetry && path !== '/auth/refresh') {
     const refreshed = await tryRefresh();
     if (refreshed) {

@@ -16,7 +16,7 @@ export interface ApiKycRecord {
 export function verifyNin(payload: {
   firstName: string;
   lastName: string;
-  dateOfBirth: string; // YYYY-MM-DD
+  dateOfBirth: string;
   ninNumber: string;
 }) {
   return api.post<ApiEnvelope<ApiKycRecord>>('/kyc/verify-nin', payload).then((r) => r.data);

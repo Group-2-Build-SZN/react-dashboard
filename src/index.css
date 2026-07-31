@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary — buttons, navigation, icons, headers, brand identity */
   --color-primary-50: #EFF6FF;
   --color-primary-100: #DBEAFE;
   --color-primary-200: #BFDBFE;
@@ -13,7 +12,6 @@
   --color-primary-800: #1E40AF;
   --color-primary-900: #1E3A8A;
 
-  /* Secondary — verified badge, success states, trust score, confirmed listings */
   --color-secondary-50: #F0FDF4;
   --color-secondary-100: #DCFCE7;
   --color-secondary-200: #BBF7D0;
@@ -25,7 +23,6 @@
   --color-secondary-800: #166534;
   --color-secondary-900: #14532D;
 
-  /* Accent — warnings, moderate ratings, notifications */
   --color-accent-50: #FFFBEB;
   --color-accent-100: #FEF3C7;
   --color-accent-200: #FDE68A;
@@ -37,7 +34,6 @@
   --color-accent-800: #92400E;
   --color-accent-900: #78350F;
 
-  /* Error — scam reports, error messages, invalid inputs */
   --color-error-50: #FEF2F2;
   --color-error-100: #FEE2E2;
   --color-error-200: #FECACA;
@@ -49,13 +45,10 @@
   --color-error-800: #991B1B;
   --color-error-900: #7F1D1D;
 
-  /* Muted — secondary/helper text and default borders (inputs, outline buttons) */
   --color-muted: #AFB2BB;
 
-  /* Auth screen page background (Sign Up, Login, OTP) — Colours/Blue/Blue 1 */
   --color-blue-tint: #E2EAFC;
 
-  /* Card/chip border (Section 2) — Colors/Borders-500, lighter than the auth "muted" border */
   --color-border-light: #E2EBF0;
 }
 
@@ -85,22 +78,15 @@ img {
   max-width: 100%;
 }
 
-/* Hides the native scrollbar on horizontally-scrollable rows
-   (e.g. "Recommended for you") while keeping scroll functional.
-   Apply via className="scrollbar-hide" */
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
 }
 
-/* Dual-thumb price range slider: two overlapping <input type="range">
-   share one track. The track/input itself ignores pointer events so
-   clicks pass through; only the thumb re-enables them, so each thumb
-   drags independently. */
 .range-thumb::-webkit-slider-thumb {
   pointer-events: auto;
   -webkit-appearance: none;

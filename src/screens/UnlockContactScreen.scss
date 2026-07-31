@@ -46,12 +46,12 @@
 
     &__cta {
         @include button-primary;
-        width: 100%; // full width
+        width: 100%;
         font-size: 16px;
         padding: 14px;
 
         @media (min-width: 768px) {
-            width: 400px; // nicer on tablets
+            width: 400px;
             margin: 0 auto;
         }
     }

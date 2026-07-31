@@ -54,7 +54,6 @@ function VideoWalkthrough({ propertyId, isPremium, onBack, onUnlockContact }: Vi
       return;
     }
 
-    // No Web Share API (most desktop browsers) — fall back to clipboard.
     try {
       await navigator.clipboard.writeText(shareUrl);
       setLinkCopied(true);
@@ -143,7 +142,7 @@ function VideoWalkthrough({ propertyId, isPremium, onBack, onUnlockContact }: Vi
         ) : (
           <VideoPreview
             thumbnail={property.videoUrls[0] ?? property.coverImageUrl}
-            duration="—" // no video-duration field in the API
+            duration="—"
             onPlay={handlePlay}
           />
         )}

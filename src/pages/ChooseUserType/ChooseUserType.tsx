@@ -49,9 +49,6 @@ function ChooseUserType({ onBack, onContinue, error }: ChooseUserTypeProps) {
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
 
-  // The real POST /auth/complete-profile call requires all three of these —
-  // this screen was previously the only step in the sign-up flow that never
-  // collected them, so the API call would fail validation every time.
   const canContinue = firstName.trim() !== "" && lastName.trim() !== "" && phone.trim() !== "";
 
   return (

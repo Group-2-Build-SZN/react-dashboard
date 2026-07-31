@@ -8,13 +8,6 @@ import { getSubscriptionStatus } from "../../api/payments";
 import { getMe } from "../../api/auth";
 import { useAuth } from "../lib/AuthContext";
 
-// Paystack redirects the browser back here (to whatever callback_url the
-// backend set when the transaction was initialized) after the user pays or
-// cancels on the hosted checkout page. Paystack appends `?reference=...` /
-// `?trxref=...` to that URL — we don't act on the reference directly (the
-// backend's webhook is the source of truth for whether it succeeded), we
-// just use its presence to poll `/payments/subscription` until isPremium
-// flips, then refresh the logged-in user so the rest of the app sees it.
 const POLL_ATTEMPTS = 5;
 const POLL_DELAY_MS = 2000;
 

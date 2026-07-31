@@ -34,7 +34,7 @@ export function UnlockContactScreen({ property, onBack, onConfirmPayment }: Unlo
             <ScreenHeader title="Unlock Contact" onBack={onBack} />
 
             <div className="unlock-screen__body">
-                {/* Property Info */}
+                {}
                 <section className="unlock-card">
                     <p className="unlock-card__label">Property</p>
                     <div className="unlock-card__property">
@@ -53,7 +53,7 @@ export function UnlockContactScreen({ property, onBack, onConfirmPayment }: Unlo
                     </div>
                 </section>
 
-                {/* Amount */}
+                {}
                 <section className="unlock-card">
                     <p className="unlock-card__label">Amount to Pay</p>
                     <p className="unlock-card__amount">{formatNaira(UNLOCK_FEE_NGN)}</p>
@@ -62,7 +62,7 @@ export function UnlockContactScreen({ property, onBack, onConfirmPayment }: Unlo
                     </p>
                 </section>
 
-                {/* Payment Methods */}
+                {}
                 <h2 className="unlock-screen__section-title">Choose Payment Method</h2>
                 <div className="method-list">
                     {METHODS.map(({ id, label, description, Icon }) => {
@@ -89,14 +89,14 @@ export function UnlockContactScreen({ property, onBack, onConfirmPayment }: Unlo
                     })}
                 </div>
 
-                {/* Secure note */}
+                {}
                 <div className="unlock-screen__secure">
                     <Lock size={14} />
                     <span>Secure Payment</span>
                 </div>
             </div>
 
-            {/* Footer */}
+            {}
             <div className="unlock-screen__footer">
                 <button
                     className="unlock-screen__cta"

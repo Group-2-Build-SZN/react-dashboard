@@ -1,13 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { House, Compass, Map, Heart, User } from 'lucide-react';
 
-// Merged from two near-identical BottomNav components (one SCSS/BEM, one
-// Tailwind). Kept the Tailwind styling since it's a closer match to the
-// rest of the auth/browse flow. Supports both call-site conventions that
-// existed across the two codebases so neither side had to change its props:
-//   - `onChange`   (used by ContactUsScreen / SavedPropertiesScreen / ProfileScreen / InteractiveMap)
-//   - `onNavigate` (used by HomeDashboard / PropertyListing)
-// If neither is passed, it falls back to `navigate(/${tab})`.
 
 export type NavTab = 'home' | 'explore' | 'map' | 'saved' | 'profile';
 export type BottomNavTab = NavTab;

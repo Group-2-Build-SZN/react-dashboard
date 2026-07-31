@@ -12,11 +12,6 @@ import type { Property } from "../../types";
 
 const propertyTypes = ["All", "Flats", "Self-Contain", "Duplex", "Bungalow"] as const;
 
-// UI labels above don't match the API's actual propertyType enum values
-// (self_contained, one_bedroom_flat, two_bedroom_flat, duplex, bungalow,
-// shared_apartment) — this maps the closest ones. "Flats" and
-// "Self-Contain" are broader than any single enum value, so they're left
-// unmapped (== no propertyType filter applied) rather than guessing wrong.
 const TYPE_FILTER_MAP: Partial<Record<(typeof propertyTypes)[number], string>> = {
   Duplex: "duplex",
   Bungalow: "bungalow",
@@ -62,7 +57,7 @@ function Search({
         .finally(() => {
           if (!cancelled) setIsLoading(false);
         });
-    }, 300); // debounce so it's not one request per keystroke
+    }, 300);
 
     return () => {
       cancelled = true;

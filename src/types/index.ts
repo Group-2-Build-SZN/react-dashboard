@@ -26,20 +26,17 @@ export interface Property {
     isVerified: boolean;
     listingCategory: ListingCategory;
     isFavorited: boolean;
-    // --- extended for the merged app (from the real API, not in the original mock) ---
     description?: string;
     photoUrls: string[];
     videoUrls: string[];
     features: string[];
     propertyType: PropertyType;
-    trustScore: number; // 0-100 raw score from the API
+    trustScore: number;
     waterScore?: number;
     powerScore?: number;
     securityScore?: number;
     roadScore?: number;
     ownerId: string;
-    // Only populated from GET /properties/{id} (list endpoints don't include
-    // owner details) — undefined until the detail screens fetch by id.
     owner?: {
         name: string;
         memberSince: string;
@@ -101,11 +98,6 @@ export interface ContactMethod {
     detail: string;
     isOnline?: boolean;
 }
-// NOTE: previously used values here (wrong_photos, agent_unresponsive,
-// price_mismatch, already_taken, scam_suspected) didn't match the backend's
-// actual enum for POST /properties/{id}/report, so submitting a report with
-// any of those reasons was rejected by the API with a 400 validation error.
-// Corrected to match the backend exactly.
 export type ReportReason =
     | 'fake_listing'
     | 'scam_or_fraud'
@@ -135,7 +127,7 @@ export interface UserProfile {
 export interface SettingsItem {
     id: string;
     label: string;
-    value?: string; // e.g. "English", "NGN", "v1.0.0" — shown right-aligned
+    value?: string;
 }
 
 export interface SettingsSection {
