@@ -19,6 +19,7 @@ import { SearchResultsPage } from "./pages/dashboard/SearchResultsPage";
 import { InquiriesPage } from "./pages/dashboard/InquiriesPage";
 import { SavedPropertiesPage } from "./pages/dashboard/SavedPropertiesPage";
 import { PropertyDetailPage } from "./pages/PropertyDetailPage";
+import { VideoWalkthroughPage } from "./pages/VideoWalkthroughPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { TermsOfServicePage } from "./pages/TermsOfServicePage";
 import { useAuth } from "./lib/AuthContext";
@@ -53,6 +54,7 @@ function App() {
       <Route path="/dashboard/saved" element={<RequireAuth><SavedPropertiesPage /></RequireAuth>} />
       <Route path="/search" element={<SearchResultsPage />} />
       <Route path="/property/:id" element={<PropertyDetailPage />} />
+      <Route path="/property/:id/video" element={<VideoWalkthroughPage />} />
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/terms" element={<TermsOfServicePage />} />
       <Route path="*" element={<Navigate to="/" replace />} />

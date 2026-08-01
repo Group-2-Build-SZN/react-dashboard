@@ -14,7 +14,6 @@ import {
   X,
   Phone,
   Mail,
-  Lock,
 } from "lucide-react";
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
@@ -79,8 +78,6 @@ export function PropertyDetailPage() {
   const [nearby, setNearby] = useState<{ type: string; name: string; distance_metres: number }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isVideoOpen, setIsVideoOpen] = useState(false);
-  const [isUnlockPromptOpen, setIsUnlockPromptOpen] = useState(false);
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const [isInspectionOpen, setIsInspectionOpen] = useState(false);
@@ -251,18 +248,13 @@ export function PropertyDetailPage() {
               </span>
             )}
             {property.videoUrls.length > 0 && (
-              <button
-                onClick={() => (user?.isPremium ? setIsVideoOpen(true) : setIsUnlockPromptOpen(true))}
-                disabled={isUnlocking}
-                className="flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-caption font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
+              <Link
+                to={`/property/${id}/video`}
+                className="flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-caption font-medium text-neutral-700 hover:bg-neutral-50"
               >
-                {user?.isPremium ? (
-                  <Video size={14} className="text-primary" />
-                ) : (
-                  <Lock size={14} className="text-neutral-400" />
-                )}
+                <Video size={14} className="text-primary" />
                 Video Walkthrough
-              </button>
+              </Link>
             )}
           </div>
 
@@ -522,62 +514,6 @@ export function PropertyDetailPage() {
         </div>
       </main>
       <Footer />
-
-      {isUnlockPromptOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-          onClick={() => setIsUnlockPromptOpen(false)}
-        >
-          <div
-            className="w-full max-w-sm rounded-2xl bg-white p-6 text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Lock size={28} className="mx-auto text-neutral-400" />
-            <h3 className="mt-3 text-h4 font-bold text-neutral">Unlock to watch</h3>
-            <p className="mt-2 text-body text-neutral-500">
-              The video walkthrough is part of My Ulo Premium. Unlock contact & videos to watch
-              it.
-            </p>
-            {unlockError && <p className="mt-2 text-small text-red-500">{unlockError}</p>}
-            <div className="mt-4 flex flex-col gap-2">
-              <Button
-                fullWidth
-                onClick={() => {
-                  setIsUnlockPromptOpen(false);
-                  handleUnlockContact();
-                }}
-                disabled={isUnlocking}
-              >
-                {isUnlocking ? "Redirecting…" : "Unlock Now"}
-              </Button>
-              <Button fullWidth variant="ghost" onClick={() => setIsUnlockPromptOpen(false)}>
-                Not now
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isVideoOpen && property.videoUrls[0] && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-          onClick={() => setIsVideoOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-2xl rounded-2xl bg-black"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setIsVideoOpen(false)}
-              aria-label="Close video"
-              className="absolute -top-10 right-0 text-white"
-            >
-              <X size={24} />
-            </button>
-            <video src={property.videoUrls[0]} controls autoPlay className="w-full rounded-2xl" />
-          </div>
-        </div>
-      )}
 
       {isInspectionOpen && (
         <div

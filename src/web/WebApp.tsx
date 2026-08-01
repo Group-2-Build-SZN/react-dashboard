@@ -1,0 +1,45 @@
+import { Routes, Route } from "react-router-dom";
+import { LandingPage } from "./pages/LandingPage";
+import { Login } from "./pages/auth/Login";
+import { Signup } from "./pages/auth/Signup";
+import { CheckEmail } from "./pages/auth/CheckEmail";
+import { MapPage } from "./pages/MapPage";
+import { AboutPage } from "./pages/AboutPage";
+import { ContactPage } from "./pages/ContactPage";
+import { DashboardPage } from "./pages/dashboard/DashboardPage";
+import { ProfilePage } from "./pages/dashboard/ProfilePage";
+import { AccountPage } from "./pages/dashboard/AccountPage";
+import { SecurityPage } from "./pages/dashboard/SecurityPage";
+import { NotificationsPage } from "./pages/dashboard/NotificationsPage";
+import { SearchResultsPage } from "./pages/dashboard/SearchResultsPage";
+import { PropertyDetailPage } from "./pages/PropertyDetailPage";
+import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
+import { TermsOfServicePage } from "./pages/TermsOfServicePage";
+
+function WebApp() {
+  return (
+    <div style={{ fontFamily: "var(--font-sans)", color: "var(--color-neutral)" }}>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/login/check-email" element={<CheckEmail mode="login" />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup/check-email" element={<CheckEmail mode="signup" />} />
+        <Route path="/map" element={<MapPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard/settings/profile" element={<ProfilePage />} />
+        <Route path="/dashboard/settings/account" element={<AccountPage />} />
+        <Route path="/dashboard/settings/security" element={<SecurityPage />} />
+        <Route path="/dashboard/settings/notifications" element={<NotificationsPage />} />
+        <Route path="/search" element={<SearchResultsPage />} />
+        <Route path="/property/:id" element={<PropertyDetailPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsOfServicePage />} />
+      </Routes>
+    </div>
+  );
+}
+
+export default WebApp;
