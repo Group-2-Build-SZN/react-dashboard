@@ -53,6 +53,7 @@ function PropertyCard({
 }: PropertyCardProps) {
   return (
     <div
+      style={{ padding: '5px' }}
       onClick={onClick}
       className="overflow-hidden rounded-xl bg-white shadow-sm"
     >

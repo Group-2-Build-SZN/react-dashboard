@@ -20,7 +20,7 @@ function PropertyOverview({
   verified,
 }: PropertyOverviewProps) {
   return (
-    <div>
+    <div style={{ padding: '3px' }}>
 
       {verified && (
         <div className="mb-2">
