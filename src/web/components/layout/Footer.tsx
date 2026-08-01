@@ -12,20 +12,16 @@ const quickLinks = [
   { label: "Home", to: "/" },
   { label: "Search Properties", to: "/search" },
   { label: "How It Works", to: "/#how-it-works" },
-  { label: "List Property", to: "/#list-property" },
 ];
 
 const companyLinks = [
   { label: "About Us", to: "/about" },
   { label: "Contact Us", to: "/contact" },
-  { label: "Help Center", to: "/#help" },
-  { label: "Blog", to: "/#blog" },
 ];
 
 const legalLinks = [
   { label: "Privacy Policy", to: "/privacy" },
   { label: "Terms of Service", to: "/terms" },
-  { label: "Cookie Policy", to: "/#cookies" },
 ];
 
 const socialLinks = [

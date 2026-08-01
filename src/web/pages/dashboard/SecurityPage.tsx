@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
+import { SettingsLayout } from "../../components/dashboard/SettingsLayout";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { useAuth } from "../../lib/AuthContext";
@@ -28,7 +28,7 @@ export function SecurityPage() {
   }
 
   return (
-    <DashboardLayout>
+    <SettingsLayout>
       <form onSubmit={handleSubmit} className="max-w-xl rounded-2xl border border-neutral-200 p-6">
         <h2 className="text-h4 font-bold text-neutral">Change Email</h2>
 
@@ -56,6 +56,6 @@ export function SecurityPage() {
           <Button type="button" variant="outline" onClick={handleCancel}>Cancel</Button>
         </div>
       </form>
-    </DashboardLayout>
+    </SettingsLayout>
   );
 }

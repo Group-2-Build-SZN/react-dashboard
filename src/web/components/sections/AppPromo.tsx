@@ -1,4 +1,3 @@
-import { GooglePlayIcon, AppleIcon } from "../ui/StoreIcons";
 import promoImage from "../../assets/images/ChatGPT Image Jul 14, 2026, 03_48_04 PM 1.png";
 import phoneImage from "../../assets/images/ChatGPT Image Jul 15, 2026, 08_57_45 PM 1.png";
 
@@ -28,37 +27,6 @@ export function AppPromo() {
               My Ulo app gives you the power to search, verify, and connect on
               the go.
             </p>
-
-            <div className="mt-8 flex flex-wrap gap-4">
-              <a
-                href="#"
-                className="flex items-center gap-3 rounded-xl bg-neutral px-5 py-3 text-white"
-              >
-                <GooglePlayIcon size={22} />
-                <span className="text-left">
-                  <span className="block text-caption text-neutral-300">
-                    Get it on
-                  </span>
-                  <span className="block text-body font-semibold">
-                    Google Play
-                  </span>
-                </span>
-              </a>
-              <a
-                href="#"
-                className="flex items-center gap-3 rounded-xl bg-neutral px-5 py-3 text-white"
-              >
-                <AppleIcon size={22} />
-                <span className="text-left">
-                  <span className="block text-caption text-neutral-300">
-                    Download on the
-                  </span>
-                  <span className="block text-body font-semibold">
-                    App Store
-                  </span>
-                </span>
-              </a>
-            </div>
           </div>
         </div>
       </div>

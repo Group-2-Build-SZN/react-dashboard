@@ -148,8 +148,11 @@ export function DashboardPage() {
         <div>
           <h3 className="text-h3 font-bold text-primary">List your property on My Ulo</h3>
           <p className="mt-2 text-body text-neutral-500">
-            Reach thousands of verified tenants and rent faster. Use the My Ulo mobile app to create a listing.
+            Reach thousands of verified tenants and rent faster.
           </p>
+          <Button size="lg" className="mt-4">
+            List Property
+          </Button>
         </div>
       </div>
     </DashboardLayout>

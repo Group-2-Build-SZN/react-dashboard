@@ -11,7 +11,7 @@ const sections: LegalSection[] = [
       {
         heading: "Personal Information",
         paragraph:
-          "This may include your name, address, phone number, identification number (NIN), payment information.",
+          "This may include your name, email address, phone number, identification number (NIN), payment information.",
       },
       {
         heading: "Usage Information",

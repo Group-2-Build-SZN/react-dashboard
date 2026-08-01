@@ -13,13 +13,6 @@ const mainLinks = [
   { label: "My Inquiries", to: "/dashboard/inquiries", icon: MessageCircleQuestionMark },
 ];
 
-const settingsLinks = [
-  { label: "Profile", to: "/dashboard/settings/profile" },
-  { label: "Account", to: "/dashboard/settings/account" },
-  { label: "Security", to: "/dashboard/settings/security" },
-  { label: "Notifications", to: "/dashboard/settings/notifications" },
-];
-
 export function DashboardSidebar() {
   const location = useLocation();
   const inSettings = location.pathname.startsWith("/dashboard/settings");
@@ -58,27 +51,6 @@ export function DashboardSidebar() {
           Settings
         </NavLink>
       </nav>
-
-      {inSettings && (
-        <nav className="mt-3 ml-3 flex flex-col gap-1 border-l border-neutral-200 pl-3">
-          {settingsLinks.map((link) => (
-            <NavLink
-              key={link.label}
-              to={link.to}
-              className={({ isActive }) =>
-                cn(
-                  "rounded-lg px-3 py-2 text-body",
-                  isActive
-                    ? "bg-primary-50 font-medium text-primary"
-                    : "text-neutral-600 hover:bg-neutral-50"
-                )
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
-        </nav>
-      )}
     </aside>
   );
 }

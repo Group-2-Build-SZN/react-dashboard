@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   Search,
   X,
@@ -9,6 +9,7 @@ import {
   List,
 } from "lucide-react";
 import { Footer } from "../../components/layout/Footer";
+import { PropertyCard } from "../../components/ui/PropertyCard";
 import {
   listProperties,
   saveProperty,
@@ -100,6 +101,7 @@ const PRICE_MIN = 0;
 const PRICE_MAX = 10000000;
 
 export function SearchResultsPage() {
+  const [searchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
 
@@ -110,6 +112,8 @@ export function SearchResultsPage() {
   const [maxPrice, setMaxPrice] = useState(PRICE_MAX);
   const [sort, setSort] = useState(sortOptions[0]);
   const [page, setPage] = useState(1);
+  const [verifiedOnly] = useState(searchParams.get("verified") === "true");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [total, setTotal] = useState(0);
@@ -132,6 +136,7 @@ export function SearchResultsPage() {
     propertyType,
     maxPrice,
     sort,
+    verifiedOnly,
   });
 
   const isLoading = completedRequestKey !== requestKey;
@@ -148,6 +153,7 @@ export function SearchResultsPage() {
       bathrooms: parseCountOption(bathroom),
       maxPrice:
         maxPrice < PRICE_MAX ? maxPrice : undefined,
+      verifiedOnly: verifiedOnly || undefined,
     };
 
     listProperties(params)
@@ -351,7 +357,7 @@ export function SearchResultsPage() {
           </p>
 
           <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
-            <aside>
+            <aside className="rounded-2xl border border-neutral-200 p-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-h4 font-bold text-neutral">
                   Filters
@@ -451,17 +457,41 @@ export function SearchResultsPage() {
                     View
                   </span>
 
-                  <button className="text-neutral-600">
+                  <button
+                    type="button"
+                    aria-label="Grid view"
+                    onClick={() => setViewMode("grid")}
+                    className={
+                      viewMode === "grid"
+                        ? "text-neutral-600"
+                        : "text-neutral-300 hover:text-neutral-500"
+                    }
+                  >
                     <LayoutGrid size={18} />
                   </button>
 
-                  <button>
+                  <button
+                    type="button"
+                    aria-label="List view"
+                    onClick={() => setViewMode("list")}
+                    className={
+                      viewMode === "list"
+                        ? "text-neutral-600"
+                        : "text-neutral-300 hover:text-neutral-500"
+                    }
+                  >
                     <List size={18} />
                   </button>
                 </div>
               </div>
 
-              <div className="mt-4 flex flex-col gap-4">
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3"
+                    : "mt-4 flex flex-col gap-4"
+                }
+              >
                 {currentError ? (
                   <p className="text-small text-error">
                     {currentError}
@@ -474,6 +504,48 @@ export function SearchResultsPage() {
                   <p className="text-small text-neutral-500">
                     No properties match your filters.
                   </p>
+                ) : viewMode === "grid" ? (
+                  properties.map((p) => (
+                    <Link
+                      key={p.id}
+                      to={`/property/${p.id}`}
+                      className="relative block"
+                    >
+                      <button
+                        type="button"
+                        aria-label={
+                          p.isFavorited
+                            ? "Remove from saved"
+                            : "Save property"
+                        }
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleSaved(p);
+                        }}
+                        className={`absolute right-3 top-3 z-10 ${
+                          p.isFavorited ? "text-error" : "text-white"
+                        }`}
+                      >
+                        <Heart
+                          size={20}
+                          fill={
+                            p.isFavorited ? "currentColor" : "none"
+                          }
+                        />
+                      </button>
+                      <PropertyCard
+                        image={p.coverImageUrl || ""}
+                        title={p.listingTitle}
+                        location={p.address}
+                        price={formatNaira(p.price)}
+                        beds={p.bedrooms}
+                        baths={p.bathrooms}
+                        type={p.propertyType}
+                        verified={p.isVerified}
+                      />
+                    </Link>
+                  ))
                 ) : (
                   properties.map((p) => (
                     <Link

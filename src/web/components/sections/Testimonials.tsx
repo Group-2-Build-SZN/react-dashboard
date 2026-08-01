@@ -1,7 +1,4 @@
 import { Quote, Star } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { cn } from "../../lib/utils";
 
 const testimonials = [
   {
@@ -25,8 +22,6 @@ const testimonials = [
 ];
 
 export function Testimonials() {
-  const [active, setActive] = useState(1);
-
   return (
     <section className="bg-neutral-50 py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -62,29 +57,6 @@ export function Testimonials() {
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-8 flex justify-center gap-2">
-          {testimonials.map((t, i) => (
-            <button
-              key={t.name}
-              aria-label={`Show testimonial ${i + 1}`}
-              onClick={() => setActive(i)}
-              className={cn(
-                "h-2 rounded-full transition-all",
-                active === i ? "w-6 bg-primary" : "w-2 bg-neutral-300"
-              )}
-            />
-          ))}
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link
-            to="/#reviews"
-            className="text-body font-medium text-primary hover:underline"
-          >
-            See All
-          </Link>
         </div>
       </div>
     </section>

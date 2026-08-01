@@ -2,7 +2,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Bell } from "lucide-react";
 import { useState } from "react";
 import logo from "../../assets/images/logo-icon.svg";
-import avatar from "../../assets/images/Ellipse 20.png";
+import { Avatar } from "../ui/Avatar";
 import { useAuth } from "../../lib/AuthContext";
 
 const navLinks = [
@@ -53,14 +53,21 @@ export function DashboardNavbar() {
           </button>
           <div className="relative">
             <button onClick={() => setMenuOpen((v) => !v)}>
-              <img
-                src={user?.avatarUrl || avatar}
+              <Avatar
+                src={user?.avatarUrl}
                 alt={user ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || 'User avatar' : 'User avatar'}
-                className="h-9 w-9 rounded-full object-cover"
+                size={36}
               />
             </button>
             {menuOpen && (
-              <div className="absolute right-0 mt-2 w-40 rounded-lg border border-neutral-200 bg-white py-1 shadow-md">
+              <div className="absolute right-0 mt-2 w-44 rounded-lg border border-neutral-200 bg-white py-1 shadow-md">
+                <Link
+                  to="/dashboard/settings/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className="block w-full px-4 py-2 text-left text-small text-neutral-700 hover:bg-neutral-50"
+                >
+                  My Profile
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="block w-full px-4 py-2 text-left text-small text-error hover:bg-neutral-50"

@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
-import { Pencil, Calendar, Bell, X } from "lucide-react";
+import { Pencil, Calendar, BellRing, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
+import { SettingsLayout } from "../../components/dashboard/SettingsLayout";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
+import { Avatar } from "../../components/ui/Avatar";
 import { useAuth } from "../../lib/AuthContext";
 import { completeProfile, uploadAvatar } from "../../../api/auth";
-import avatarFallback from "../../assets/images/Ellipse 20.png";
 
 export function ProfilePage() {
   const { user, setUser } = useAuth();
@@ -75,7 +75,7 @@ export function ProfilePage() {
     : "—";
 
   return (
-    <DashboardLayout>
+    <SettingsLayout>
       <div
         className="flex flex-col gap-4 rounded-2xl p-6 text-white sm:flex-row sm:items-center sm:justify-between"
         style={{
@@ -85,10 +85,11 @@ export function ProfilePage() {
       >
         <div className="flex items-center gap-4">
           <div className="relative">
-            <img
-              src={user?.avatarUrl || avatarFallback}
+            <Avatar
+              src={user?.avatarUrl}
               alt={`${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Your avatar'}
-              className="h-16 w-16 rounded-full object-cover ring-2 ring-white/50"
+              size={64}
+              className="ring-2 ring-white/50"
             />
             <input
               ref={fileInputRef}
@@ -163,16 +164,22 @@ export function ProfilePage() {
         </div>
       )}
 
-      <div className="mt-6 flex flex-col items-start justify-between gap-4 rounded-2xl bg-primary-50 p-6 sm:flex-row sm:items-center">
+      <div
+        className="mt-6 flex flex-col items-start justify-between gap-4 rounded-2xl p-6 text-white sm:flex-row sm:items-center"
+        style={{
+          background:
+            "linear-gradient(90deg, #1E40AF 7.69%, rgba(30, 64, 175, 0.69) 53.61%, rgba(22, 163, 74, 0.22) 99.52%)",
+        }}
+      >
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary">
-            <Bell size={18} />
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white">
+            <BellRing size={18} />
           </span>
           <div>
-            <p className="text-body font-semibold text-neutral">
+            <p className="text-body font-semibold text-white">
               Customize Notification Settings
             </p>
-            <p className="text-small text-neutral-500">
+            <p className="text-small text-white/80">
               Select your preferred method of receiving notification
             </p>
           </div>
@@ -181,6 +188,6 @@ export function ProfilePage() {
           <Button>Manage</Button>
         </Link>
       </div>
-    </DashboardLayout>
+    </SettingsLayout>
   );
 }

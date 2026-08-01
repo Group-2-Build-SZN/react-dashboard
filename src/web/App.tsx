@@ -4,6 +4,9 @@ import { LandingPage } from "./pages/LandingPage";
 import { Login } from "./pages/auth/Login";
 import { Signup } from "./pages/auth/Signup";
 import { CheckEmail } from "./pages/auth/CheckEmail";
+import { ChooseUserType } from "./pages/auth/ChooseUserType";
+import { KYCVerification } from "./pages/auth/KYCVerification";
+import { VerificationSuccess } from "./pages/auth/VerificationSuccess";
 import { MapPage } from "./pages/MapPage";
 import { AboutPage } from "./pages/AboutPage";
 import { ContactPage } from "./pages/ContactPage";
@@ -35,6 +38,9 @@ function App() {
       <Route path="/login/check-email" element={<CheckEmail mode="login" />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/signup/check-email" element={<CheckEmail mode="signup" />} />
+      <Route path="/choose-user-type" element={<RequireAuth><ChooseUserType /></RequireAuth>} />
+      <Route path="/kyc-verification" element={<RequireAuth><KYCVerification /></RequireAuth>} />
+      <Route path="/verification-success" element={<RequireAuth><VerificationSuccess /></RequireAuth>} />
       <Route path="/map" element={<MapPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
+import { SettingsLayout } from "../../components/dashboard/SettingsLayout";
 import { Button } from "../../components/ui/Button";
 
 const LANGUAGES = ["English (US)", "English (UK)"];
@@ -70,7 +70,7 @@ export function AccountPage() {
   }
 
   return (
-    <DashboardLayout>
+    <SettingsLayout>
       <div className="max-w-xl rounded-2xl border border-neutral-200 p-6">
         <h2 className="text-h4 font-bold text-neutral">Account Preferences</h2>
 
@@ -87,6 +87,6 @@ export function AccountPage() {
           <Button variant="outline" onClick={handleCancel}>Cancel</Button>
         </div>
       </div>
-    </DashboardLayout>
+    </SettingsLayout>
   );
 }

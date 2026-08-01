@@ -35,9 +35,11 @@ export function Hero() {
                 Find a Home
               </Button>
             </Link>
-            <Button size="lg" variant="secondary" icon={<FileText size={18} />}>
-              List of Property
-            </Button>
+            <Link to="/signup" className="w-full sm:w-auto">
+              <Button size="lg" variant="secondary" icon={<FileText size={18} />} fullWidth>
+                List of Property
+              </Button>
+            </Link>
           </div>
 
           <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4">

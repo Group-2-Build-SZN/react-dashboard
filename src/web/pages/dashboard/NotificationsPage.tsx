@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
+import { SettingsLayout } from "../../components/dashboard/SettingsLayout";
 import { cn } from "../../lib/utils";
 
 const initialEmail = [
@@ -82,13 +82,13 @@ export function NotificationsPage() {
   }
 
   return (
-    <DashboardLayout>
+    <SettingsLayout>
       <div className="max-w-2xl rounded-2xl border border-neutral-200 p-6">
         <NotificationGroup title="Email Notifications" items={email} toggle={toggleEmail} />
         <div className="mt-8">
           <NotificationGroup title="Push Notifications" items={push} toggle={togglePush} />
         </div>
       </div>
-    </DashboardLayout>
+    </SettingsLayout>
   );
 }

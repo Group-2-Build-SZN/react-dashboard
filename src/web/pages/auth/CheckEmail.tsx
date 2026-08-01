@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Mail, CircleCheckBig, Phone } from "lucide-react";
+import { Mail, CircleCheckBig } from "lucide-react";
 import { AuthLayout } from "../../components/layout/AuthLayout";
 import { OTPInput } from "../../components/ui/OTPInput";
-import { Input } from "../../components/ui/Input";
-import { Button } from "../../components/ui/Button";
 import { useAuth } from "../../lib/AuthContext";
-import { verifyCode, completeProfile, requestCode } from "../../../api/auth";
+import { verifyCode, requestCode } from "../../../api/auth";
 import loginCheckImage from "../../assets/images/unsplash_hE0nmTffKtM.png";
 import signupCheckImage from "../../assets/images/unsplash_YI5vG37d-Ig.png";
 
@@ -45,9 +43,6 @@ export function CheckEmail({ mode }: CheckEmailProps) {
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
   const [error, setError] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [needsPhone, setNeedsPhone] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [isCompletingProfile, setIsCompletingProfile] = useState(false);
 
   useEffect(() => {
     if (secondsLeft <= 0) return;
@@ -65,7 +60,7 @@ export function CheckEmail({ mode }: CheckEmailProps) {
       setUser(user);
 
       if (mode === "signup" && !user.firstName) {
-        setNeedsPhone(true);
+        navigate("/choose-user-type", { state: { fullName: state?.fullName } });
       } else {
         navigate("/dashboard");
       }
@@ -73,33 +68,6 @@ export function CheckEmail({ mode }: CheckEmailProps) {
       setError(err instanceof Error ? err.message : "Invalid or expired code");
     } finally {
       setIsVerifying(false);
-    }
-  }
-
-  async function handleCompleteProfile() {
-    setError(null);
-    const [firstName, ...rest] = (state?.fullName || "").trim().split(" ");
-    const lastName = rest.join(" ") || firstName || "Ulo";
-
-    if (!firstName) {
-      setError("We're missing your name — please sign up again");
-      return;
-    }
-
-    setIsCompletingProfile(true);
-    try {
-      const user = await completeProfile({
-        firstName,
-        lastName,
-        phone,
-        role: "tenant",
-      });
-      setUser(user);
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to complete your profile");
-    } finally {
-      setIsCompletingProfile(false);
     }
   }
 
@@ -117,93 +85,55 @@ export function CheckEmail({ mode }: CheckEmailProps) {
       panelSubtitle={content.panelSubtitle}
     >
       <div className="flex flex-col items-center text-center">
-        {needsPhone ? (
-          <>
-            <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
-              <Phone size={26} className="text-primary" />
-            </span>
+        <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
+          <Mail size={26} className="text-primary" />
+          <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
+            <CircleCheckBig size={14} />
+          </span>
+        </span>
 
-            <h2 className="mt-6 text-h2 font-bold text-neutral">One last step</h2>
-            <p className="mt-2 text-body text-neutral-500">
-              Add your phone number so agents and landlords can reach you.
-            </p>
+        <h2 className="mt-6 text-h2 font-bold text-neutral">Check your email</h2>
+        <p className="mt-2 text-body text-neutral-500">
+          We've sent a 6-digit code to
+          <br />
+          <span className="font-medium text-primary">{email}</span>
+        </p>
 
-            <div className="mt-8 w-full">
-              <Input
-                id="phone"
-                type="tel"
-                label="Phone Number"
-                placeholder="e.g. 08012345678"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
+        <div className="mt-8">
+          <OTPInput onChange={handleOTPChange} />
+        </div>
 
-            <Button
-              size="lg"
-              fullWidth
-              className="mt-6"
-              disabled={isCompletingProfile}
-              onClick={handleCompleteProfile}
-            >
-              {isCompletingProfile ? "Finishing up…" : "Continue to My Ulo"}
-            </Button>
+        {isVerifying && <p className="mt-3 text-small text-neutral-500">Verifying…</p>}
+        {error && <p className="mt-3 text-small text-error">{error}</p>}
 
-            {error && <p className="mt-3 text-small text-error">{error}</p>}
-          </>
-        ) : (
-          <>
-            <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
-              <Mail size={26} className="text-primary" />
-              <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
-                <CircleCheckBig size={14} />
+        <p className="mt-8 text-small text-neutral-500">
+          {secondsLeft > 0 ? (
+            <>
+              Didn't receive the email? Check your spam folder or resend in{" "}
+              <span className="font-medium text-primary">
+                {formatTime(secondsLeft)}
               </span>
-            </span>
+            </>
+          ) : (
+            <>
+              Didn't receive the email? Check your spam folder or{" "}
+              <button
+                type="button"
+                onClick={handleResend}
+                className="font-semibold text-primary"
+              >
+                Resend code
+              </button>
+            </>
+          )}
+        </p>
 
-            <h2 className="mt-6 text-h2 font-bold text-neutral">Check your email</h2>
-            <p className="mt-2 text-body text-neutral-500">
-              We've sent a 6-digit code to
-              <br />
-              <span className="font-medium text-primary">{email}</span>
-            </p>
-
-            <div className="mt-8">
-              <OTPInput onChange={handleOTPChange} />
-            </div>
-
-            {isVerifying && <p className="mt-3 text-small text-neutral-500">Verifying…</p>}
-            {error && <p className="mt-3 text-small text-error">{error}</p>}
-
-            <p className="mt-8 text-small text-neutral-500">
-              {secondsLeft > 0 ? (
-                <>
-                  Didn't receive the email? Check your spam folder or resend in{" "}
-                  <span className="font-medium text-primary">
-                    {formatTime(secondsLeft)}
-                  </span>
-                </>
-              ) : (
-                <>
-                  Didn't receive the email? Check your spam folder or{" "}
-                  <button
-                    type="button"
-                    onClick={handleResend}
-                    className="font-semibold text-primary"
-                  >
-                    Resend code
-                  </button>
-                </>
-              )}
-            </p>
-
-            <Link
-              to={mode === "login" ? "/login" : "/signup"}
-              className="mt-4 text-small text-neutral-400 hover:text-neutral-600"
-            >
-              ← Back
-            </Link>
-          </>
-        )}
+        <Link
+          to={mode === "login" ? "/login" : "/signup"}
+          className="mt-4 text-small text-neutral-400 hover:text-neutral-600"
+        >
+          ← Back
+        </Link>
       </div>
     </AuthLayout>
   );

@@ -2,8 +2,8 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, Bell } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/Button";
+import { Avatar } from "../ui/Avatar";
 import logo from "../../assets/images/logo-icon.svg";
-import avatar from "../../assets/images/Ellipse 20.png";
 import { useAuth } from "../../lib/AuthContext";
 
 const navLinks = [
@@ -65,10 +65,10 @@ export function Navbar({ variant = "marketing" }: NavbarProps) {
             </button>
             <div className="relative">
               <button onClick={() => setMenuOpen((v) => !v)}>
-                <img
-                  src={user?.avatarUrl || avatar}
+                <Avatar
+                  src={user?.avatarUrl}
                   alt={user ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || 'User avatar' : 'User avatar'}
-                  className="h-9 w-9 rounded-full object-cover"
+                  size={36}
                 />
               </button>
               {menuOpen && (

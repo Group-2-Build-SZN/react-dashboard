@@ -22,7 +22,7 @@ export function PropertyCard({
   verified = true,
 }: PropertyCardProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-200 transition-shadow hover:shadow-md">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 transition-shadow hover:shadow-md">
       <div className="relative">
         <img src={image} alt={title} className="h-44 w-full object-cover bg-neutral-100" />
         {verified && (
@@ -32,21 +32,21 @@ export function PropertyCard({
           </span>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="text-h4 font-semibold text-neutral">{title}</h3>
-        <p className="mt-1 text-small text-neutral-500">{location}</p>
+      <div className="flex flex-1 flex-col p-4">
+        <h3 className="truncate text-h4 font-semibold text-neutral">{title}</h3>
+        <p className="mt-1 truncate text-small text-neutral-500">{location}</p>
         <p className="mt-2 text-h4 font-bold text-primary">
           {price}
           <span className="text-small font-normal text-neutral-500">/year</span>
         </p>
-        <div className="mt-3 flex items-center gap-4 text-small text-neutral-500">
+        <div className="mt-auto flex items-center gap-4 pt-3 text-small text-neutral-500">
           <span className="flex items-center gap-1">
             <BedDouble size={14} /> {beds} Beds
           </span>
           <span className="flex items-center gap-1">
             <Bath size={14} /> {baths} Baths
           </span>
-          <span>{type}</span>
+          <span className="truncate">{type}</span>
         </div>
       </div>
     </div>

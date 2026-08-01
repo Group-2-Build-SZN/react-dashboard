@@ -49,6 +49,7 @@ export function LegalPageLayout({
               {sections.map((section, i) => (
                 <button
                   key={section.title}
+                  type="button"
                   onClick={() => setActive(i)}
                   className={cn(
                     "rounded-lg px-3 py-2 text-left text-small",
