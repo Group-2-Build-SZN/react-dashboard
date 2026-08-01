@@ -94,7 +94,7 @@ function HomeDashboard({
   ] as const;
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div style={{ padding: '8px 9px' }} className="min-h-screen bg-white pb-24">
 
       <div className="flex items-center justify-center px-5 pt-8">
 
@@ -114,7 +114,7 @@ function HomeDashboard({
         <p className="mt-2 px-5 text-center text-sm text-error-600">{locationError}</p>
       )}
 
-      <div className="mt-8 px-5">
+      <div style={{ padding: '3px 10px 0 0' }} className="mt-8 px-5">
         <p className="text-sm text-gray-500">
           Hello, {userName} 👋
         </p>
@@ -124,7 +124,7 @@ function HomeDashboard({
         </h1>
       </div>
 
-      <div className="mt-8 px-5">
+      <div style={{ padding: '0px 5px 0 0' }} className="mt-8 px-5">
         <SearchBar
           placeholder="Search by location, area or keyword"
           onChange={onSearch}
@@ -133,7 +133,7 @@ function HomeDashboard({
         />
       </div>
 
-      <div className="mt-14 flex justify-around px-5">
+      <div style={{ margin: '5px 0px' }} className="mt-14 flex justify-around px-5">
         {quickActions.map(({ id, label, icon: Icon, colorClass, onClick }) => (
           <button key={id} onClick={onClick} className="flex flex-col items-center gap-2">
             <span className={`flex h-12 w-12 items-center justify-center rounded-full border border-border-light ${colorClass}`}>
@@ -144,7 +144,7 @@ function HomeDashboard({
         ))}
       </div>
 
-      <div className="relative mx-5 mt-10 flex h-40 items-center gap-4 overflow-hidden rounded-2xl bg-blue-tint p-5">
+      <div style={{ padding: '13px' }} className="relative mx-5 mt-10 flex h-40 items-center gap-4 overflow-hidden rounded-2xl bg-blue-tint p-5">
         <span className="z-10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary-600 text-white">
           <ShieldCheck size={24} />
         </span>
@@ -165,7 +165,7 @@ function HomeDashboard({
         />
       </div>
 
-      <div className="mt-10">
+      <div style={{ padding: '8px 0px' }} className="mt-10">
 
         <div className="flex items-center justify-between px-5">
           <h2 className="text-base font-semibold text-gray-900">
@@ -184,7 +184,7 @@ function HomeDashboard({
           </div>
         </div>
 
-        <div className="scrollbar-hide mt-4 flex gap-4 overflow-x-auto px-5 pb-2">
+        <div className="scrollbar-hide mt-4 flex gap-5 overflow-x-auto px-5 pb-2">
           {recommended.length === 0 ? (
             <div className="px-1">
               <p className="text-sm text-gray-500">
@@ -223,7 +223,7 @@ function HomeDashboard({
 
       <BottomNav active="home" onNavigate={onNavigate} />
 
-    </div>
+    </div >
   );
 }
 

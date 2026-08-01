@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { House, Compass, Map, Heart, User } from 'lucide-react';
+import './bottomNav.scss'
 
 
 export type NavTab = 'home' | 'explore' | 'map' | 'saved' | 'profile';
@@ -29,25 +30,22 @@ function BottomNav({ active, onChange, onNavigate }: BottomNavProps) {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md border-t border-border-light bg-white">
-      <div className="mx-auto flex max-w-md justify-around py-3">
-        {TABS.map(({ id, label, Icon }) => {
-          const isActive = id === active;
-          return (
-            <button
-              key={id}
-              onClick={() => handleClick(id)}
-              className={`flex flex-col items-center gap-1 text-xs ${
-                isActive ? 'font-semibold text-primary-600' : 'text-muted'
-              }`}
-            >
-              <Icon size={22} strokeWidth={isActive ? 2.4 : 2} />
-              <span>{label}</span>
-            </button>
-          );
-        })}
-      </div>
+    <nav className="bottom-nav">
+      {TABS.map(({ id, label, Icon }) => {
+        const isActive = id === active;
+        return (
+          <button
+            key={id}
+            onClick={() => handleClick(id)}
+            className={`bottom-nav__item ${isActive ? 'bottom-nav__item--active' : ''}`}
+          >
+            <Icon size={22} strokeWidth={isActive ? 2.4 : 2} />
+            <span>{label}</span>
+          </button>
+        );
+      })}
     </nav>
+
   );
 }
 

@@ -1,0 +1,43 @@
+@use '../../styles/tokens' as *;
+
+
+
+
+
+.bottom-nav {
+    display: flex;
+    background: $color-surface;
+    border-top: 1px solid $color-border;
+    padding: $space-2 0;
+    flex-direction: row;
+    justify-content: space-around;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+
+
+
+    &__item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        background: none;
+        border: none;
+        color: $color-text-muted;
+        font-size: 11px;
+        padding: $space-2 0;
+        cursor: pointer;
+
+        &--active {
+            color: $color-primary;
+            font-weight: 600;
+        }
+    }
+}
+
+nav.bottom-nav {
+    padding-top: 10px;
+}

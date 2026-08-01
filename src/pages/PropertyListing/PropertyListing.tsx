@@ -133,16 +133,16 @@ function PropertyListing({
   }
 
   return (
-    <div>
+    <div style={{ padding: '5px' }}>
       <ListingHeader
         resultCount={isLoading ? undefined : properties.length}
         activeFilterCount={
           (activeFilter === "All" ? 0 : 1) +
           (advancedFilters
             ? (advancedFilters.propertyType !== "All" ? 1 : 0) +
-              (advancedFilters.bedrooms !== "Any" ? 1 : 0) +
-              (advancedFilters.bathrooms !== "Any" ? 1 : 0) +
-              advancedFilters.amenities.length
+            (advancedFilters.bedrooms !== "Any" ? 1 : 0) +
+            (advancedFilters.bathrooms !== "Any" ? 1 : 0) +
+            advancedFilters.amenities.length
             : 0)
         }
         onBack={onBack}

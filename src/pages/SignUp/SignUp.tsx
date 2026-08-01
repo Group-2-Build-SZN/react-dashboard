@@ -24,7 +24,7 @@ function SignUp({
   const [email, setEmail] = useState("");
 
   return (
-    <div className="flex min-h-screen flex-col bg-blue-tint px-6 pb-8 pt-5">
+    <div style={{ padding: '8px 10px' }} className="flex min-h-screen flex-col bg-blue-tint px-6 pb-8 pt-5">
 
       <button
         onClick={onBack}
@@ -61,6 +61,7 @@ function SignUp({
           placeholder="Enter your email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          style={{ padding: '10px 10px' }}
         />
 
         {error && <p className="-mt-4 text-sm text-error-600">{error}</p>}

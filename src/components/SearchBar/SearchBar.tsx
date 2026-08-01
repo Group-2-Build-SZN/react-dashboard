@@ -16,9 +16,9 @@ function SearchBar({
   onFocus,
 }: SearchBarProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div style={{ marginBottom: '3px' }} className="flex items-center gap-2 ">
 
-      <div className="flex h-[50px] flex-1 items-center gap-2 rounded-full border border-border-light bg-white px-4">
+      <div style={{ padding: '10px' }} className="flex h-[50px] flex-1 items-center gap-2 rounded-full border border-border-light bg-white px-4">
         <Search size={18} className="flex-shrink-0 text-muted" />
 
         <input

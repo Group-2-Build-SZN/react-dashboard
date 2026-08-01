@@ -14,7 +14,7 @@ interface ListingHeaderProps {
 
 function ListingHeader({ resultCount, activeFilterCount = 0, onBack, onOpenMap, onOpenFilters }: ListingHeaderProps) {
   return (
-    <div className="bg-white px-5 pt-5">
+    <div style={{ padding: '5px', marginBottom: '4px' }} className="bg-white px-5 pt-5">
 
       <div className="flex items-center justify-between">
 
@@ -55,9 +55,9 @@ function ListingHeader({ resultCount, activeFilterCount = 0, onBack, onOpenMap, 
             />
           </button>
 
-          <button
+          <button style={{ padding: '5px' }}
             onClick={onOpenFilters}
-            className="flex h-9 items-center gap-2 rounded-xl border border-border-light bg-white px-3"
+            className="flex  h-9 items-center gap-2 rounded-xl border border-border-light bg-white px-3"
           >
 
             <SlidersHorizontal
@@ -65,7 +65,7 @@ function ListingHeader({ resultCount, activeFilterCount = 0, onBack, onOpenMap, 
               strokeWidth={2}
             />
 
-            <span className="text-sm font-medium text-gray-900">
+            <span style={{ marginTop: '4px' }} className="text-sm font-medium text-gray-900">
               Filter
             </span>
 

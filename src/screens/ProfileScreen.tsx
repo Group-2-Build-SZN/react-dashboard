@@ -50,11 +50,11 @@ export function ProfileScreen({ user, onAvatarSelected, onOpenSettings, onNaviga
     }
 
     return (
-        <div className="profile-screen">
+        <div style={{ padding: '1px' }} className="profile-screen">
             <header className="profile-screen__header">
                 <span />
                 <button className="profile-screen__settings" onClick={onOpenSettings} aria-label="Settings">
-                    <Settings size={20} />
+                    <Settings size={25} />
                 </button>
             </header>
 

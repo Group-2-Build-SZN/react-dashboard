@@ -3,18 +3,21 @@
 .profile-screen {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    // min-height: 100vh;
     background: $color-bg;
     font-family: $font-family;
+    padding-top: 15px;
 
     &__header {
         display: flex;
         align-items: center;
         justify-content: flex-end;
         padding: $space-4;
+
     }
 
     &__settings {
+        padding: 7px;
         background: none;
         border: none;
         color: $color-text;
@@ -29,6 +32,7 @@
         display: flex;
         flex-direction: column;
         gap: $space-5;
+        padding: 8px;
     }
 }
 
@@ -98,6 +102,7 @@
     @include card;
     background: $color-primary-light;
     border: none;
+    padding: 10px;
 
     &__title {
         font-size: 14px;
@@ -151,6 +156,7 @@
     display: flex;
     flex-direction: column;
     gap: $space-3;
+    padding: 5px;
 
     &__item {
         display: flex;
@@ -162,6 +168,7 @@
         padding: $space-4;
         cursor: pointer;
         text-align: left;
+        padding: 10px;
 
         &--danger {
 
@@ -198,4 +205,31 @@
         color: $color-text-muted;
         flex-shrink: 0;
     }
+}
+
+section.account-overview {
+    padding: 10px 10px 10px 10px;
+    margin-top: -10px;
+}
+
+button.profile-screen__settings {
+    padding: 9px 14px 1px 4px;
+}
+
+.profile-hero {
+    padding-right: 11px;
+    padding-left: 13px;
+}
+
+nav.profile-menu {
+    padding: 10px;
+
+}
+
+button.profile-menu__item {
+    padding: 13px;
+}
+
+img.profile-hero__avatar {
+    margin-left: 11px;
 }

@@ -62,7 +62,7 @@ function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-white px-6 pb-8 pt-5">
+    <div style={{ padding: '10px 15px' }} className="flex min-h-screen flex-col bg-white px-6 pb-8 pt-5">
 
       <div className="flex justify-end">
         <button

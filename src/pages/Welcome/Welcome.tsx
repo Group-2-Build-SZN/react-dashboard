@@ -9,7 +9,7 @@ type WelcomeProps = {
 
 function Welcome({ onGetStarted, onLogIn }: WelcomeProps) {
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-gray-50">
+    <div style={{ padding: '15px 10px', backgroundColor: '#cfe6f5' }} className="welcomebg flex h-screen flex-col overflow-hidden bg-gray-50">
 
       <div className="relative min-h-0 flex-1">
         <img

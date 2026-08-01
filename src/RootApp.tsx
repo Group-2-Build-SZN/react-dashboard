@@ -5,11 +5,11 @@ import { useIsDesktop } from './hooks/useIsDesktop';
 export default function RootApp() {
   const isDesktop = useIsDesktop();
   return isDesktop ? (
-    <div className="web-root">
+    <div style={{ maxWidth: 'auto 0' }} className="web-root">
       <DesktopApp />
     </div>
   ) : (
-    <div className="mobile-root">
+    <div style={{ maxWidth: 'auto 0' }} className="mobile-root">
       <MobileApp />
     </div>
   );
