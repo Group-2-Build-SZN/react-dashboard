@@ -5,7 +5,7 @@ import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 import { getProperty } from "../../api/properties";
 import { apiPropertyToProperty, propertyTypeLabel } from "../../api/adapters";
-import type { Property } from "../../api/adapters";
+import type { Property } from "../../types";
 
 export function VideoWalkthroughPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +16,7 @@ export function VideoWalkthroughPage() {
 
   useEffect(() => {
     if (!id) return;
+
     let cancelled = false;
     setIsLoading(true);
 
@@ -26,10 +27,14 @@ export function VideoWalkthroughPage() {
         setError(null);
       })
       .catch(() => {
-        if (!cancelled) setError("We couldn't load this video.");
+        if (!cancelled) {
+          setError("We couldn't load this video.");
+        }
       })
       .finally(() => {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       });
 
     return () => {
@@ -38,25 +43,29 @@ export function VideoWalkthroughPage() {
   }, [id]);
 
   const thumbnails = property
-    ? [property.videoUrls[0] ? "video" : null, ...property.photoUrls]
-        .filter((v): v is string => Boolean(v))
+    ? [property.videoUrls[0] ? "video" : null, ...property.photoUrls].filter(
+        (v): v is string => Boolean(v)
+      )
     : [];
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="flex-1 bg-white">
-        <div className="mx-auto max-w-5xl px-6 py-10">
+
+      <main className="pt-24 pb-16">
+        <div className="mx-auto max-w-7xl px-6">
           <Link
             to={id ? `/property/${id}` : "/search"}
             className="flex items-center gap-1 text-body text-primary hover:underline"
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft className="h-4 w-4" />
             Back to search results
           </Link>
 
           {isLoading ? (
-            <p className="mt-8 text-body text-neutral-500">Loading video…</p>
+            <p className="mt-8 text-body text-neutral-500">
+              Loading video…
+            </p>
           ) : error || !property ? (
             <p className="mt-8 text-body text-error">
               {error ?? "Video not found."}
@@ -66,10 +75,15 @@ export function VideoWalkthroughPage() {
               <h1 className="mt-4 text-h2 font-bold text-neutral">
                 Video Walkthrough
               </h1>
+
               <p className="mt-1 text-body text-neutral-600">
-                {property.bedrooms} Bedroom {propertyTypeLabel(property.propertyType)}
+                {property.bedrooms} Bedroom{" "}
+                {propertyTypeLabel(property.propertyType)}
               </p>
-              <p className="text-body text-neutral-500">{property.address}</p>
+
+              <p className="text-body text-neutral-500">
+                {property.address}
+              </p>
 
               <div className="mt-6">
                 {activeMedia === 0 && property.videoUrls[0] ? (
@@ -81,7 +95,10 @@ export function VideoWalkthroughPage() {
                   />
                 ) : (
                   <img
-                    src={property.photoUrls[activeMedia - 1] || property.photoUrls[0]}
+                    src={
+                      property.photoUrls[activeMedia - 1] ??
+                      property.photoUrls[0]
+                    }
                     alt=""
                     className="h-96 w-full rounded-2xl object-cover"
                   />
@@ -100,7 +117,11 @@ export function VideoWalkthroughPage() {
                         }`}
                       >
                         <img
-                          src={thumb === "video" ? property.photoUrls[0] : thumb}
+                          src={
+                            thumb === "video"
+                              ? property.photoUrls[0]
+                              : thumb
+                          }
                           alt=""
                           className="h-20 w-full object-cover"
                         />
@@ -122,6 +143,7 @@ export function VideoWalkthroughPage() {
           )}
         </div>
       </main>
+
       <Footer />
     </div>
   );
