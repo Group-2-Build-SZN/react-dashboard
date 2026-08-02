@@ -69,7 +69,7 @@ export function ChooseUserType() {
         role,
       });
       setUser(user);
-      navigate(role === "tenant" ? "/dashboard" : "/kyc-verification");
+      navigate("/kyc-verification");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save your profile — try again");
     } finally {

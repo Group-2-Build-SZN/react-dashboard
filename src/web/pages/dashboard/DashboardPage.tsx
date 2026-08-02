@@ -39,9 +39,11 @@ export function DashboardPage() {
   }, []);
 
   const statCards = [
-    { label: "Saved Properties", value: savedCount, icon: Heart, iconBg: "bg-secondary-50", iconColor: "text-secondary", to: "/dashboard/settings/profile" },
+    { label: "Saved Properties", value: savedCount, icon: Heart, iconBg: "bg-secondary-50", iconColor: "text-secondary", to: "/dashboard/saved" },
     { label: "My Inquiries", value: stats.inquiriesMade, icon: MessageCircleQuestionMark, iconBg: "bg-accent-50", iconColor: "text-accent-600", to: "/dashboard/inquiries" },
-    { label: "Properties Viewed", value: stats.viewedProperties, icon: Eye, iconBg: "bg-primary-50", iconColor: "text-primary", to: "/dashboard/settings/profile" },
+    // No "viewed properties" page exists yet — omitting `to` rather than
+    // pointing this at an unrelated page like the others were doing.
+    { label: "Properties Viewed", value: stats.viewedProperties, icon: Eye, iconBg: "bg-primary-50", iconColor: "text-primary", to: undefined },
     { label: "Search Properties", value: undefined, icon: Search, iconBg: "bg-primary-100", iconColor: "text-primary-700", to: "/search" },
   ];
 
@@ -65,9 +67,13 @@ export function DashboardPage() {
             <p className="mt-3 text-small text-neutral-500">{s.label}</p>
             <p className="text-h3 font-bold text-neutral">{s.value ?? "\u2014"}</p>
             <hr className="my-2 border-neutral-100" />
-            <Link to={s.to} className="text-small font-medium text-primary">
-              View all
-            </Link>
+            {s.to ? (
+              <Link to={s.to} className="text-small font-medium text-primary">
+                View all
+              </Link>
+            ) : (
+              <span className="text-small font-medium text-neutral-300">View all</span>
+            )}
           </div>
         ))}
       </div>
@@ -150,9 +156,11 @@ export function DashboardPage() {
           <p className="mt-2 text-body text-neutral-500">
             Reach thousands of verified tenants and rent faster.
           </p>
-          <Button size="lg" className="mt-4">
-            List Property
-          </Button>
+          <Link to="/landlord/properties/new">
+            <Button size="lg" className="mt-4">
+              List Property
+            </Button>
+          </Link>
         </div>
       </div>
     </DashboardLayout>

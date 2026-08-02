@@ -55,7 +55,17 @@ export function GoogleSignInButton({ fullWidth }: GoogleSignInButtonProps) {
             try {
               const user = await signInWithGoogle(response.credential);
               setUser(user);
-              navigate(dashboardPathFor(user));
+              // Same check CheckEmail.tsx uses for the OTP flow — without
+              // this, an account with no completed profile (new Google
+              // identity, or a Google sign-in that the backend didn't link
+              // to an existing email/OTP account with a role already set)
+              // fell through dashboardPathFor's default and landed on the
+              // tenant dashboard instead of onboarding.
+              if (!user.firstName) {
+                navigate("/choose-user-type");
+              } else {
+                navigate(dashboardPathFor(user));
+              }
             } catch (err) {
               setError(err instanceof Error ? err.message : "Google sign-in failed");
             }

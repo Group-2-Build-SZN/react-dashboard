@@ -527,7 +527,7 @@ function ChooseUserTypeRoute() {
         try {
           const updatedUser = await authApi.completeProfile({ firstName, lastName, phone, role });
           setUser(updatedUser);
-          navigate(role === 'tenant' ? '/home' : '/kyc-verification');
+          navigate('/kyc-verification');
         } catch (e) {
           setError(e instanceof Error ? e.message : 'Failed to save your profile — try again');
         }
@@ -538,8 +538,13 @@ function ChooseUserTypeRoute() {
 
 function KYCVerificationRoute() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(true);
+
+  // Tenants verify via NIN (individual); landlords/agents via CAC (business).
+  // Not a user choice — determined by the role picked on the previous screen.
+  const lockedType = user?.role === 'tenant' ? 'individual' : 'business';
 
   useEffect(() => {
     let cancelled = false;
@@ -566,11 +571,12 @@ function KYCVerificationRoute() {
     <KYCVerification
       onBack={() => navigate('/choose-user-type')}
       error={error}
+      lockedType={lockedType}
       onContinue={async (submission: KYCSubmission) => {
         setError(null);
         try {
           const result =
-            submission.type === 'individual'
+            lockedType === 'individual'
               ? await verifyNin({
                   firstName: submission.firstName,
                   lastName: submission.lastName,

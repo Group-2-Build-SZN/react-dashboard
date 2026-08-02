@@ -6,12 +6,16 @@ import { Button } from "../../components/ui/Button";
 import logo from "../../assets/images/logo-icon.svg";
 import kycIllustration from "../../assets/images/kyc-verify-illustration.png";
 import { verifyNin, verifyCac } from "../../../api/kyc";
+import { useAuth } from "../../lib/AuthContext";
 
 type VerificationType = "individual" | "business";
 
 export function KYCVerification() {
   const navigate = useNavigate();
-  const [type, setType] = useState<VerificationType>("individual");
+  const { user } = useAuth();
+  // Tenants verify via NIN (individual); landlords/agents via CAC (business).
+  // Not a user choice — determined by the role picked on the previous screen.
+  const type: VerificationType = user?.role === "tenant" ? "individual" : "business";
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -105,32 +109,9 @@ export function KYCVerification() {
           <div className="mt-6">
             <p className="mb-2 text-body font-medium text-neutral">I am verifying as</p>
 
-            <div className="flex rounded-xl border border-neutral-200 p-1">
-              <button
-                type="button"
-                onClick={() => setType("individual")}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-small font-semibold transition-colors ${
-                  type === "individual"
-                    ? "border border-primary bg-white text-primary"
-                    : "border border-transparent text-neutral-500"
-                }`}
-              >
-                <User size={14} />
-                Individual (NIN)
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setType("business")}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-small font-semibold transition-colors ${
-                  type === "business"
-                    ? "border border-primary bg-white text-primary"
-                    : "border border-transparent text-neutral-500"
-                }`}
-              >
-                <Building2 size={14} />
-                Business (CAC)
-              </button>
+            <div className="flex items-center gap-2 rounded-xl border border-primary bg-white px-4 py-2.5 text-small font-semibold text-primary">
+              {type === "individual" ? <User size={14} /> : <Building2 size={14} />}
+              {type === "individual" ? "Individual (NIN)" : "Business (CAC)"}
             </div>
           </div>
 

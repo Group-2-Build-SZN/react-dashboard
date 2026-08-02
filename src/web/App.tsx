@@ -15,6 +15,7 @@ import { LandlordDashboardPage } from "./pages/landlord/LandlordDashboardPage";
 import { AddPropertyPage } from "./pages/landlord/AddPropertyPage";
 import { MyPropertiesPage } from "./pages/landlord/MyPropertiesPage";
 import { LandlordProfilePage } from "./pages/landlord/LandlordProfilePage";
+import { LandlordInquiriesPage } from "./pages/landlord/LandlordInquiriesPage";
 import { ProfilePage } from "./pages/dashboard/ProfilePage";
 import { AccountPage } from "./pages/dashboard/AccountPage";
 import { SecurityPage } from "./pages/dashboard/SecurityPage";
@@ -53,6 +54,7 @@ function App() {
       <Route path="/landlord/dashboard" element={<RequireAuth><LandlordDashboardPage /></RequireAuth>} />
       <Route path="/landlord/properties/new" element={<RequireAuth><AddPropertyPage /></RequireAuth>} />
       <Route path="/landlord/properties" element={<RequireAuth><MyPropertiesPage /></RequireAuth>} />
+      <Route path="/landlord/inquiries" element={<RequireAuth><LandlordInquiriesPage /></RequireAuth>} />
       <Route path="/landlord/profile" element={<RequireAuth><LandlordProfilePage /></RequireAuth>} />
       <Route path="/dashboard/settings/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
       <Route path="/dashboard/settings/account" element={<RequireAuth><AccountPage /></RequireAuth>} />

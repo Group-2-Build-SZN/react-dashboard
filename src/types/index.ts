@@ -24,6 +24,7 @@ export interface Property {
     lat: number;
     lng: number;
     isVerified: boolean;
+    availabilityStatus?: 'available' | 'taken' | 'under_review';
     listingCategory: ListingCategory;
     isFavorited: boolean;
     description?: string;

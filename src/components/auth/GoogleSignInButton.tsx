@@ -55,7 +55,11 @@ export function GoogleSignInButton({ fullWidth, redirectTo }: GoogleSignInButton
             try {
               const user = await signInWithGoogle(response.credential);
               setUser(user);
-              navigate(redirectTo);
+              // Matches the email/OTP flow's check (see EnterCode route in
+              // App.tsx) — an account with no completed profile yet needs
+              // onboarding, not whatever static destination the caller
+              // passed in for an already-set-up account.
+              navigate(user.firstName ? redirectTo : "/choose-user-type");
             } catch (err) {
               setError(err instanceof Error ? err.message : "Google sign-in failed");
             }

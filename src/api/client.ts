@@ -54,7 +54,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const res = await fetch(`${BASE_URL}${path}`, {
     ...rest,
     headers: finalHeaders,
-    credentials: 'include', // send the refresh-token cookie
+    credentials: 'include', 
     body: body === undefined ? undefined : isFormData ? (body as FormData) : JSON.stringify(body),
   });
 

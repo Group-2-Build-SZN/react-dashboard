@@ -20,10 +20,14 @@ type KYCVerificationProps = {
   onBack?: () => void;
   onContinue?: (submission: KYCSubmission) => Promise<void> | void;
   error?: string | null;
+  // Tenants verify via NIN, landlords/agents via CAC — this isn't a user
+  // choice, it's determined by the role picked on the previous screen. When
+  // set, the individual/business toggle is hidden entirely.
+  lockedType?: VerificationType;
 };
 
-function KYCVerification({ onBack, onContinue, error }: KYCVerificationProps) {
-  const [type, setType] = useState<VerificationType>("individual");
+function KYCVerification({ onBack, onContinue, error, lockedType }: KYCVerificationProps) {
+  const [type, setType] = useState<VerificationType>(lockedType ?? "individual");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [firstName, setFirstName] = useState("");
@@ -84,7 +88,15 @@ function KYCVerification({ onBack, onContinue, error }: KYCVerificationProps) {
           I am verifying as
         </p>
 
-        <div className="flex rounded-xl border border-border-light p-1">
+        {lockedType ? (
+          <div className="flex items-center gap-2 rounded-xl border border-primary-800 bg-white px-4 py-2.5 text-sm font-semibold text-primary-800">
+            <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-primary-800 text-white">
+              {lockedType === "individual" ? <User size={12} /> : <Building2 size={12} />}
+            </span>
+            {lockedType === "individual" ? "Individual (NIN)" : "Business (CAC)"}
+          </div>
+        ) : (
+          <div className="flex rounded-xl border border-border-light p-1">
 
           <button
             onClick={() => setType("individual")}
@@ -127,6 +139,7 @@ function KYCVerification({ onBack, onContinue, error }: KYCVerificationProps) {
           </button>
 
         </div>
+        )}
       </div>
 
       <div className="mt-5 rounded-xl bg-blue-tint p-4">

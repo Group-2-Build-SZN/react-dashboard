@@ -58,6 +58,10 @@ function ratingToScore(rating: number): number {
   return Math.max(0, Math.min(100, rating * 20));
 }
 
+function toListingCategory(purpose: 'rent' | 'sale'): 'for_rent' | 'for_sale' {
+  return purpose === 'sale' ? 'for_sale' : 'for_rent';
+}
+
 export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDetail): Property {
   const { lat, lng } = extractLatLng(item);
 
@@ -66,7 +70,7 @@ export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDet
       id: item.id,
       listingTitle: item.listing_title,
       address: item.address,
-      neighborhood: item.address, // API has no separate neighborhood field
+      neighborhood: item.address, 
       price: Number(item.price),
       pricePeriod: 'year',
       bedrooms: item.bedrooms,
@@ -75,7 +79,8 @@ export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDet
       lat,
       lng,
       isVerified: item.is_published,
-      listingCategory: item.listing_purpose === 'rent' ? 'for_rent' : 'for_sale',
+      availabilityStatus: item.availability_status,
+      listingCategory: toListingCategory(item.listing_purpose),
       isFavorited: item.is_saved ?? false,
       description: item.description ?? undefined,
       photoUrls: item.photo_urls ?? [],
@@ -103,7 +108,8 @@ export function apiPropertyToProperty(item: ApiPropertyListItem | ApiPropertyDet
     lat,
     lng,
     isVerified: item.isPublished,
-    listingCategory: item.listingPurpose === 'rent' ? 'for_rent' : 'for_sale',
+    availabilityStatus: item.availabilityStatus,
+    listingCategory: toListingCategory(item.listingPurpose),
     isFavorited: item.isSaved ?? false,
     description: item.description ?? undefined,
     photoUrls: item.photoUrls ?? [],

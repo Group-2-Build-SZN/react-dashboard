@@ -137,3 +137,15 @@ export function publishProperty(propertyId: string) {
 export function deleteProperty(propertyId: string) {
   return api.delete(`/properties/${propertyId}`);
 }
+
+export async function listMyProperties(ownerId: string) {
+  const first = await listProperties({ limit: 50, page: 1 });
+  const pages = [first];
+  for (let page = 2; page <= first.pagination.totalPages; page++) {
+    pages.push(await listProperties({ limit: 50, page }));
+  }
+  return {
+    ...first,
+    data: pages.flatMap((p) => p.data).filter((item) => item.owner_id === ownerId),
+  };
+}
