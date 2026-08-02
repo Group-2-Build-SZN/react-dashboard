@@ -825,7 +825,7 @@ export default function App() {
       <Route path="/property/:id" element={<PropertyDetailsRoute />} />
       <Route path="/video/:id" element={<VideoWalkthroughRoute />} />
       <Route path="/pay/:id" element={<EnterCardDetailsRoute />} />
-      <Route path="/payment/callback" element={<PaymentCallbackRoute />} />
+      <Route path="/subscription/success" element={<PaymentCallbackRoute />} />
       <Route path="/payment-success/:id" element={<PaymentSuccessRoute />} />
 
       {}
