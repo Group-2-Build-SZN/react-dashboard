@@ -97,3 +97,43 @@ export function reportProperty(
     .post<ApiEnvelope<ApiPropertyReport>>(`/properties/${propertyId}/report`, formData)
     .then((r) => r.data);
 }
+
+export interface CreatePropertyPayload {
+  listingTitle: string;
+  listingPurpose?: 'rent' | 'sale';
+  description?: string;
+  propertyType: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  price: number;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+  videoUrls?: string[];
+  features?: string[];
+}
+
+export function createProperty(payload: CreatePropertyPayload) {
+  return api
+    .post<ApiEnvelope<ApiPropertyDetail>>('/properties', payload)
+    .then((r) => r.data);
+}
+
+export function uploadPropertyMedia(
+  propertyId: string,
+  formData: FormData
+) {
+  return api
+    .post<ApiEnvelope<ApiPropertyDetail>>(`/properties/${propertyId}/media`, formData)
+    .then((r) => r.data);
+}
+
+export function publishProperty(propertyId: string) {
+  return api
+    .patch<ApiEnvelope<ApiPropertyDetail>>(`/properties/${propertyId}/publish`, {})
+    .then((r) => r.data);
+}
+
+export function deleteProperty(propertyId: string) {
+  return api.delete(`/properties/${propertyId}`);
+}

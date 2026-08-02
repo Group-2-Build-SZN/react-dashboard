@@ -4,6 +4,7 @@ import { Mail, CircleCheckBig } from "lucide-react";
 import { AuthLayout } from "../../components/layout/AuthLayout";
 import { OTPInput } from "../../components/ui/OTPInput";
 import { useAuth } from "../../lib/AuthContext";
+import { dashboardPathFor } from "../../lib/dashboardPath";
 import { verifyCode, requestCode } from "../../../api/auth";
 import loginCheckImage from "../../assets/images/unsplash_hE0nmTffKtM.png";
 import signupCheckImage from "../../assets/images/unsplash_YI5vG37d-Ig.png";
@@ -62,7 +63,7 @@ export function CheckEmail({ mode }: CheckEmailProps) {
       if (mode === "signup" && !user.firstName) {
         navigate("/choose-user-type", { state: { fullName: state?.fullName } });
       } else {
-        navigate("/dashboard");
+        navigate(dashboardPathFor(user));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid or expired code");

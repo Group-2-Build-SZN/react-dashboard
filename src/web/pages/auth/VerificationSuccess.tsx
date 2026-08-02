@@ -1,11 +1,14 @@
 import { useNavigate, Link } from "react-router-dom";
 import { HelpCircle } from "lucide-react";
 import { Button } from "../../components/ui/Button";
+import { useAuth } from "../../lib/AuthContext";
+import { dashboardPathFor } from "../../lib/dashboardPath";
 import logo from "../../assets/images/logo-icon.svg";
 import successBadge from "../../assets/images/verification-success-badge.png";
 
 export function VerificationSuccess() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-6 py-12">
@@ -32,7 +35,7 @@ export function VerificationSuccess() {
         </p>
 
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Button size="lg" onClick={() => navigate("/dashboard")}>
+          <Button size="lg" onClick={() => navigate(dashboardPathFor(user))}>
             Go to Dashboard
           </Button>
           <Link to="/search">

@@ -145,10 +145,21 @@ export function PropertyDetailPage() {
     };
   }, [id]);
 
+  useEffect(() => {
+    function handlePageShow(event: PageTransitionEvent) {
+      if (event.persisted) {
+        setIsUnlocking(false);
+      }
+    }
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
+
   async function handleUnlockContact() {
     setUnlockError(null);
     setIsUnlocking(true);
     try {
+      sessionStorage.setItem("myulo:postPaymentReturnTo", window.location.pathname);
       const { authorization_url } = await initSubscription();
       window.location.href = authorization_url;
     } catch (err) {
@@ -299,18 +310,26 @@ export function PropertyDetailPage() {
           </div>
 
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            {user?.isPremium && property.owner?.phone ? (
-              <div className="flex flex-1 flex-col gap-2 rounded-xl border border-secondary-200 bg-secondary-50 p-4">
-                <p className="text-small font-medium text-neutral">Contact unlocked</p>
-                <a href={`tel:${property.owner.phone}`} className="flex items-center gap-2 text-body text-neutral">
-                  <Phone size={16} /> {property.owner.phone}
-                </a>
-                {property.owner.email && (
-                  <a href={`mailto:${property.owner.email}`} className="flex items-center gap-2 text-body text-neutral">
-                    <Mail size={16} /> {property.owner.email}
+            {user?.isPremium ? (
+              property.owner?.phone ? (
+                <div className="flex flex-1 flex-col gap-2 rounded-xl border border-secondary-200 bg-secondary-50 p-4">
+                  <p className="text-small font-medium text-neutral">Contact unlocked</p>
+                  <a href={`tel:${property.owner.phone}`} className="flex items-center gap-2 text-body text-neutral">
+                    <Phone size={16} /> {property.owner.phone}
                   </a>
-                )}
-              </div>
+                  {property.owner.email && (
+                    <a href={`mailto:${property.owner.email}`} className="flex items-center gap-2 text-body text-neutral">
+                      <Mail size={16} /> {property.owner.email}
+                    </a>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-1 items-center rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+                  <p className="text-small text-neutral-500">
+                    This lister hasn't added contact details yet.
+                  </p>
+                </div>
+              )
             ) : (
               <Button size="lg" fullWidth onClick={handleUnlockContact} disabled={isUnlocking}>
                 {isUnlocking ? "Redirecting…" : "Unlock Contact"}

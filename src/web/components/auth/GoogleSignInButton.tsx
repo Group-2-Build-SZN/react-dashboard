@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
+import { dashboardPathFor } from "../../lib/dashboardPath";
 import { signInWithGoogle } from "../../../api/auth";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
@@ -54,7 +55,7 @@ export function GoogleSignInButton({ fullWidth }: GoogleSignInButtonProps) {
             try {
               const user = await signInWithGoogle(response.credential);
               setUser(user);
-              navigate("/dashboard");
+              navigate(dashboardPathFor(user));
             } catch (err) {
               setError(err instanceof Error ? err.message : "Google sign-in failed");
             }
